@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Maven Launch4j Plugin
+Copyright (c) 2006 Paul Jungwirth
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.akathist.maven.plugins.launch4j</groupId>
+  <artifactId>launch4j-maven-plugin</artifactId>
+  <packaging>maven-plugin</packaging>
+  <version>1.4-SNAPSHOT</version>
+  <name>Maven Launch4j Plugin</name>
+  <description>This plugin creates Windows executables from Java jar files using the Launch4j utility.</description>
+  <!--
+  <description><![CDATA[This plugin creates Windows executables from Java jar files using <a href="http://launch4j.sourceforge.net">the Launch4j utility</a>.]]></description>
+  -->
+  <url>http://9stmaryrd.com/tools/launch4j-maven-plugin/</url>
+  <licenses>
+	  <license>
+		  <name>GNU General Public License</name>
+		  <url>http://www.gnu.org/licenses/gpl.txt</url>
+		  <distribution>repo</distribution>
+	  </license>
+  </licenses>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-artifact</artifactId>
+      <version>2.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-project</artifactId>
+      <version>2.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-descriptor</artifactId>
+      <version>2.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>1.8.3</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>ant</groupId>
+      <artifactId>ant</artifactId>
+      <version>1.7.0</version>
+    </dependency>
+	<!-- not in ibiblio. used for gui. see https://abeille.dev.java.net/
+    <dependency>
+      <groupId>??</groupId>
+      <artifactId>formsrt</artifactId>
+      <version>??</version>
+    </dependency>
+	just gui again:
+    <dependency>
+      <groupId>com.jgoodies</groupId>
+      <artifactId>looks</artifactId>
+	  <version>2.0.4</version>
+    </dependency>
+	-->
+    <dependency>
+      <groupId>foxtrot</groupId>
+      <artifactId>foxtrot</artifactId>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.thoughtworks.xstream</groupId>
+      <artifactId>xstream</artifactId>
+	  <version>1.3.1</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+	  <plugins>
+		  <plugin>
+			  <artifactId>maven-antrun-plugin</artifactId>
+			  <executions>
+				  <execution>
+					  <id>copy</id>
+					  <phase>process-classes</phase>
+					  <goals><goal>run</goal></goals>
+					  <configuration>
+						  <tasks>
+							  <copy file="README" todir="target/classes"/>
+							  <copy file="LICENSE" todir="target/classes"/>
+						  </tasks>
+					  </configuration>
+				  </execution>
+			  </executions>
+		  </plugin>
+		  <plugin>
+			  <artifactId>maven-assembly-plugin</artifactId>
+			  <executions>
+				  <execution>
+					  <id>assemble-workdir</id>
+					  <phase>package</phase>
+					  <goals><goal>attached</goal></goals>
+					  <configuration>
+						  <descriptors>
+							  <descriptor>src/main/assembly/assemble-linux.xml</descriptor>
+							  <descriptor>src/main/assembly/assemble-win32.xml</descriptor>
+							  <descriptor>src/main/assembly/assemble-mac.xml</descriptor>
+							  <descriptor>src/main/assembly/assemble-solaris.xml</descriptor>
+						  </descriptors>
+					  </configuration>
+				  </execution>
+				  <execution>
+					  <id>dist-src</id>
+					  <phase>package</phase>
+					  <goals><goal>attached</goal></goals>
+					  <configuration>
+						  <descriptors>
+							  <descriptor>src/main/assembly/src.xml</descriptor>
+						  </descriptors>
+					  </configuration>
+				  </execution>
+			  </executions>
+		  </plugin>
+	  </plugins>
+	  <extensions>
+		  <extension>
+			  <groupId>org.apache.maven.wagon</groupId>
+			  <artifactId>wagon-ftp</artifactId>
+			  <version>1.0-alpha-6</version>
+		  </extension>
+	  </extensions>
+  </build>
+  <reporting>
+	  <plugins>
+		  <plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-project-info-reports-plugin</artifactId>
+			  <reportSets>
+				  <reportSet>
+					  <reports>
+						  <report>index</report>
+						  <report>summary</report>
+						  <report>license</report>
+						  <report>dependencies</report>
+					  </reports>
+				  </reportSet>
+			  </reportSets>
+		  </plugin>
+		  <plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-javadoc-plugin</artifactId>
+		  </plugin>
+		  <plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-surefire-report-plugin</artifactId>
+		  </plugin>
+	  </plugins>
+  </reporting>
+  <distributionManagement>
+	  <repository>
+		  <id>akathist-repository</id>
+		  <name>Akathist Repository</name>
+		  <!--
+		  <url>file:///maven-repo</url>
+		  -->
+		  <url>ftp://ftp.9stmaryrd.com/public_html/maven</url>
+	  </repository>
+  </distributionManagement>
+</project>

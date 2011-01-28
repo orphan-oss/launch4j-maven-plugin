@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Maven Launch4j Plugin">
+	<publishDate format="dd MMMM yyyy"/>
+	<body>
+		<links>
+			<item name="Launch4j" href="http://launch4j.sourceforge.net"/>
+		</links>
+		<!--
+		<menu name="blah">
+			<item name="Ick" href="/asdfsadf.html"/>
+		</menu>
+		javadoc
+		${reports}
+		-->
+		<menu name="Project Information">
+			<item name="About" href="index.html"/>
+			<item name="Summary" href="project-summary.html"/>
+			<item name="License" href="license.html"/>
+			<item name="Dependencies" href="dependencies.html"/>
+			<item name="Javadoc" href="apidocs/index.html"/>
+			<item name="Unit Tests" href="surefire-report.html"/>
+		</menu>
+	</body>
+</project>

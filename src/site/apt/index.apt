@@ -1,0 +1,3 @@
+Launch4j Maven Plugin
+
+  This plugin creates Windows executables from Java jar files using {{{http://launch4j.sourceforge.net}the Launch4j utility}}.
