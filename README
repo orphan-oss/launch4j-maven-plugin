@@ -1,0 +1,258 @@
+Maven Launch4j Plugin 1.0
+A plugin for using Launch4j in Maven projects.
+Copyright (c) 2006 Paul Jungwirth
+16 October 2006
+
+Launch4j by Grzegorz Kowal (http://launch4j.sourceforge.net/) wraps a jar file 
+in a Windows executable to ease deployment of Java desktop applications. You 
+can either bundle a JRE or tell Launch4j to search the hard drive for an 
+existing one. If none is found, then Launch4j will show the user a download 
+page. Launch4j has many features. You can create either GUI or console 
+applications. You can show a splash screen while the JRE loads, give your 
+application a custom icon in the Windows task bar, set a more descriptive 
+process name (other than "java"), and set a variety of other process attributes.
+
+You can run Launch4j on Windows, Linux, Solaris, or OS X. You specify the 
+configuration through an XML file. Please see the Launch4j site for more 
+information on this file. You can also set your configuration via the Launch4j 
+GUI.
+
+The Maven plugin for Launch4j lets you generate the Launch4j executable as part 
+of the Maven build process. It supports Maven 2.0.4 and Launch4j 3.0.0-pre1. 
+You don't have to download Launch4j; all the necessary files are included in 
+the plugin. (The plugin does not include Launch4j's GUI option.) Depending on 
+your operating system, the plugin will download an additional artifact 
+containing platform-specific binaries that Launch4j uses to create the 
+executable. This artifact is treated like any other Maven dependency, so it is 
+only downloaded the first time you need it.
+
+Using the Maven plugin, you specify the Launch4j configuration in your POM. I 
+hope to add support for external configuration files, but right now you have to 
+use the POM. The format of this configuration is very similar to the standard 
+Launch4j XML format. There are two main differences. First, any lists of 
+like-named elements must appear in a wrapper element. For example, you can't 
+say:
+
+    <icon>logo.bin</icon>
+    <var>this=that</var>
+    <var>foo=bar</var>
+    <var>blep=blurp</var>
+
+You must say:
+
+    <icon>logo.bin</icon>
+    <vars>
+        <var>this=that</var>
+        <var>foo=bar</var>
+        <var>blep=blurp</var>
+    </vars>
+
+Likewise for <lib> and <obj> elements.
+
+Second, the sub-elements of the <classPath> element are a little different. 
+This is so you can set the classpath based on your depedencies. <classPath> 
+still takes a <mainClass> element, but it does not take <cp>. Instead, it 
+supports these children:
+
+    <addDependencies>   If you set this to "true," the plugin will build your 
+                        classpath based on all dependencies in the runtime and
+                        compile scopes. This is on by default.
+
+    <jarLocation>       If you are using the addDependencies feature, you can
+                        use this option to add a prefix before each jar's name.
+                        This is useful if you are bundling your app with the
+                        executable alongside a lib directory that contains all
+                        your jars. If that's what you're doing, you would specify 
+                        <jarLocation>lib/</jarLocation>.
+
+    <preCp>             Use this to add classpath entries before the automatically-
+                        generated list. This element functions whether you have
+                        enabled <addDependencies> or not. Entries in the list should
+                        be separated by semicolons, as in a Windows-style CLASSPATH
+                        variable.
+
+    <postCp>            Use this to add classpath entries after the automatically-
+                        generated list. This element functions whether you have 
+                        enabled <addDependencies> or not. Entries in the list should
+                        be separated by semicolons, as in a Windows-style CLASSPATH
+                        variable.
+
+Other than these changes, the XML format is just like Launch4j's standard 
+format.
+
+By default, the Launch4j plugin is bound to the package phase. Suppose you have 
+a single-module project named encc. It is a console application, not a GUI. It 
+is packaged as a jar, so the jarring runs automatically during the package 
+phase before anything else. You want to use launch4j to create an executable 
+and then use the assmebly plugin to bundle everything up. You could bind both 
+launch4j and assembly to the package phase with a POM like this:
+
+
+  <project>
+    . . .
+    <groupId>com.akathist.encc</groupId>
+    <artifactId>encc</artifactId>
+    <packaging>jar</packaging>
+    . . .
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>com.akathist.maven.plugins.launch4j</groupId>
+          <artifactId>launch4j-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>l4j-clui</id>
+              <phase>package</phase>
+              <goals><goal>launch4j</goal></goals>
+              <configuration>
+                <headerType>console</headerType>
+                <outfile>target/encc.exe</outfile>
+                <jar>target/encc-1.0.jar</jar>
+                <errTitle>encc</errTitle>
+                <classPath>
+                  <mainClass>com.akathist.encc.Clui</mainClass>
+                  <addDependencies>false</addDependencies>
+                  <preCp>anything</preCp>
+                </classPath>
+                <jre>
+                  <minVersion>1.5.0</minVersion>
+                </jre>
+                <versionInfo>
+                  <fileVersion>1.2.3.4</fileVersion>
+                  <txtFileVersion>txt file version?</txtFileVersion>
+                  <fileDescription>a description</fileDescription>
+                  <copyright>my copyright</copyright>
+                  <productVersion>4.3.2.1</productVersion>
+                  <txtProductVersion>txt product version</txtProductVersion>
+                  <productName>E-N-C-C</productName>
+                  <internalName>ccne</internalName>
+                  <originalFilename>original.exe</originalFilename>
+                </versionInfo>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>assembly</id>
+              <phase>package</phase>
+              <goals><goal>attached</goal></goals>
+              <configuration>
+                <descriptors>
+                  <descriptor>assembly.xml</descriptor>
+                </descriptors>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </build>
+    . . .
+  </project>
+
+
+Note that when you bind the assembly plugin to a phase, you must use 
+assembly:attached, not assembly:assembly, to prevent its forking a parallel 
+lifecycle and running everything twice.
+
+Or suppose your application can run in either GUI or console mode, and you want 
+to create separate executables for each. Then your POM would look like this:
+
+
+  <project>
+    . . .
+    <groupId>com.akathist.encc</groupId>
+    <artifactId>encc</artifactId>
+    <packaging>jar</packaging>
+    . . .
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>com.akathist.maven.plugins.launch4j</groupId>
+          <artifactId>launch4j-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>l4j-clui</id>
+              <phase>package</phase>
+              <goals><goal>launch4j</goal></goals>
+              <configuration>
+                <headerType>console</headerType>
+                <outfile>target/encc.exe</outfile>
+                <jar>target/encc-1.0.jar</jar>
+                <errTitle>encc</errTitle>
+                <classPath>
+                  <mainClass>com.akathist.encc.Clui</mainClass>
+                  <addDependencies>false</addDependencies>
+                  <preCp>anything</preCp>
+                </classPath>
+                <jre>
+                  <minVersion>1.5.0</minVersion>
+                </jre>
+                <versionInfo>
+                  <fileVersion>1.2.3.4</fileVersion>
+                  <txtFileVersion>txt file version?</txtFileVersion>
+                  <fileDescription>a description</fileDescription>
+                  <copyright>my copyright</copyright>
+                  <productVersion>4.3.2.1</productVersion>
+                  <txtProductVersion>txt product version</txtProductVersion>
+                  <productName>E-N-C-C</productName>
+                  <internalName>ccne</internalName>
+                  <originalFilename>original.exe</originalFilename>
+                </versionInfo>
+              </configuration>
+            </execution>
+                <execution>
+                  <id>l4j-gui</id>
+                  <phase>package</phase>
+                  <goals><goal>launch4j</goal></goals>
+                  <configuration>
+                    <headerType>gui</headerType>
+                    <outfile>target/enccg.exe</outfile>
+                    <jar>target/encc-1.0.jar</jar>
+                    <errTitle>enccg</errTitle>
+                    <classPath>
+                      <mainClass>com.akathist.encc.Gui</mainClass>
+                    </classPath>
+                    <jre>
+                      <minVersion>1.5.0</minVersion>
+                    </jre>
+                    <versionInfo>
+                      <fileVersion>1.2.3.4</fileVersion>
+                      <txtFileVersion>txt file version?</txtFileVersion>
+                      <fileDescription>a description</fileDescription>
+                      <copyright>my copyright</copyright>
+                      <productVersion>4.3.2.1</productVersion>
+                      <txtProductVersion>txt product version</txtProductVersion>
+                      <productName>E-N-C-C</productName>
+                      <internalName>ccne</internalName>
+                      <originalFilename>original.exe</originalFilename>
+                    </versionInfo>
+                  </configuration>
+                </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>assembly</id>
+              <phase>package</phase>
+              <goals><goal>attached</goal></goals>
+              <configuration>
+                <descriptors>
+                  <descriptor>assembly.xml</descriptor>
+                </descriptors>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </build>
+    . . .
+  </project>
+
+
+If you have any questions, you can send a note to maven {a} 9stmaryrd * com.
+

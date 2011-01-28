@@ -1,0 +1,66 @@
++ Instead of distributing all the binary files together,
+  distrubte them separately and pull down the right one as needed, based on a system property.
+  Look at maven-dependency-plugin for code on grabbing dependencies--and unpacking them.
+
++ give version ranges for our dependencies so we play nice in people's projects.
+
++ By default, generate the <cp> element automatically from the dependencies.
+
+- What is up with downloading xstream every time?
+
++ Rename l4j to launch4j: package, groupId
+
++ Add a license file of my own.
+
++ Add license comment blocks to all files.
+
++ Rename from maven-launch4j-plugin to launch4j-maven-plugin.
+
++ Use mvn site to generate a site for this plugin.
+    - javadoc should include private fields.
+	- put something like the README in the index.html file.
+
++ Use maven to generate a source distro for this plugin.
+
+- Move this to public svn (sourceforge?).
+
+- Use maven release to release new versions.
+
+- Add to <classPath>:
+	<excludes>
+		<exclude>
+			<groupId></groupId>
+			<artifactId></artifactId>
+		</exclude>
+		...
+	</excludes>
+
++ Use ftp in <distributionManagement> to make updating my online repository easy.
+  But don't put this in the POM with username & password, because that gets posted publicly!
+    + getting NPE from ftp-wagon. (this was because I was missing a matching <server> in ~/.m2/settings.xml)
+
+- add a snapshot repository, too.
+
+- Don't run launch4j unless the inputs are newer than the output?
+
++ Improve logic on whether to unjar:
+    + After unjarring, write the marker file.
+	+ If the marker is there and newer than the jar, don't unjar.
+	+ But if the jar is newer, unjar anyway.
+	+ After unjarring, either write the marker file or touch it.
+
+- dontWrapJar doesn't work?
+	from an email:
+	However (sorry!) I can't get <dontWrapJar> to work.  I have tried every combination of "target/" or "./", including using backslashes (in case of a platform specific-issue) but each results in:
+	"Specify runtime path of the jar relative to executable"
+
+	I would expect the following config should have worked. I have confirmed that it works from the root of the project using the commandline launch4j.
+
+	<outfile>target/app.exe</outfile>
+	<jar>app-1.0.jar</jar>
+
+- support l4j 3.0.1
+
+- support bundling the JRE (or figure out what parameters already allow this)
+
+
