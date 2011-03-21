@@ -295,10 +295,15 @@ public class Launch4jMojo extends AbstractMojo {
 	 */
 	private Messages messages;
 
-	private File getJar() {
-		File f = new File(jar);
-		if (f.isAbsolute()) return f;
-		else return new File(getBaseDir(), jar);
+    /**
+     * Windows manifest file (a XML file) with the same name as .exe file (myapp.exe.manifest)
+     *
+     * @parameter
+     */
+    private File manifest;
+
+    private File getJar() {
+		return new File(jar);
 	}
 
 	public void execute() throws MojoExecutionException {
@@ -318,6 +323,7 @@ public class Launch4jMojo extends AbstractMojo {
 		c.setPriority(priority);
 		c.setCustomProcName(customProcName);
 		c.setStayAlive(stayAlive);
+        c.setManifest(manifest);
 		c.setIcon(icon);
 		c.setHeaderObjects(objs);
 		c.setLibs(libs);
