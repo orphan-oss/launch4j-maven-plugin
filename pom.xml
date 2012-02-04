@@ -227,33 +227,5 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
             </plugin>
         </plugins>
     </reporting>
-
-    <distributionManagement>
-        <repository>
-            <id>softwaremill-public-releases</id>
-            <name>SoftwareMill Public Releases</name>
-            <url>http://tools.softwaremill.pl/nexus/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>softwaremill-public-snapshots</id>
-            <name>SoftwareMill Public Snapshots</name>
-            <url>http://tools.softwaremill.pl/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>smlcommon-repos</id>
-            <name>Softwaremill Common Repository Group</name>
-            <url>http://tools.softwaremill.pl/nexus/content/groups/smlcommon-repos/</url>
-            <layout>default</layout>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
 </project>
+
