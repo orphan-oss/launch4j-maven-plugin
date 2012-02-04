@@ -38,7 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     </licenses>
 
     <scm>
-        <developerConnection>scm:git:git@github.com:lukaszlenart/launch4j-maven-plugin.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:vorburger/launch4j-maven-plugin.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
