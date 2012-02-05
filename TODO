@@ -8,21 +8,15 @@
 
 - What is up with downloading xstream every time?
 
-+ Rename l4j to launch4j: package, groupId
-
 + Add a license file of my own.
 
 + Add license comment blocks to all files.
-
-+ Rename from maven-launch4j-plugin to launch4j-maven-plugin.
 
 + Use mvn site to generate a site for this plugin.
     - javadoc should include private fields.
 	- put something like the README in the index.html file.
 
 + Use maven to generate a source distro for this plugin.
-
-- Move this to public svn (sourceforge?).
 
 - Use maven release to release new versions.
 
@@ -58,8 +52,6 @@
 
 	<outfile>target/app.exe</outfile>
 	<jar>app-1.0.jar</jar>
-
-- support l4j 3.0.1
 
 - support bundling the JRE (or figure out what parameters already allow this)
 

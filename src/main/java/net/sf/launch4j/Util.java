@@ -135,12 +135,17 @@ public class Util {
 			is.close();
 			p.waitFor();
 			if (errLine != -1) {
-				throw new ExecException(Messages.getString("Util.exec.failed")
-						+ ": " + cmd, errLine);
+				StringBuffer sb = new StringBuffer(Messages.getString("Util.exec.failed"));
+				AppendCommandLine(sb, cmd);
+				throw new ExecException(sb.toString(), errLine);
 			}
 			if (p.exitValue() != 0) {
-				throw new ExecException(Messages.getString("Util.exec.failed")
-						+ "(" + p.exitValue() + "): " + cmd);
+				StringBuffer sb = new StringBuffer(Messages.getString("Util.exec.failed"));
+				sb.append(" (");
+				sb.append(p.exitValue());
+				sb.append(')');
+				AppendCommandLine(sb, cmd);
+				throw new ExecException(sb.toString());
 			}
 		} catch (IOException e) {
 			close(is);
@@ -148,6 +153,16 @@ public class Util {
 		} catch (InterruptedException e) {
 			close(is);
 			throw new ExecException(e);
+		}
+	}
+	
+	private static void AppendCommandLine(StringBuffer sb, String[] cmd) {
+		sb.append(": ");
+		for (int i = 0; i < cmd.length; i++) {
+			sb.append(cmd[i]);
+			if (i < cmd.length - 1) {
+				sb.append(' ');
+			}
 		}
 	}
 

@@ -1,0 +1,25 @@
+Publish to https://github.com/vorburger/m2p2-repository :
+
+$ mvn -DdryRun=true clean release:clean release:prepare
+$ mvn release:clean
+	(NOT $ mvn release:rollback)
+
+---
+
+$ mvn release:prepare
+
+$ mkdir target/local-repo
+$ mvn release:stage -DstagingRepository=staging::default::file:../../local-repo/    
+	INSTEAD of $ mvn release:perform
+	NOTE: The CWD is target/checkout/target/, that's why ../../ is needed!
+
+$ mv local-repo/com ../../m2p2-repository/maven/releases/
+$ cd ../../m2p2-repository
+$ ./update-directory-index.sh
+$ git add .
+$ git commit -m "publishing ..."
+$ git push
+
+$ cd -
+$ mvn release:clean
+
