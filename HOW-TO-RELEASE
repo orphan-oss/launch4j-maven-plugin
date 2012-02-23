@@ -23,3 +23,7 @@ $ git push
 $ cd -
 $ mvn release:clean
 
+---
+
+mvn source:jar javadoc:jar repository:bundle-create
+
