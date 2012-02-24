@@ -162,6 +162,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		         </execution>
 	        </executions>
             </plugin>
+	    <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-release-plugin</artifactId>
+		<version>2.2.2</version>
+ 	       	<configuration>
+			<!--https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven
+			    http://jira.codehaus.org/browse/MGPG-9 & http://jira.codehaus.org/browse/MRELEASE-263 -->
+			<mavenExecutorId>forked-path</mavenExecutorId>
+		</configuration>
+	    </plugin>
         </plugins>
         <extensions>
             <extension>
