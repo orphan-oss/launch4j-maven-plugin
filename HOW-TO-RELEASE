@@ -25,5 +25,4 @@ $ mvn release:clean
 
 ---
 
-mvn source:jar javadoc:jar repository:bundle-create
-
+mvn clean verify source:jar javadoc:jar repository:bundle-create
