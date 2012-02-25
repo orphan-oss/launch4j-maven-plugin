@@ -24,5 +24,14 @@ $ cd -
 $ mvn release:clean
 
 ---
+mvn clean package source:jar javadoc:jar
+cd target
+cp ../pom.xml .
+find pom.xml *.jar *.gz *.zip -exec gpg -ab '{}' \;
+rm launch4j-maven-plugin-1.5.1-bundle.jar
+jar -cvf launch4j-maven-plugin-1.5.1-bundle.jar pom.xml *.jar *.gz *.zip *.asc
+gpg --multifile --verify *asc
 
-mvn clean verify source:jar javadoc:jar repository:bundle-create
+This does not produce the format expected by https://issues.sonatype.org/browse/OSSRH-3010:
+	mvn source:jar javadoc:jar repository:bundle-create
+
