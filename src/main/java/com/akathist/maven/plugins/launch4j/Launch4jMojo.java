@@ -201,9 +201,11 @@ public class Launch4jMojo extends AbstractMojo {
 	private String chdir;
 
 	/**
-	 * priority (?)
+	 * Priority class of windows process.
+	 * Valid values are "normal" (default), "idle" and "high".
+	 * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms685100(v=vs.85).aspx">MSDN: Scheduling Priorities</a>
 	 *
-	 * @parameter
+	 * @parameter default-value="normal"
 	 */
 	private String priority;
 
