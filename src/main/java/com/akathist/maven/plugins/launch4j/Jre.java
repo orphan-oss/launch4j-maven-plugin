@@ -80,7 +80,7 @@ public class Jre {
 	 *  </tr>
 	 * </table>
 	 *
-	 * @parameter default-value=preferJre
+	 * @parameter default-value="preferJre"
 	 */
 	String jdkPreference;
 
