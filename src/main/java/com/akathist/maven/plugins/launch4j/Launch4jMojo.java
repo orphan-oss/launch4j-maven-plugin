@@ -18,22 +18,6 @@
  */
 package com.akathist.maven.plugins.launch4j;
 
-import net.sf.launch4j.Builder;
-import net.sf.launch4j.BuilderException;
-import net.sf.launch4j.config.Config;
-import net.sf.launch4j.config.ConfigPersister;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -45,6 +29,23 @@ import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+import net.sf.launch4j.Builder;
+import net.sf.launch4j.BuilderException;
+import net.sf.launch4j.config.Config;
+import net.sf.launch4j.config.ConfigPersister;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Wraps a jar in a Windows executable.
@@ -200,9 +201,11 @@ public class Launch4jMojo extends AbstractMojo {
 	private String chdir;
 
 	/**
-	 * priority (?)
+	 * Priority class of windows process.
+	 * Valid values are "normal" (default), "idle" and "high".
+	 * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms685100(v=vs.85).aspx">MSDN: Scheduling Priorities</a>
 	 *
-	 * @parameter
+	 * @parameter default-value="normal"
 	 */
 	private String priority;
 
@@ -334,6 +337,9 @@ public class Launch4jMojo extends AbstractMojo {
 		}
 		if (jre != null) {
 			c.setJre(jre.toL4j());
+		}
+		if (singleInstance != null) {
+			c.setSingleInstance(singleInstance.toL4j());
 		}
 		if (splash != null) {
 			c.setSplash(splash.toL4j());
@@ -623,6 +629,7 @@ public class Launch4jMojo extends AbstractMojo {
 			log.debug("messages.bundledJreErr = " + messages.bundledJreErr);
 			log.debug("messages.jreVersionErr = " + messages.jreVersionErr);
 			log.debug("messages.launcherErr = " + messages.launcherErr);
+			log.debug("messages.instanceAlreadyExistsMsg = " + messages.instanceAlreadyExistsMsg);
 		} else {
 			log.debug("messages = null");
 		}

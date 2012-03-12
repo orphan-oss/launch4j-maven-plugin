@@ -38,8 +38,11 @@ package net.sf.launch4j;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import net.sf.launch4j.config.Config;
@@ -158,7 +161,8 @@ public class RcBuilder {
 		}
 
 		File f = Util.createTempFile("rc");
-		BufferedWriter w = new BufferedWriter(new FileWriter(f));
+		Writer fw = new OutputStreamWriter(new FileOutputStream(f), Charset.forName("ISO-8859-1"));
+		BufferedWriter w = new BufferedWriter(fw);
 		w.write(_sb.toString());
 		w.close();
 		return f;

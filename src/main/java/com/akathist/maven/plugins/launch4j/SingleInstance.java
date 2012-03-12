@@ -18,7 +18,6 @@
  */
 package com.akathist.maven.plugins.launch4j;
 
-import java.util.*;
 
 /**
  * Details about running your application as a single instance.
