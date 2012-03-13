@@ -18,7 +18,7 @@
  */
 package com.akathist.maven.plugins.launch4j;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Details about which jre the executable should call.
@@ -58,9 +58,29 @@ public class Jre {
 	String maxVersion;
 
 	/**
-	 * If true, the private JREs of SDKs will not be used.
+	 * Allows you to specify a preference for a public JRE or a private JDK runtime.
+	 * <p>
+	 * Valid values are:
+	 * <table border="1">
+	 * 	<tr>
+	 *   <td>jreOnly</td>
+	 *   <td>Always use a public JRE</td>
+	 *  </tr>
+	 *  <tr>
+	 *   <td>preferJre</td>
+	 *   <td>Prefer a public JRE, but use a JDK private runtime if it is newer than the public JRE</td>
+	 *  </tr>
+	 *  <tr>
+	 *   <td>preferJdk</td>
+	 *   <td>Prefer a JDK private runtime, but use a public JRE if it is newer than the JDK</td>
+	 *  </tr>
+	 *  <tr>
+	 *   <td>jdkOnly</td>
+	 *   <td>Always use a private JDK runtime (fails if there is no JDK installed)</td>
+	 *  </tr>
+	 * </table>
 	 *
-	 * @parameter default-value=false
+	 * @parameter default-value="preferJre"
 	 */
 	String jdkPreference;
 

@@ -18,7 +18,6 @@
  */
 package com.akathist.maven.plugins.launch4j;
 
-import java.util.*;
 
 /**
  * Details about messages you can pass.
@@ -30,8 +29,11 @@ public class Messages {
 	String bundledJreErr;
 
 	String jreVersionErr;
-
+	
 	String launcherErr;
+	
+	String instanceAlreadyExistsMsg;
+
 
 	net.sf.launch4j.config.Msg toL4j() {
 		net.sf.launch4j.config.Msg ret = new net.sf.launch4j.config.Msg();
@@ -40,6 +42,7 @@ public class Messages {
 		ret.setBundledJreErr(bundledJreErr);
 		ret.setJreVersionErr(jreVersionErr);
 		ret.setLauncherErr(launcherErr);
+		ret.setInstanceAlreadyExistsMsg(instanceAlreadyExistsMsg);
 
 		return ret;
 	}
