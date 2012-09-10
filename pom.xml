@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     <groupId>com.akathist.maven.plugins.launch4j</groupId>
     <artifactId>launch4j-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.6-SNAPSHOT</version>
+    <version>1.5.2-SNAPSHOT</version>
     <name>Maven Launch4j Plugin</name>
     <description>This plugin creates Windows executables from Java jar files using the Launch4j utility.</description>
     <!--
@@ -38,9 +38,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     </licenses>
 
     <scm>
+	<connection>https://github.com/vorburger/launch4j-maven-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:vorburger/launch4j-maven-plugin.git</developerConnection>
         <tag>HEAD</tag>
+	<url>https://github.com/vorburger/launch4j-maven-plugin</url>
     </scm>
+
+    <developers>
+	<developer>
+		<id>PaulJungwirth</id>
+		<name>Paul Jungwirth</name>
+	</developer>
+    </developers>
 
     <dependencies>
         <dependency>
@@ -148,6 +157,28 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-gpg-plugin</artifactId>
+		<version>1.4</version>
+		<executions>
+			<execution>
+				<id>sign-artifacts</id>
+				<phase>verify</phase>
+				<goals><goal>sign</goal></goals>
+		         </execution>
+	        </executions>
+            </plugin>
+	    <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-release-plugin</artifactId>
+		<version>2.2.2</version>
+ 	       	<configuration>
+			<!--https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven
+			    http://jira.codehaus.org/browse/MGPG-9 & http://jira.codehaus.org/browse/MRELEASE-263 -->
+			<mavenExecutorId>forked-path</mavenExecutorId>
+		</configuration>
+	    </plugin>
         </plugins>
         <extensions>
             <extension>
