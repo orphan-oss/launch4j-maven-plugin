@@ -98,6 +98,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
     <build>
         <plugins>
+        	<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
