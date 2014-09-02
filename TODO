@@ -54,5 +54,5 @@
 	<jar>app-1.0.jar</jar>
 
 - support bundling the JRE (or figure out what parameters already allow this)
-
+.
 
