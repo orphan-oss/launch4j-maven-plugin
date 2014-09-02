@@ -101,21 +101,6 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
-<!-- 					<execution> -->
-<!-- 						<id>assemble-workdir</id> -->
-<!-- 						<phase>package</phase> -->
-<!-- 						<goals> -->
-<!-- 							<goal>attached</goal> -->
-<!-- 						</goals> -->
-<!-- 						<configuration> -->
-<!-- 							<descriptors> -->
-<!-- 								<descriptor>src/main/assembly/assemble-linux.xml</descriptor> -->
-<!-- 								<descriptor>src/main/assembly/assemble-win32.xml</descriptor> -->
-<!-- 								<descriptor>src/main/assembly/assemble-mac.xml</descriptor> -->
-<!-- 								<descriptor>src/main/assembly/assemble-solaris.xml</descriptor> -->
-<!-- 							</descriptors> -->
-<!-- 						</configuration> -->
-<!-- 					</execution> -->
 					<execution>
 						<id>dist-src</id>
 						<phase>package</phase>
