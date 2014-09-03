@@ -23,13 +23,12 @@
 	<artifactId>launch4j-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 	<version>1.6-SNAPSHOT</version>
-	<name>Maven Launch4j Plugin</name>
+
+    <name>Maven Launch4j Plugin</name>
 	<description>This plugin creates Windows executables from Java jar files using the Launch4j utility.</description>
-	<!-- <description><![CDATA[This plugin creates Windows executables from
-		Java jar files using <a href="http://launch4j.sourceforge.net">the Launch4j
-		utility</a>.]]></description> -->
 	<url>http://9stmaryrd.com/tools/launch4j-maven-plugin/</url>
-	<licenses>
+
+    <licenses>
 		<license>
 			<name>GNU General Public License</name>
 			<url>http://www.gnu.org/licenses/gpl.txt</url>
@@ -111,13 +110,6 @@
 				</executions>
 			</plugin>
 		</plugins>
-		<extensions>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ftp</artifactId>
-				<version>1.0-alpha-6</version>
-			</extension>
-		</extensions>
 		<pluginManagement>
 			<plugins>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
