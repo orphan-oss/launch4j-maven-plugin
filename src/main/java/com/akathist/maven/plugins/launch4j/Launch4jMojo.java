@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
@@ -41,7 +40,6 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -55,6 +53,10 @@ import org.apache.maven.project.MavenProject;
  * @requiresDependencyResolution compile
  */
 public class Launch4jMojo extends AbstractMojo {
+
+	private static final String LAUNCH4J_ARTIFACT_ID = "launch4j";
+
+	private static final String LAUNCH4J_GROUP_ID = "net.sf.launch4j";
 
 	/**
 	 * The dependencies required by the project.
@@ -108,6 +110,13 @@ public class Launch4jMojo extends AbstractMojo {
 	 * @component
 	 */
 	private ArtifactResolver resolver;
+	
+	/**
+	 * The dependencies of this plugin. 
+	 * Used to get the Launch4j artifact version.
+	 * 
+	 * @parameter default-value="${plugin.artifacts}" */
+	private java.util.List<Artifact> pluginArtifacts;
 
 	/**
 	 * The base of the current project.
@@ -209,15 +218,7 @@ public class Launch4jMojo extends AbstractMojo {
 	 */
 	private String priority;
 
-	/**
-	 * Sets the process name to the executable filename (instead of java) and uses XP-style manifests (if any).
-	 * Using this parameter creates a launch4j-tmp directory inside the JRE,
-	 * so don't use it if your app won't have permission to do that.
-	 *
-	 * @parameter default-value=false
-	 */
-	private boolean customProcName;
-
+	
 	/**
 	 * If true, the executable waits for the java application to finish before returning its exit code.
 	 * Defaults to false for gui applications. Has no effect for console applications, which always wait.
@@ -323,8 +324,7 @@ public class Launch4jMojo extends AbstractMojo {
 		c.setSupportUrl(supportUrl);
 		c.setCmdLine(cmdLine);
 		c.setChdir(chdir);
-		c.setPriority(priority);
-		c.setCustomProcName(customProcName);
+		c.setPriority(priority);		
 		c.setStayAlive(stayAlive);
         c.setManifest(manifest);
 		c.setIcon(icon);
@@ -518,36 +518,11 @@ public class Launch4jMojo extends AbstractMojo {
 			throw new MojoExecutionException("Sorry, Launch4j doesn't support the '" + os + "' OS.");
 		}
 
-		return factory.createArtifactWithClassifier("com.akathist.maven.plugins.launch4j", "launch4j-maven-plugin",
-				getMyVersion(), "jar", "workdir-" + plat);
+		return factory.createArtifactWithClassifier(LAUNCH4J_GROUP_ID, LAUNCH4J_ARTIFACT_ID,
+				getLaunch4jVersion(), "jar", "workdir-" + plat);
 	}
 
-	/**
-	 * All this work just to get the version of the current plugin!
-	 * We want to download the platform-specific bundle whose version matches the plugin's version,
-	 * so we have to figure out what version we are.
-	 */
-	private String getMyVersion() throws MojoExecutionException {
-		/*
-		getLog().info("version = " + plugin.getVersion());
-		return plugin.getVersion();	// plugin was set by ${plugin}, but it doesn't work: getVersion returns null!
-		*/
-		Log log = getLog();
-		log.debug("searching for launch4j plugin");
-		Iterator i = plugins.iterator();
-		while (i.hasNext()) {
-			Plugin p = (Plugin)i.next();
-			if (log.isDebugEnabled()) log.debug(p.getGroupId() + " ## " + p.getArtifactId() + " ## " + p.getVersion());
-			if ("launch4j-maven-plugin".equals(p.getArtifactId()) &&
-					"com.akathist.maven.plugins.launch4j".equals(p.getGroupId())) {
-				String v = p.getVersion();
-				log.debug("Found launch4j version " + v);
-				return v;
-			}
-		}
-		throw new MojoExecutionException("Launch4j isn't among this project's plugins. How can that be?");
-	}
-
+	
 	private File getBaseDir() {
 		return basedir;
 	}
@@ -567,8 +542,7 @@ public class Launch4jMojo extends AbstractMojo {
 		log.debug("supportUrl = " + supportUrl);
 		log.debug("cmdLine = " + cmdLine);
 		log.debug("chdir = " + chdir);
-		log.debug("priority = " + priority);
-		log.debug("customProcName = " + customProcName);
+		log.debug("priority = " + priority);	
 		log.debug("stayAlive = " + stayAlive);
 		log.debug("icon = " + icon);
 		log.debug("objs = " + objs);
@@ -635,4 +609,32 @@ public class Launch4jMojo extends AbstractMojo {
 		}
 	}
 
+	/**
+	 * The Launch4j version used by the plugin.
+	 * We want to download the platform-specific bundle whose version matches the Launch4j version,
+	 * so we have to figure out what version the plugin is using.
+	 *  
+	 * @return
+	 * @throws MojoExecutionException 
+	 */
+	private String getLaunch4jVersion() throws MojoExecutionException{
+		String version = null;
+		
+		for(Artifact artifact: pluginArtifacts){
+					if(LAUNCH4J_GROUP_ID.equals(artifact.getGroupId()) &&
+					LAUNCH4J_ARTIFACT_ID.equals(artifact.getArtifactId())
+							&& "core".equals(artifact.getClassifier())	){
+				
+				version = artifact.getVersion();
+				getLog().debug("Found launch4j version " + version);
+				break;
+			}
+		}
+		
+		if(version==null){
+			throw new MojoExecutionException("Impossible to find which Launch4j version to use");
+		}
+		
+		return version;
+	}
 }
