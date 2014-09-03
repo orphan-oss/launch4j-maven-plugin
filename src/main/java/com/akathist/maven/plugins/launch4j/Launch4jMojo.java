@@ -239,21 +239,21 @@ public class Launch4jMojo extends AbstractMojo {
 	 *
 	 * @parameter
 	 */
-	private List objs;
+	private List<String> objs;
 
 	/**
 	 * Win32 libraries to include. Used for custom headers only.
 	 *
 	 * @parameter
 	 */
-	private List libs;
+	private List<String> libs;
 
 	/**
 	 * Variables to set.
 	 *
 	 * @parameter
 	 */
-	private List vars;
+	private List<String> vars;
 
 	/**
 	 * Details about the supported jres.

@@ -18,10 +18,12 @@
  */
 package com.akathist.maven.plugins.launch4j;
 
-import java.io.*;
-import java.util.*;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.artifact.Artifact;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 public class ClassPath {
 
@@ -72,7 +74,7 @@ public class ClassPath {
 	 */
 	String postCp;
 
-	private void addToCp(List cp, String cpStr) {
+	private void addToCp(List<String> cp, String cpStr) {
 		cp.addAll(Arrays.asList(cpStr.split("\\s*;\\s*")));
 	}
 
@@ -80,25 +82,24 @@ public class ClassPath {
 		net.sf.launch4j.config.ClassPath ret = new net.sf.launch4j.config.ClassPath();
 		ret.setMainClass(mainClass);
 		
-		List cp = new ArrayList();
+		List<String> cp = new ArrayList<String>();
 		if (preCp != null) addToCp(cp, preCp);
 
 		if (addDependencies) {
 			if (jarLocation == null) jarLocation = "";
 			else if ( ! jarLocation.endsWith("/")) jarLocation += "/";
 
-			Iterator i = dependencies.iterator();
-			while (i.hasNext()) {
-				Artifact dep = (Artifact)i.next();
-				if (Artifact.SCOPE_COMPILE.equals(dep.getScope()) ||
-					Artifact.SCOPE_RUNTIME.equals(dep.getScope())) {
+            for (Object dependency : dependencies) {
+                Artifact dep = (Artifact) dependency;
+                if (Artifact.SCOPE_COMPILE.equals(dep.getScope()) ||
+                        Artifact.SCOPE_RUNTIME.equals(dep.getScope())) {
 
-					String depFilename;
-					depFilename = dep.getFile().getName();
-					// System.out.println("dep = " + depFilename);
-					cp.add(jarLocation + depFilename);
-				}
-			}
+                    String depFilename;
+                    depFilename = dep.getFile().getName();
+                    // System.out.println("dep = " + depFilename);
+                    cp.add(jarLocation + depFilename);
+                }
+            }
 		}
 
 		if (postCp != null) addToCp(cp, postCp);
