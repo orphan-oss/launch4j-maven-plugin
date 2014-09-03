@@ -12,14 +12,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.akathist.maven.plugins.launch4j</groupId>
+    <groupId>com.akathist.maven.plugins.launch4j</groupId>
 	<artifactId>launch4j-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 	<version>1.6-SNAPSHOT</version>
 	<name>Maven Launch4j Plugin</name>
 	<description>This plugin creates Windows executables from Java jar files using the Launch4j utility.</description>
-	<!-- <description><![CDATA[This plugin creates Windows executables from 
-		Java jar files using <a href="http://launch4j.sourceforge.net">the Launch4j 
+	<!-- <description><![CDATA[This plugin creates Windows executables from
+		Java jar files using <a href="http://launch4j.sourceforge.net">the Launch4j
 		utility</a>.]]></description> -->
 	<url>http://9stmaryrd.com/tools/launch4j-maven-plugin/</url>
 	<licenses>
@@ -41,6 +41,12 @@
 			<artifactId>launch4j</artifactId>
 			<version>3.4.0</version>
 			<classifier>core</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.ibm.icu</groupId>
+                    <artifactId>icu4j</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
