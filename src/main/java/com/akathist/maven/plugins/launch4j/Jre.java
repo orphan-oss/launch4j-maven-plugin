@@ -114,7 +114,7 @@ public class Jre {
 	 * &lt;opt&gt;-Dsettings="%HomeDrive%%HomePath%\\settings.ini"&lt;/opt&gt;
 	 * </pre>
 	 */
-	List opts;
+	List<String> opts;
 
 	net.sf.launch4j.config.Jre toL4j() {
 		net.sf.launch4j.config.Jre ret = new net.sf.launch4j.config.Jre();
@@ -123,10 +123,10 @@ public class Jre {
 		ret.setMinVersion(minVersion);
 		ret.setMaxVersion(maxVersion);
 		ret.setJdkPreference(jdkPreference);
-		ret.setInitialHeapSize(new Integer(initialHeapSize));
-		ret.setInitialHeapPercent(new Integer(initialHeapPercent));
-		ret.setMaxHeapSize(new Integer(maxHeapSize));
-		ret.setMaxHeapPercent(new Integer(maxHeapPercent));
+		ret.setInitialHeapSize(initialHeapSize);
+		ret.setInitialHeapPercent(initialHeapPercent);
+		ret.setMaxHeapSize(maxHeapSize);
+		ret.setMaxHeapPercent(maxHeapPercent);
 		ret.setOptions(opts);
 
 		return ret;
