@@ -22,3 +22,22 @@ A: Add this repository to your `~/.m2/settings.xml`
     </repository>
 </repositories>
 ```
+Q: Where can I find -SNAPSHOT builds?
+
+A: Use the Sonatype OSS repo
+
+```xml
+<repositories>
+    <repository>
+        <id>sonatype-nexus-snapshots</id>
+        <name>Sonatype Nexus Snapshots</name>
+        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        <releases>
+            <enabled>false</enabled>
+        </releases>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+</repositories>
+```
