@@ -46,12 +46,20 @@
         <tag>HEAD</tag>
     </scm>
 
-    <dependencies>
-        <dependency>
-            <groupId>net.sf.launch4j</groupId>
-            <artifactId>launch4j</artifactId>
+    <repositories>
+        <repository>
+            <id>dsol-xml</id>
+            <name>Simulation @ TU Delft</name>
+            <url>http://simulation.tudelft.nl/maven/</url>
+        </repository>
+    </repositories>
+    
+	<dependencies>
+		<dependency>
+			<groupId>net.sf.launch4j</groupId>
+			<artifactId>launch4j</artifactId>
             <version>${launch4j.version}</version>
-            <classifier>core</classifier>
+			<classifier>core</classifier>
             <exclusions>
                 <exclusion>
                     <groupId>com.ibm.icu</groupId>
