@@ -116,6 +116,13 @@ public class Jre {
 	 */
 	List<String> opts;
 
+    /**
+     * Sets JVM version to use: 32 bits, 64 bits or 64/32 bits
+     * Possible values: 32, 64, 64/32 - it will fallback to default value if different option was used
+     * Default value is: 64/32
+     */
+    String runtimeBits;
+
 	net.sf.launch4j.config.Jre toL4j() {
 		net.sf.launch4j.config.Jre ret = new net.sf.launch4j.config.Jre();
 
@@ -128,6 +135,7 @@ public class Jre {
 		ret.setMaxHeapSize(maxHeapSize);
 		ret.setMaxHeapPercent(maxHeapPercent);
 		ret.setOptions(opts);
+        ret.setRuntimeBits(runtimeBits);
 
 		return ret;
 	}
