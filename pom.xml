@@ -46,14 +46,6 @@
         <tag>HEAD</tag>
     </scm>
 
-    <repositories>
-        <repository>
-            <id>dsol-xml</id>
-            <name>Simulation @ TU Delft</name>
-            <url>http://simulation.tudelft.nl/maven/</url>
-        </repository>
-    </repositories>
-    
 	<dependencies>
 		<dependency>
 			<groupId>net.sf.launch4j</groupId>
