@@ -31,7 +31,7 @@ A: Use the Sonatype OSS repo
     <repository>
         <id>sonatype-nexus-snapshots</id>
         <name>Sonatype Nexus Snapshots</name>
-        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         <releases>
             <enabled>false</enabled>
         </releases>
