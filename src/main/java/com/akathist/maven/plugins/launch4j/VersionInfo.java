@@ -90,4 +90,19 @@ public class VersionInfo {
 		return ret;
 	}
 
+    @Override
+    public String toString() {
+        return "VersionInfo{" +
+                "fileVersion='" + fileVersion + '\'' +
+                ", txtFileVersion='" + txtFileVersion + '\'' +
+                ", fileDescription='" + fileDescription + '\'' +
+                ", copyright='" + copyright + '\'' +
+                ", productVersion='" + productVersion + '\'' +
+                ", txtProductVersion='" + txtProductVersion + '\'' +
+                ", productName='" + productName + '\'' +
+                ", companyName='" + companyName + '\'' +
+                ", internalName='" + internalName + '\'' +
+                ", originalFilename='" + originalFilename + '\'' +
+                '}';
+    }
 }
