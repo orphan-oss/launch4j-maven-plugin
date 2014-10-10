@@ -120,6 +120,8 @@ public class Jre {
      * Sets JVM version to use: 32 bits, 64 bits or 64/32 bits
      * Possible values: 32, 64, 64/32 - it will fallback to default value if different option was used
      * Default value is: 64/32
+     *
+     * @parameter default-value="64/32"
      */
     String runtimeBits;
 
@@ -140,4 +142,19 @@ public class Jre {
 		return ret;
 	}
 
+    @Override
+    public String toString() {
+        return "Jre{" +
+                "path='" + path + '\'' +
+                ", minVersion='" + minVersion + '\'' +
+                ", maxVersion='" + maxVersion + '\'' +
+                ", jdkPreference='" + jdkPreference + '\'' +
+                ", initialHeapSize=" + initialHeapSize +
+                ", initialHeapPercent=" + initialHeapPercent +
+                ", maxHeapSize=" + maxHeapSize +
+                ", maxHeapPercent=" + maxHeapPercent +
+                ", opts=" + opts +
+                ", runtimeBits='" + runtimeBits + '\'' +
+                '}';
+    }
 }
