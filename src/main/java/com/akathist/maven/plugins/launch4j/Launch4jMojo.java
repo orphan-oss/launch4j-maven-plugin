@@ -333,7 +333,7 @@ public class Launch4jMojo extends AbstractMojo {
 		c.setVariables(vars);
 
 		if (classPath != null) {
-			c.setClassPath(classPath.toL4j(dependencies));
+			c.setClassPath(classPath.toL4j(dependencies, project.getRuntimeArtifacts()));
 		}
 		if (jre != null) {
 			c.setJre(jre.toL4j());
