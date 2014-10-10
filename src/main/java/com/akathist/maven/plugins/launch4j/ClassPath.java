@@ -78,7 +78,7 @@ public class ClassPath {
 		cp.addAll(Arrays.asList(cpStr.split("\\s*;\\s*")));
 	}
 
-	net.sf.launch4j.config.ClassPath toL4j(Set dependencies) {
+	net.sf.launch4j.config.ClassPath toL4j(Set dependencies, List runtimeDependencies) {
 		net.sf.launch4j.config.ClassPath ret = new net.sf.launch4j.config.ClassPath();
 		ret.setMainClass(mainClass);
 		
@@ -88,6 +88,9 @@ public class ClassPath {
 		if (addDependencies) {
 			if (jarLocation == null) jarLocation = "";
 			else if ( ! jarLocation.endsWith("/")) jarLocation += "/";
+
+            // Add all runtime dependencies as we need them to run the wrapped jar
+            dependencies.addAll(runtimeDependencies);
 
             for (Object dependency : dependencies) {
                 Artifact dep = (Artifact) dependency;
@@ -107,5 +110,16 @@ public class ClassPath {
 
 		return ret;
 	}
+
+    @Override
+    public String toString() {
+        return "ClassPath{" +
+                "mainClass='" + mainClass + '\'' +
+                ", addDependencies=" + addDependencies +
+                ", jarLocation='" + jarLocation + '\'' +
+                ", preCp='" + preCp + '\'' +
+                ", postCp='" + postCp + '\'' +
+                '}';
+    }
 
 }
