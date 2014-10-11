@@ -7,6 +7,7 @@ Originally hosted at http://9stmaryrd.com/tools/launch4j-maven-plugin/
 ## Version notes 1.6
 - dropped Launch4j source and based on artifacts from Maven Central
 - uses the latest version of Launch4j (3.4.0)
+- at least Java 1.7 is required
 
 # FAQ
 Q: I cannot build my project because `dsol-xml` dependency is missing?
