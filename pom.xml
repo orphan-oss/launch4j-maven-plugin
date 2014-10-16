@@ -27,6 +27,10 @@
 	<description>This plugin creates Windows executables from Java jar files using the Launch4j utility.</description>
 	<url>http://9stmaryrd.com/tools/launch4j-maven-plugin/</url>
 
+    <properties>
+        <launch4j.version>3.5.0</launch4j.version>
+    </properties>
+
     <licenses>
 		<license>
 			<name>GNU General Public License</name>
@@ -44,7 +48,7 @@
 		<dependency>
 			<groupId>net.sf.launch4j</groupId>
 			<artifactId>launch4j</artifactId>
-			<version>3.4.0</version>
+			<version>${launch4j.version}</version>
 			<classifier>core</classifier>
             <exclusions>
                 <exclusion>
@@ -111,7 +115,7 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
+				<!--This plugin's configuration is used to store Eclipse m2e settings
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
