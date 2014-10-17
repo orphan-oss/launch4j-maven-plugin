@@ -6,11 +6,11 @@ Originally hosted at http://9stmaryrd.com/tools/launch4j-maven-plugin/
 
 ## Version notes 1.7
 - uses the latest version of Launch4j (3.5.0)
-- contains support for `runtimeBits`, see [#6](../issues/6)
-- fixes problem with including dependencies in scope `runtime`, see [#5](../issues/5)
+- contains support for `runtimeBits`, see [#6](../../issues/6)
+- fixes problem with including dependencies in scope `runtime`, see [#5](../../issues/5)
 
 ## Version notes 1.6
-- dropped Launch4j source and based on artifacts from Maven Central, see [#8](../issues/8)
+- dropped Launch4j source and based on artifacts from Maven Central, see [#8](../../issues/8)
 - uses the latest version of Launch4j (3.4.0)
 - at least Java 1.7 is required
 
