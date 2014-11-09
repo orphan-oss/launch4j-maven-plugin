@@ -29,9 +29,9 @@ public class Messages {
 	String bundledJreErr;
 
 	String jreVersionErr;
-	
+
 	String launcherErr;
-	
+
 	String instanceAlreadyExistsMsg;
 
 

@@ -20,6 +20,8 @@ package com.akathist.maven.plugins.launch4j;
 
 import java.io.*;
 
+import org.apache.maven.plugins.annotations.Parameter;
+
 public class Splash {
 
 	/**
@@ -30,25 +32,22 @@ public class Splash {
 	/**
 	 * If true, the splash screen will close automatically as soon as an error window or java window appears.
 	 * If false, the splash screen will not close until {@link #timeout} sections. Defaults to true.
-	 *
-	 * @parameter default-value=true;
 	 */
+	@Parameter(defaultValue="true")
 	boolean waitForWindow;
 
 	/**
 	 * The number of seconds to keep the splash screen open before automatically closing it.
 	 * Defaults to 60.
-	 *
-	 * @parameter default-value=60
 	 */
+	@Parameter(defaultValue="60")
 	int timeout;
 
 	/**
 	 * If true, an error message will appear if the app hasn't started in {@link #timeout} seconds.
 	 * If false, the splash screen will close quietly. Defaults to true.
-	 *
-	 * @parameter default-value=true
 	 */
+	@Parameter(defaultValue="true")
 	boolean timeoutErr;
 
 	net.sf.launch4j.config.Splash toL4j() {
