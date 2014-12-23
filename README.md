@@ -5,7 +5,7 @@ Originally hosted at http://9stmaryrd.com/tools/launch4j-maven-plugin/
 [![Build Status](https://travis-ci.org/lukaszlenart/launch4j-maven-plugin.svg)](https://travis-ci.org/lukaszlenart/launch4j-maven-plugin)
 
 ## Version notes 1.7.2
-- added support for `restartOnCrash` Launch4j's option [#11](../../pull/14)
+- added support for `restartOnCrash` Launch4j's option [#14](../../pull/14)
 
 ## Version notes 1.7.1
 - launch4j's `abeille` dependency was excluded [#11](../../pull/11)
