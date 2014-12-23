@@ -33,7 +33,6 @@ import net.sf.launch4j.Builder;
 import net.sf.launch4j.BuilderException;
 import net.sf.launch4j.config.Config;
 import net.sf.launch4j.config.ConfigPersister;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -66,7 +65,7 @@ public class Launch4jMojo extends AbstractMojo {
 	 * @readonly
 	 */
 	private Set dependencies;
-	
+
 	/**
 	 * The user's current project.
 	 *
@@ -110,11 +109,11 @@ public class Launch4jMojo extends AbstractMojo {
 	 * @component
 	 */
 	private ArtifactResolver resolver;
-	
+
 	/**
-	 * The dependencies of this plugin. 
+	 * The dependencies of this plugin.
 	 * Used to get the Launch4j artifact version.
-	 * 
+	 *
 	 * @parameter default-value="${plugin.artifacts}" */
 	private java.util.List<Artifact> pluginArtifacts;
 
@@ -218,7 +217,7 @@ public class Launch4jMojo extends AbstractMojo {
 	 */
 	private String priority;
 
-	
+
 	/**
 	 * If true, the executable waits for the java application to finish before returning its exit code.
 	 * Defaults to false for gui applications. Has no effect for console applications, which always wait.
@@ -226,6 +225,14 @@ public class Launch4jMojo extends AbstractMojo {
 	 * @parameter default-value=false
 	 */
 	private boolean stayAlive;
+
+	/**
+	 * If true, when the application exits, any exit code other than 0 is considered a crash and
+	 * the application will be started again.
+	 *
+	 * @parameter default-value=false
+	 */
+	private boolean restartOnCrash;
 
 	/**
 	 * The icon to use in the taskbar. Must be in ico format.
@@ -284,7 +291,7 @@ public class Launch4jMojo extends AbstractMojo {
 	 * @parameter
 	 */
 	private Splash splash;
-	
+
 	/**
 	 * Lots of information you can attach to the windows process.
 	 *
@@ -324,8 +331,9 @@ public class Launch4jMojo extends AbstractMojo {
 		c.setSupportUrl(supportUrl);
 		c.setCmdLine(cmdLine);
 		c.setChdir(chdir);
-		c.setPriority(priority);		
+		c.setPriority(priority);
 		c.setStayAlive(stayAlive);
+		c.setRestartOnCrash(restartOnCrash);
         c.setManifest(manifest);
 		c.setIcon(icon);
 		c.setHeaderObjects(objs);
@@ -382,7 +390,7 @@ public class Launch4jMojo extends AbstractMojo {
 	 * unpack it. Then different systems won't contend for the same space. But then I'll need to hack
 	 * the l4j code so it permits passing in a work directory and doesn't always base it on
 	 * the location of its own jarfile.
-	 * 
+	 *
 	 * @return the work directory.
 	 */
 	private File setupBuildEnvironment() throws MojoExecutionException {
@@ -522,7 +530,7 @@ public class Launch4jMojo extends AbstractMojo {
 				getLaunch4jVersion(), "jar", "workdir-" + plat);
 	}
 
-	
+
 	private File getBaseDir() {
 		return basedir;
 	}
@@ -542,8 +550,9 @@ public class Launch4jMojo extends AbstractMojo {
 		log.debug("supportUrl = " + supportUrl);
 		log.debug("cmdLine = " + cmdLine);
 		log.debug("chdir = " + chdir);
-		log.debug("priority = " + priority);	
+		log.debug("priority = " + priority);
 		log.debug("stayAlive = " + stayAlive);
+		log.debug("restartOnCrash = " + restartOnCrash);
 		log.debug("icon = " + icon);
 		log.debug("objs = " + objs);
 		log.debug("libs = " + libs);
