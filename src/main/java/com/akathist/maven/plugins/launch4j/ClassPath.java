@@ -89,13 +89,12 @@ public class ClassPath {
             dependencies.addAll(runtimeDependencies);
 
             for (Artifact dependency : dependencies) {
-                Artifact dep = (Artifact) dependency;
-                if (Artifact.SCOPE_COMPILE.equals(dep.getScope()) ||
-                        Artifact.SCOPE_RUNTIME.equals(dep.getScope())) {
+                if (Artifact.SCOPE_COMPILE.equals(dependency.getScope()) ||
+                        Artifact.SCOPE_RUNTIME.equals(dependency.getScope())) {
 
                     String depFilename;
-                    depFilename = dep.getFile().getName();
-                    // System.out.println("dep = " + depFilename);
+                    depFilename = dependency.getFile().getName();
+                    // System.out.println("dependency = " + depFilename);
                     cp.add(jarLocation + depFilename);
                 }
             }

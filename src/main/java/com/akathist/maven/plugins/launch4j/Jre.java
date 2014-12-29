@@ -122,7 +122,7 @@ public class Jre {
      * Possible values: 32, 64, 64/32 - it will fallback to default value if different option was used
      * Default value is: 64/32
      */
-	@Parameter(defaultValue="64/32")
+    @Parameter(defaultValue="64/32")
     String runtimeBits;
 
 	net.sf.launch4j.config.Jre toL4j() {
