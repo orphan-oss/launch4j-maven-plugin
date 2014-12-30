@@ -27,120 +27,120 @@ import org.apache.maven.plugins.annotations.Parameter;
  */
 public class Jre {
 
-	/**
-	 * Use this property when you are bundling a jre with your application. It holds the path to the jre.
-	 * If relative, this path is from the executable.
-	 * <p>
-	 * If you specify path only and not minVersion, then the executable will show an error if the jre is not found.
-	 * <p>
-	 * If you specify path along with minVersion, then the executable will check the path first, and if no jre
-	 * is found there, it will search the local system for a jre matching minVersion. If it still doesn't
-	 * find anything, it will show the java download page. You may also specify maxVersion to further
-	 * constrain the search.
-	 */
-	String path;
+    /**
+     * Use this property when you are bundling a jre with your application. It holds the path to the jre.
+     * If relative, this path is from the executable.
+     * <p>
+     * If you specify path only and not minVersion, then the executable will show an error if the jre is not found.
+     * <p>
+     * If you specify path along with minVersion, then the executable will check the path first, and if no jre
+     * is found there, it will search the local system for a jre matching minVersion. If it still doesn't
+     * find anything, it will show the java download page. You may also specify maxVersion to further
+     * constrain the search.
+     */
+    String path;
 
-	/**
-	 * Use this property if you want the executable to search the system for a jre.
-	 * It names the minimum version acceptable, in x.x.x[_xx] format.
-	 * <p>
-	 * If you specify this property without giving a path, then the executable will search for a jre
-	 * and, none is found, display the java download page.
-	 * <p>
-	 * If you include a path also, the executable will try that path before searching for jre matching minVersion.
-	 * <p>
-	 * In either case, you can also specify a maxVersion.
-	 */
-	String minVersion;
+    /**
+     * Use this property if you want the executable to search the system for a jre.
+     * It names the minimum version acceptable, in x.x.x[_xx] format.
+     * <p>
+     * If you specify this property without giving a path, then the executable will search for a jre
+     * and, none is found, display the java download page.
+     * <p>
+     * If you include a path also, the executable will try that path before searching for jre matching minVersion.
+     * <p>
+     * In either case, you can also specify a maxVersion.
+     */
+    String minVersion;
 
-	/**
-	 * If you specify minVersion, you can also use maxVersion to further constrain the search for a jre.
-	 * This property should be in the format x.x.x[_xx].
-	 */
-	String maxVersion;
+    /**
+     * If you specify minVersion, you can also use maxVersion to further constrain the search for a jre.
+     * This property should be in the format x.x.x[_xx].
+     */
+    String maxVersion;
 
-	/**
-	 * Allows you to specify a preference for a public JRE or a private JDK runtime.
-	 * <p>
-	 * Valid values are:
-	 * <table border="1">
-	 * 	<tr>
-	 *   <td>jreOnly</td>
-	 *   <td>Always use a public JRE</td>
-	 *  </tr>
-	 *  <tr>
-	 *   <td>preferJre</td>
-	 *   <td>Prefer a public JRE, but use a JDK private runtime if it is newer than the public JRE</td>
-	 *  </tr>
-	 *  <tr>
-	 *   <td>preferJdk</td>
-	 *   <td>Prefer a JDK private runtime, but use a public JRE if it is newer than the JDK</td>
-	 *  </tr>
-	 *  <tr>
-	 *   <td>jdkOnly</td>
-	 *   <td>Always use a private JDK runtime (fails if there is no JDK installed)</td>
-	 *  </tr>
-	 * </table>
-	 */
-	@Parameter(defaultValue="preferJre")
-	String jdkPreference;
+    /**
+     * Allows you to specify a preference for a public JRE or a private JDK runtime.
+     * <p>
+     * Valid values are:
+     * <table border="1">
+     * <tr>
+     * <td>jreOnly</td>
+     * <td>Always use a public JRE</td>
+     * </tr>
+     * <tr>
+     * <td>preferJre</td>
+     * <td>Prefer a public JRE, but use a JDK private runtime if it is newer than the public JRE</td>
+     * </tr>
+     * <tr>
+     * <td>preferJdk</td>
+     * <td>Prefer a JDK private runtime, but use a public JRE if it is newer than the JDK</td>
+     * </tr>
+     * <tr>
+     * <td>jdkOnly</td>
+     * <td>Always use a private JDK runtime (fails if there is no JDK installed)</td>
+     * </tr>
+     * </table>
+     */
+    @Parameter(defaultValue = "preferJre")
+    String jdkPreference;
 
-	/**
-	 * Sets java's initial heap size in MB, like the -Xms flag.
-	 */
-	int initialHeapSize;
+    /**
+     * Sets java's initial heap size in MB, like the -Xms flag.
+     */
+    int initialHeapSize;
 
-	/**
-	 * Sets java's initial heap size in percent of free memory.
-	 */
-	int initialHeapPercent;
+    /**
+     * Sets java's initial heap size in percent of free memory.
+     */
+    int initialHeapPercent;
 
-	/**
-	 * Sets java's maximum heap size in MB, like the -Xmx flag.
-	 */
-	int maxHeapSize;
+    /**
+     * Sets java's maximum heap size in MB, like the -Xmx flag.
+     */
+    int maxHeapSize;
 
-	/**
-	 * Sets java's maximum heap size in percent of free memory.
-	 */
-	int maxHeapPercent;
+    /**
+     * Sets java's maximum heap size in percent of free memory.
+     */
+    int maxHeapPercent;
 
-	/**
-	 * Use this to pass arbitrary options to the java/javaw program.
-	 * For instance, you can say:
-	 * <pre>
-	 * &lt;opt&gt;-Dlaunch4j.exedir="%EXEDIR%"&lt;/opt&gt;
-	 * &lt;opt&gt;-Dlaunch4j.exefile="%EXEFILE%"&lt;/opt&gt;
-	 * &lt;opt&gt;-Denv.path="%Path%"&lt;/opt&gt;
-	 * &lt;opt&gt;-Dsettings="%HomeDrive%%HomePath%\\settings.ini"&lt;/opt&gt;
-	 * </pre>
-	 */
-	List<String> opts;
+    /**
+     * Use this to pass arbitrary options to the java/javaw program.
+     * For instance, you can say:
+     * <pre>
+     * &lt;opt&gt;-Dlaunch4j.exedir="%EXEDIR%"&lt;/opt&gt;
+     * &lt;opt&gt;-Dlaunch4j.exefile="%EXEFILE%"&lt;/opt&gt;
+     * &lt;opt&gt;-Denv.path="%Path%"&lt;/opt&gt;
+     * &lt;opt&gt;-Dsettings="%HomeDrive%%HomePath%\\settings.ini"&lt;/opt&gt;
+     * </pre>
+     */
+    List<String> opts;
 
     /**
      * Sets JVM version to use: 32 bits, 64 bits or 64/32 bits
      * Possible values: 32, 64, 64/32 - it will fallback to default value if different option was used
      * Default value is: 64/32
      */
-    @Parameter(defaultValue="64/32")
+    @Parameter(defaultValue = "64/32")
     String runtimeBits;
 
-	net.sf.launch4j.config.Jre toL4j() {
-		net.sf.launch4j.config.Jre ret = new net.sf.launch4j.config.Jre();
+    net.sf.launch4j.config.Jre toL4j() {
+        net.sf.launch4j.config.Jre ret = new net.sf.launch4j.config.Jre();
 
-		ret.setPath(path);
-		ret.setMinVersion(minVersion);
-		ret.setMaxVersion(maxVersion);
-		ret.setJdkPreference(jdkPreference);
-		ret.setInitialHeapSize(initialHeapSize);
-		ret.setInitialHeapPercent(initialHeapPercent);
-		ret.setMaxHeapSize(maxHeapSize);
-		ret.setMaxHeapPercent(maxHeapPercent);
-		ret.setOptions(opts);
+        ret.setPath(path);
+        ret.setMinVersion(minVersion);
+        ret.setMaxVersion(maxVersion);
+        ret.setJdkPreference(jdkPreference);
+        ret.setInitialHeapSize(initialHeapSize);
+        ret.setInitialHeapPercent(initialHeapPercent);
+        ret.setMaxHeapSize(maxHeapSize);
+        ret.setMaxHeapPercent(maxHeapPercent);
+        ret.setOptions(opts);
         ret.setRuntimeBits(runtimeBits);
 
-		return ret;
-	}
+        return ret;
+    }
 
     @Override
     public String toString() {

@@ -24,17 +24,17 @@ package com.akathist.maven.plugins.launch4j;
  */
 public class SingleInstance {
 
-	String mutexName;
+    String mutexName;
 
-	String windowTitle;
+    String windowTitle;
 
-	net.sf.launch4j.config.SingleInstance toL4j() {
-		net.sf.launch4j.config.SingleInstance ret = new net.sf.launch4j.config.SingleInstance();
+    net.sf.launch4j.config.SingleInstance toL4j() {
+        net.sf.launch4j.config.SingleInstance ret = new net.sf.launch4j.config.SingleInstance();
 
-		ret.setMutexName(mutexName);
-		ret.setWindowTitle(windowTitle);
+        ret.setMutexName(mutexName);
+        ret.setWindowTitle(windowTitle);
 
-		return ret;
-	}
+        return ret;
+    }
 
 }

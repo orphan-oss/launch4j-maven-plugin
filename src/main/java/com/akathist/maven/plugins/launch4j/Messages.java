@@ -24,27 +24,27 @@ package com.akathist.maven.plugins.launch4j;
  */
 public class Messages {
 
-	String startupErr;
+    String startupErr;
 
-	String bundledJreErr;
+    String bundledJreErr;
 
-	String jreVersionErr;
+    String jreVersionErr;
 
-	String launcherErr;
+    String launcherErr;
 
-	String instanceAlreadyExistsMsg;
+    String instanceAlreadyExistsMsg;
 
 
-	net.sf.launch4j.config.Msg toL4j() {
-		net.sf.launch4j.config.Msg ret = new net.sf.launch4j.config.Msg();
+    net.sf.launch4j.config.Msg toL4j() {
+        net.sf.launch4j.config.Msg ret = new net.sf.launch4j.config.Msg();
 
-		ret.setStartupErr(startupErr);
-		ret.setBundledJreErr(bundledJreErr);
-		ret.setJreVersionErr(jreVersionErr);
-		ret.setLauncherErr(launcherErr);
-		ret.setInstanceAlreadyExistsMsg(instanceAlreadyExistsMsg);
+        ret.setStartupErr(startupErr);
+        ret.setBundledJreErr(bundledJreErr);
+        ret.setJreVersionErr(jreVersionErr);
+        ret.setLauncherErr(launcherErr);
+        ret.setInstanceAlreadyExistsMsg(instanceAlreadyExistsMsg);
 
-		return ret;
-	}
+        return ret;
+    }
 
 }

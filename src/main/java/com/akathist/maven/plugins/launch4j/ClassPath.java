@@ -28,62 +28,62 @@ import java.util.Set;
 
 public class ClassPath {
 
-	/**
-	 * The main class to run. This is not required if you are wrapping an executable jar.
-	 */
-	@Parameter
-	String mainClass;
+    /**
+     * The main class to run. This is not required if you are wrapping an executable jar.
+     */
+    @Parameter
+    String mainClass;
 
-	/**
-	 * The launch4j executable sets up a classpath before running your jar, but it must know what the
-	 * classpath should be. If you set this property to true, the plugin will indicate a classpath
-	 * based on all the dependencies your program will need at runtime. You can augment this classpath
-	 * using the preCp and postCp properties.
-	 */
-	@Parameter(defaultValue="true")
-	boolean addDependencies = true;
+    /**
+     * The launch4j executable sets up a classpath before running your jar, but it must know what the
+     * classpath should be. If you set this property to true, the plugin will indicate a classpath
+     * based on all the dependencies your program will need at runtime. You can augment this classpath
+     * using the preCp and postCp properties.
+     */
+    @Parameter(defaultValue = "true")
+    boolean addDependencies = true;
 
-	/**
-	 * If you want maven to build the classpath from dependencies, you can optionally set the jarLocation,
-	 * which is the location of the jars in your distro relative to the executable. So if your distro
-	 * has the exe at the top level and all the jars in a lib directory, you could set this to &quot;lib.&quot;
-	 * This property does not affect preCp and postCp.
-	 */
-	@Parameter
-	String jarLocation;
+    /**
+     * If you want maven to build the classpath from dependencies, you can optionally set the jarLocation,
+     * which is the location of the jars in your distro relative to the executable. So if your distro
+     * has the exe at the top level and all the jars in a lib directory, you could set this to &quot;lib.&quot;
+     * This property does not affect preCp and postCp.
+     */
+    @Parameter
+    String jarLocation;
 
-	/**
-	 * Part of the classpath that the executable should give to your application.
-	 * Paths are relative to the executable and should be in Windows format (separated by a semicolon).
-	 * You don't have to list all your dependencies here; the plugin will include them by default
-	 * after this list.
-	 */
-	@Parameter
-	String preCp;
+    /**
+     * Part of the classpath that the executable should give to your application.
+     * Paths are relative to the executable and should be in Windows format (separated by a semicolon).
+     * You don't have to list all your dependencies here; the plugin will include them by default
+     * after this list.
+     */
+    @Parameter
+    String preCp;
 
-	/**
-	 * Part of the classpath that the executable should give to your application.
-	 * Paths are relative to the executable and should be in Windows format (separated by a semicolon).
-	 * You don't have to list all your dependencies here; the plugin will include them by default
-	 * before this list.
-	 */
-	@Parameter
-	String postCp;
+    /**
+     * Part of the classpath that the executable should give to your application.
+     * Paths are relative to the executable and should be in Windows format (separated by a semicolon).
+     * You don't have to list all your dependencies here; the plugin will include them by default
+     * before this list.
+     */
+    @Parameter
+    String postCp;
 
-	private void addToCp(List<String> cp, String cpStr) {
-		cp.addAll(Arrays.asList(cpStr.split("\\s*;\\s*")));
-	}
+    private void addToCp(List<String> cp, String cpStr) {
+        cp.addAll(Arrays.asList(cpStr.split("\\s*;\\s*")));
+    }
 
-	net.sf.launch4j.config.ClassPath toL4j(Set<Artifact> dependencies, List<Artifact> runtimeDependencies) {
-		net.sf.launch4j.config.ClassPath ret = new net.sf.launch4j.config.ClassPath();
-		ret.setMainClass(mainClass);
-		
-		List<String> cp = new ArrayList<String>();
-		if (preCp != null) addToCp(cp, preCp);
+    net.sf.launch4j.config.ClassPath toL4j(Set<Artifact> dependencies, List<Artifact> runtimeDependencies) {
+        net.sf.launch4j.config.ClassPath ret = new net.sf.launch4j.config.ClassPath();
+        ret.setMainClass(mainClass);
 
-		if (addDependencies) {
-			if (jarLocation == null) jarLocation = "";
-			else if ( ! jarLocation.endsWith("/")) jarLocation += "/";
+        List<String> cp = new ArrayList<String>();
+        if (preCp != null) addToCp(cp, preCp);
+
+        if (addDependencies) {
+            if (jarLocation == null) jarLocation = "";
+            else if (!jarLocation.endsWith("/")) jarLocation += "/";
 
             // Add all runtime dependencies as we need them to run the wrapped jar
             dependencies.addAll(runtimeDependencies);
@@ -98,13 +98,13 @@ public class ClassPath {
                     cp.add(jarLocation + depFilename);
                 }
             }
-		}
+        }
 
-		if (postCp != null) addToCp(cp, postCp);
-		ret.setPaths(cp);
+        if (postCp != null) addToCp(cp, postCp);
+        ret.setPaths(cp);
 
-		return ret;
-	}
+        return ret;
+    }
 
     @Override
     public String toString() {
