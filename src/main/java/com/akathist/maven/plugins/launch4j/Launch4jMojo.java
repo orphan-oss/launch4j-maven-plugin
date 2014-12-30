@@ -42,15 +42,17 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
 /**
  * Wraps a jar in a Windows executable.
- *
- * @goal launch4j
- * @phase package
- * @requiresDependencyResolution compile
  */
+@Mojo(name="launch4j",defaultPhase=LifecyclePhase.PACKAGE,requiresDependencyResolution=ResolutionScope.COMPILE)
 public class Launch4jMojo extends AbstractMojo {
 
 	private static final String LAUNCH4J_ARTIFACT_ID = "launch4j";
@@ -59,71 +61,51 @@ public class Launch4jMojo extends AbstractMojo {
 
 	/**
 	 * The dependencies required by the project.
-	 *
-	 * @parameter default-value="${project.artifacts}"
-	 * @required
-	 * @readonly
 	 */
-	private Set dependencies;
+	@Parameter(defaultValue="${project.artifacts}",required=true,readonly=true)
+	private Set<Artifact> dependencies;
 
 	/**
 	 * The user's current project.
-	 *
-	 * @parameter default-value="${project}"
-	 * @required
-	 * @readonly
 	 */
+	@Parameter(defaultValue="${project}",required=true,readonly=true)
 	private MavenProject project;
 
 	/**
 	 * The user's plugins (including, I hope, this one).
-	 *
-	 * @parameter default-value="${project.build.plugins}"
-	 * @required
-	 * @readonly
 	 */
-	private List plugins;
+	@Parameter(defaultValue="${project.build.plugins}",required=true,readonly=true)
+	private List<Artifact> plugins;
 
 	/**
 	 * Used to look up Artifacts in the remote repository.
-	 *
-	 * @@@parameter expression="${component.org.apache.maven.artifact.factory.ArtifactFactory}"
-	 * @component
-	 * @required
-	 * @readonly
 	 */
+	@Component(role=ArtifactFactory.class)
 	private ArtifactFactory factory;
 
 	/**
-	 * The user's local repository
-	 *
-	 * @parameter default-value="${localRepository}"
-	 * @required
-	 * @readonly
+	 * The user's local repository.
 	 */
+	@Parameter(defaultValue="${localRepository}",required=true,readonly=true)
 	private ArtifactRepository localRepository;
 
 	/**
 	 * The artifact resolver used to grab the binary bits that launch4j needs.
-	 *
-	 * @component
 	 */
+	@Component(role=ArtifactResolver.class)
 	private ArtifactResolver resolver;
 
 	/**
 	 * The dependencies of this plugin.
 	 * Used to get the Launch4j artifact version.
-	 *
-	 * @parameter default-value="${plugin.artifacts}" */
+	 */
+	@Parameter(defaultValue="${plugin.artifacts}")
 	private java.util.List<Artifact> pluginArtifacts;
 
 	/**
 	 * The base of the current project.
-	 *
-	 * @parameter default-value="${basedir}"
-	 * @required
-	 * @readonly
 	 */
+	@Parameter(defaultValue="${project.basedir}",required=true,readonly=true)
 	private File basedir;
 
 	/**
@@ -132,18 +114,15 @@ public class Launch4jMojo extends AbstractMojo {
 	 * If you say gui, then launch4j will run your app from javaw instead of java
 	 * in order to avoid opening a DOS window.
 	 * Choosing gui also enables other options like taskbar icon and a splash screen.
-	 *
-	 * @parameter
-	 * @required
 	 */
+	@Parameter(required=true)
 	private String headerType;
 
 	/**
 	 * The name of the executable you want launch4j to produce.
 	 * The path, if relative, is relative to the pom.xml.
-	 *
-	 * @parameter default-value="${project.build.directory}/${project.artifactId}.exe"
 	 */
+	@Parameter(defaultValue="${project.bluid.directory}/${project.artifactId}.exe")
 	private File outfile;
 
 	/**
@@ -156,164 +135,142 @@ public class Launch4jMojo extends AbstractMojo {
 	 * You can only bundle a single jar. Therefore, you should either create a jar that contains
 	 * your own code plus all your dependencies, or you should distribute your dependencies alongside
 	 * the executable.
-	 *
-	 * @parameter default-value="${project.build.directory}/${project.build.finalName}.jar"
 	 */
+	@Parameter(defaultValue="${project.build.directory}/${project.build.finalName}.jar")
 	private String jar;
 
 	/**
 	 * Whether the executable should wrap the jar or not.
-	 *
-	 * @parameter default-value=false
 	 */
+	@Parameter(defaultValue="false")
 	private boolean dontWrapJar;
 
 	/**
 	 * The title of the error popup if something goes wrong trying to run your program,
 	 * like if java can't be found. If this is a console app and not a gui, then this value
 	 * is used to prefix any error messages, as in ${errTitle}: ${errorMessage}.
-	 *
-	 * @parameter
 	 */
+	@Parameter
 	private String errTitle;
 
 	/**
-	 * downloadUrl (?)
-	 *
-	 * @parameter
+	 * downloadUrl (?).
 	 */
+	@Parameter
 	private String downloadUrl;
 
 	/**
-	 * supportUrl (?)
-	 *
-	 * @parameter
+	 * supportUrl (?).
 	 */
+	@Parameter
 	private String supportUrl;
 
 	/**
 	 * Constant command line arguments to pass to your program's main method.
 	 * Actual command line arguments entered by the user will appear after these.
-	 *
-	 * @parameter
 	 */
+	@Parameter
 	private String cmdLine;
 
 	/**
 	 * Changes to the given directory, relative to the executable, before running your jar.
 	 * If set to <code>.</code> the current directory will be where the executable is.
 	 * If omitted, the directory will not be changed.
-	 *
-	 * @parameter
 	 */
+	@Parameter
 	private String chdir;
 
 	/**
 	 * Priority class of windows process.
 	 * Valid values are "normal" (default), "idle" and "high".
 	 * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms685100(v=vs.85).aspx">MSDN: Scheduling Priorities</a>
-	 *
-	 * @parameter default-value="normal"
 	 */
+	@Parameter(defaultValue="normal")
 	private String priority;
 
 
 	/**
 	 * If true, the executable waits for the java application to finish before returning its exit code.
 	 * Defaults to false for gui applications. Has no effect for console applications, which always wait.
-	 *
-	 * @parameter default-value=false
 	 */
+	@Parameter(defaultValue="false")
 	private boolean stayAlive;
 
 	/**
 	 * If true, when the application exits, any exit code other than 0 is considered a crash and
 	 * the application will be started again.
-	 *
-	 * @parameter default-value=false
 	 */
+	@Parameter(defaultValue="false")
 	private boolean restartOnCrash;
 
 	/**
 	 * The icon to use in the taskbar. Must be in ico format.
-	 *
-	 * @parameter
 	 */
+	@Parameter
 	private File icon;
 
 	/**
 	 * Object files to include. Used for custom headers only.
-	 *
-	 * @parameter
 	 */
+	@Parameter
 	private List<String> objs;
 
 	/**
 	 * Win32 libraries to include. Used for custom headers only.
-	 *
-	 * @parameter
 	 */
+	@Parameter
 	private List<String> libs;
 
 	/**
 	 * Variables to set.
-	 *
-	 * @parameter
 	 */
+	@Parameter
 	private List<String> vars;
 
 	/**
 	 * Details about the supported jres.
-	 *
-	 * @parameter
-	 * @required
 	 */
+	@Parameter(required=true)
 	private Jre jre;
 
 	/**
 	 * Details about the classpath your application should have.
 	 * This is required if you are not wrapping a jar.
-	 *
-	 * @parameter
 	 */
+	@Parameter
 	private ClassPath classPath;
 
 	/**
 	 * Details about whether to run as a single instance.
-	 *
-	 * @parameter
 	 */
+	@Parameter
 	private SingleInstance singleInstance;
 
 	/**
 	 * Details about the splash screen.
-	 *
-	 * @parameter
 	 */
+	@Parameter
 	private Splash splash;
 
 	/**
 	 * Lots of information you can attach to the windows process.
-	 *
-	 * @parameter
 	 */
+	@Parameter
 	private VersionInfo versionInfo;
 
 	/**
 	 * Various messages you can display.
-	 *
-	 * @parameter
 	 */
+	@Parameter
 	private Messages messages;
 
-    /**
-     * Windows manifest file (a XML file) with the same name as .exe file (myapp.exe.manifest)
-     *
-     * @parameter
-     */
-    private File manifest;
+	/**
+	 * Windows manifest file (a XML file) with the same name as .exe file (myapp.exe.manifest)
+	 */
+	@Parameter
+	private File manifest;
 
-    private File getJar() {
+	private File getJar() {
 		return new File(jar);
 	}
 
@@ -334,7 +291,7 @@ public class Launch4jMojo extends AbstractMojo {
 		c.setPriority(priority);
 		c.setStayAlive(stayAlive);
 		c.setRestartOnCrash(restartOnCrash);
-        c.setManifest(manifest);
+		c.setManifest(manifest);
 		c.setIcon(icon);
 		c.setHeaderObjects(objs);
 		c.setLibs(libs);
@@ -404,7 +361,6 @@ public class Launch4jMojo extends AbstractMojo {
 	 * Writes a marker file to prevent unzipping more than once.
 	 */
 	private File unpackWorkDir(Artifact a) throws MojoExecutionException {
-		String version = a.getVersion();
 		File platJar = a.getFile();
 		File dest = platJar.getParentFile();
 		File marker = new File(dest, platJar.getName() + ".unpacked");
@@ -421,9 +377,9 @@ public class Launch4jMojo extends AbstractMojo {
 			try {
 				// trying to use plexus-archiver here is a miserable waste of time:
 				jf = new JarFile(platJar);
-				Enumeration en = jf.entries();
+				Enumeration<JarEntry> en = jf.entries();
 				while (en.hasMoreElements()) {
-					JarEntry je = (JarEntry)en.nextElement();
+					JarEntry je = en.nextElement();
 					File outFile = new File(dest, je.getName());
 					File parent = outFile.getParentFile();
 					if (parent != null) parent.mkdirs();
@@ -622,13 +578,13 @@ public class Launch4jMojo extends AbstractMojo {
 	 * The Launch4j version used by the plugin.
 	 * We want to download the platform-specific bundle whose version matches the Launch4j version,
 	 * so we have to figure out what version the plugin is using.
-	 *  
+	 * 
 	 * @return
 	 * @throws MojoExecutionException 
 	 */
 	private String getLaunch4jVersion() throws MojoExecutionException{
 		String version = null;
-		
+
 		for(Artifact artifact: pluginArtifacts){
 					if(LAUNCH4J_GROUP_ID.equals(artifact.getGroupId()) &&
 					LAUNCH4J_ARTIFACT_ID.equals(artifact.getArtifactId())
@@ -639,11 +595,11 @@ public class Launch4jMojo extends AbstractMojo {
 				break;
 			}
 		}
-		
+
 		if(version==null){
 			throw new MojoExecutionException("Impossible to find which Launch4j version to use");
 		}
-		
+
 		return version;
 	}
 }

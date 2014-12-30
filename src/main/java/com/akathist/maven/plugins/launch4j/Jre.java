@@ -20,6 +20,8 @@ package com.akathist.maven.plugins.launch4j;
 
 import java.util.List;
 
+import org.apache.maven.plugins.annotations.Parameter;
+
 /**
  * Details about which jre the executable should call.
  */
@@ -79,9 +81,8 @@ public class Jre {
 	 *   <td>Always use a private JDK runtime (fails if there is no JDK installed)</td>
 	 *  </tr>
 	 * </table>
-	 *
-	 * @parameter default-value="preferJre"
 	 */
+	@Parameter(defaultValue="preferJre")
 	String jdkPreference;
 
 	/**
@@ -120,9 +121,8 @@ public class Jre {
      * Sets JVM version to use: 32 bits, 64 bits or 64/32 bits
      * Possible values: 32, 64, 64/32 - it will fallback to default value if different option was used
      * Default value is: 64/32
-     *
-     * @parameter default-value="64/32"
      */
+    @Parameter(defaultValue="64/32")
     String runtimeBits;
 
 	net.sf.launch4j.config.Jre toL4j() {
