@@ -8,3 +8,4 @@ target/*
 .factorypath
 /target
 .idea
+.java-version
