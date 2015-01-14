@@ -122,7 +122,7 @@ public class Launch4jMojo extends AbstractMojo {
      * The name of the executable you want launch4j to produce.
      * The path, if relative, is relative to the pom.xml.
      */
-    @Parameter(defaultValue = "${project.bluid.directory}/${project.artifactId}.exe")
+    @Parameter(defaultValue = "${project.build.directory}/${project.artifactId}.exe")
     private File outfile;
 
     /**
