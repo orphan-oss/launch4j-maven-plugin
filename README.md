@@ -4,6 +4,9 @@ Originally hosted at http://9stmaryrd.com/tools/launch4j-maven-plugin/
 
 [![Build Status](https://travis-ci.org/lukaszlenart/launch4j-maven-plugin.svg)](https://travis-ci.org/lukaszlenart/launch4j-maven-plugin)
 
+## Version notes 1.7.4
+- fixes type in default value for `outfile` parameter  [#17](../../pull/17)
+
 ## Version notes 1.7.3
 - uses Maven annotation instead of JavaDoc parameters [#15](../../pull/15)
 - upgrades Maven plugins [#15](../../pull/15)
