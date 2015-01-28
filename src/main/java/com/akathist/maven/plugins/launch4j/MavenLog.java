@@ -18,18 +18,22 @@
  */
 package com.akathist.maven.plugins.launch4j;
 
+import org.apache.maven.plugin.logging.Log;
+
 public class MavenLog extends net.sf.launch4j.Log {
 
-    org.apache.maven.plugin.logging.Log _log;
+    Log _log;
 
-    public MavenLog(org.apache.maven.plugin.logging.Log log) {
+    public MavenLog(Log log) {
         _log = log;
     }
 
+    @Override
     public void clear() {
         _log.info("");
     }
 
+    @Override
     public void append(String line) {
         _log.info("launch4j: " + line);
     }
