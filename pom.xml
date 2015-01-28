@@ -69,7 +69,7 @@
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>3.3</version>
+            <version>3.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -128,11 +128,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.3</version>
-                <configuration>
-                    <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
-                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-                </configuration>
+                <version>3.4</version>
                 <executions>
                     <execution>
                         <id>mojo-descriptor</id>
@@ -174,7 +170,7 @@
                                             <pluginExecutionFilter>
                                                 <groupId>org.apache.maven.plugins</groupId>
                                                 <artifactId>maven-plugin-plugin</artifactId>
-                                                <versionRange>[3.3,)</versionRange>
+                                                <versionRange>[3.4,)</versionRange>
                                                 <goals>
                                                     <goal>helpmojo</goal>
                                                     <goal>descriptor</goal>
