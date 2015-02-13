@@ -1,7 +1,11 @@
 = Maven Launch4j Plugin
-A plugin for using Launch4j in Maven projects.
-Copyright (c) 2006 Paul Jungwirth with additional changes by Lukasz Lenart
+
+Copyright (C) 2006 Paul Jungwirth with additional changes by Lukasz Lenart
 version 1.7.4, 13 February 2015
+
+:toc:
+
+== Description
 
 http://launch4j.sourceforge.net/[Launch4j] by Grzegorz Kowal wraps a jar file
 in a Windows executable to ease deployment of Java desktop applications. You 
@@ -18,13 +22,13 @@ information on this file. You can also set your configuration via the Launch4j
 GUI.
 
 The Maven plugin for Launch4j lets you generate the Launch4j executable as part 
-of the Maven build process. It supports Maven 2.0.4 and Launch4j 3.0.0-pre1. 
-You don't have to download Launch4j; all the necessary files are included in 
-the plugin. (The plugin does not include Launch4j's GUI option.) Depending on 
-your operating system, the plugin will download an additional artifact 
+of the Maven build process. It supports Maven 2.0.4 and Launch4j 3.x.
+Depending on your operating system, the plugin will download an additional artifact
 containing platform-specific binaries that Launch4j uses to create the 
 executable. This artifact is treated like any other Maven dependency, so it is 
 only downloaded the first time you need it.
+
+== Adding plugin to pom.xml
 
 Using the Maven plugin, you specify the Launch4j configuration in your POM. I 
 hope to add support for external configuration files, but right now you have to 
@@ -85,6 +89,10 @@ supports these children:
 
 Other than these changes, the XML format is just like Launch4j's standard 
 format.
+
+== Examples
+
+=== Single-module project
 
 By default, the Launch4j plugin is bound to the package phase. Suppose you have 
 a single-module project named encc. It is a console application, not a GUI. It 
@@ -162,8 +170,10 @@ launch4j and assembly to the package phase with a POM like this:
 ----
 
 Note that when you bind the assembly plugin to a phase, you must use 
-assembly:attached, not assembly:assembly, to prevent its forking a parallel 
+`assembly:attached`, not `assembly:assembly`, to prevent its forking a parallel
 lifecycle and running everything twice.
+
+=== GUI and console mode
 
 Or suppose your application can run in either GUI or console mode, and you want 
 to create separate executables for each. Then your POM would look like this:
