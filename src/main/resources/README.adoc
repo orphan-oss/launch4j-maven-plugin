@@ -1,8 +1,7 @@
-# Maven Launch4j Plugin 1.7.4
-
+= Maven Launch4j Plugin
 A plugin for using Launch4j in Maven projects.
 Copyright (c) 2006 Paul Jungwirth with additional changes by Lukasz Lenart
-13 February 2015
+version 1.7.4, 13 February 2015
 
 http://launch4j.sourceforge.net/[Launch4j] by Grzegorz Kowal wraps a jar file
 in a Windows executable to ease deployment of Java desktop applications. You 
