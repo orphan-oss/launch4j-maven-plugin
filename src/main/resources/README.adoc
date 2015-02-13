@@ -4,7 +4,7 @@ A plugin for using Launch4j in Maven projects.
 Copyright (c) 2006 Paul Jungwirth with additional changes by Lukasz Lenart
 13 February 2015
 
-[Launch4j](http://launch4j.sourceforge.net/) by Grzegorz Kowal wraps a jar file
+http://launch4j.sourceforge.net/[Launch4j] by Grzegorz Kowal wraps a jar file
 in a Windows executable to ease deployment of Java desktop applications. You 
 can either bundle a JRE or tell Launch4j to search the hard drive for an 
 existing one. If none is found, then Launch4j will show the user a download 
