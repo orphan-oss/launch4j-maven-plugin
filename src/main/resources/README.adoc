@@ -1,9 +1,10 @@
-Maven Launch4j Plugin 1.0
-A plugin for using Launch4j in Maven projects.
-Copyright (c) 2006 Paul Jungwirth
-16 October 2006
+# Maven Launch4j Plugin 1.7.4
 
-Launch4j by Grzegorz Kowal (http://launch4j.sourceforge.net/) wraps a jar file 
+A plugin for using Launch4j in Maven projects.
+Copyright (c) 2006 Paul Jungwirth with additional changes by Lukasz Lenart
+13 February 2015
+
+[Launch4j](http://launch4j.sourceforge.net/) by Grzegorz Kowal wraps a jar file
 in a Windows executable to ease deployment of Java desktop applications. You 
 can either bundle a JRE or tell Launch4j to search the hard drive for an 
 existing one. If none is found, then Launch4j will show the user a download 
@@ -33,49 +34,55 @@ Launch4j XML format. There are two main differences. First, any lists of
 like-named elements must appear in a wrapper element. For example, you can't 
 say:
 
+[source,xml]
+----
     <icon>logo.bin</icon>
     <var>this=that</var>
     <var>foo=bar</var>
     <var>blep=blurp</var>
+----
 
 You must say:
 
+[source,xml]
+----
     <icon>logo.bin</icon>
     <vars>
         <var>this=that</var>
         <var>foo=bar</var>
         <var>blep=blurp</var>
     </vars>
+----
 
-Likewise for <lib> and <obj> elements.
+Likewise for `<lib>` and `<obj>` elements.
 
-Second, the sub-elements of the <classPath> element are a little different. 
-This is so you can set the classpath based on your depedencies. <classPath> 
-still takes a <mainClass> element, but it does not take <cp>. Instead, it 
+Second, the sub-elements of the `<classPath>` element are a little different.
+This is so you can set the classpath based on your dependencies. `<classPath>`
+still takes a `<mainClass>` element, but it does not take `<cp>`. Instead, it
 supports these children:
 
-    <addDependencies>   If you set this to "true," the plugin will build your 
-                        classpath based on all dependencies in the runtime and
-                        compile scopes. This is on by default.
+ * `<addDependencies>` - If you set this to "true," the plugin will build your
+                         classpath based on all dependencies in the runtime and
+                         compile scopes. This is on by default.
 
-    <jarLocation>       If you are using the addDependencies feature, you can
-                        use this option to add a prefix before each jar's name.
-                        This is useful if you are bundling your app with the
-                        executable alongside a lib directory that contains all
-                        your jars. If that's what you're doing, you would specify 
-                        <jarLocation>lib/</jarLocation>.
+ * `<jarLocation>` - If you are using the addDependencies feature, you can
+                     use this option to add a prefix before each jar's name.
+                     This is useful if you are bundling your app with the
+                     executable alongside a lib directory that contains all
+                     your jars. If that's what you're doing, you would specify
+                     `<jarLocation>lib/</jarLocation>`.
 
-    <preCp>             Use this to add classpath entries before the automatically-
-                        generated list. This element functions whether you have
-                        enabled <addDependencies> or not. Entries in the list should
-                        be separated by semicolons, as in a Windows-style CLASSPATH
-                        variable.
+ * `<preCp>` - Use this to add classpath entries before the automatically-
+               generated list. This element functions whether you have
+               enabled `<addDependencies>` or not. Entries in the list should
+               be separated by semicolons, as in a Windows-style `CLASSPATH`
+               variable.
 
-    <postCp>            Use this to add classpath entries after the automatically-
-                        generated list. This element functions whether you have 
-                        enabled <addDependencies> or not. Entries in the list should
-                        be separated by semicolons, as in a Windows-style CLASSPATH
-                        variable.
+ * `<postCp>` - Use this to add classpath entries after the automatically-
+                generated list. This element functions whether you have
+                enabled `<addDependencies>` or not. Entries in the list should
+                be separated by semicolons, as in a Windows-style `CLASSPATH`
+                variable.
 
 Other than these changes, the XML format is just like Launch4j's standard 
 format.
@@ -84,10 +91,12 @@ By default, the Launch4j plugin is bound to the package phase. Suppose you have
 a single-module project named encc. It is a console application, not a GUI. It 
 is packaged as a jar, so the jarring runs automatically during the package 
 phase before anything else. You want to use launch4j to create an executable 
-and then use the assmebly plugin to bundle everything up. You could bind both 
+and then use the assembly plugin to bundle everything up. You could bind both
 launch4j and assembly to the package phase with a POM like this:
 
 
+[source,xml]
+----
   <project>
     . . .
     <groupId>com.akathist.encc</groupId>
@@ -151,7 +160,7 @@ launch4j and assembly to the package phase with a POM like this:
     </build>
     . . .
   </project>
-
+----
 
 Note that when you bind the assembly plugin to a phase, you must use 
 assembly:attached, not assembly:assembly, to prevent its forking a parallel 
@@ -160,7 +169,8 @@ lifecycle and running everything twice.
 Or suppose your application can run in either GUI or console mode, and you want 
 to create separate executables for each. Then your POM would look like this:
 
-
+[source,xml]
+----
   <project>
     . . .
     <groupId>com.akathist.encc</groupId>
@@ -252,7 +262,8 @@ to create separate executables for each. Then your POM would look like this:
     </build>
     . . .
   </project>
+----
 
+If you have any questions, please register a ticket!
 
-If you have any questions, you can send a note to maven {a} 9stmaryrd * com.
-
+Enjoy!

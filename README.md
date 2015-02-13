@@ -4,6 +4,12 @@ Originally hosted at http://9stmaryrd.com/tools/launch4j-maven-plugin/
 
 [![Build Status](https://travis-ci.org/lukaszlenart/launch4j-maven-plugin.svg)](https://travis-ci.org/lukaszlenart/launch4j-maven-plugin)
 
+# Documentation
+
+Please check [this](blob/master/src/main/resources/README.adoc) document for more detailed info on how to use the plugin
+
+# Version Notes
+
 ## Version notes 1.7.4
 - fixes type in default value for `outfile` parameter  [#17](../../pull/17)
 
