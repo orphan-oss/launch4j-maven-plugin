@@ -6,7 +6,7 @@ Originally hosted at http://9stmaryrd.com/tools/launch4j-maven-plugin/
 
 # Documentation
 
-Please check [this](blob/master/src/main/resources/README.adoc) document for more detailed info on how to use the plugin
+Please check [this](src/main/resources/README.adoc) document for more detailed info on how to use the plugin
 
 # Version Notes
 
