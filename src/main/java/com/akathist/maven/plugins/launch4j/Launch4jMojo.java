@@ -275,8 +275,11 @@ public class Launch4jMojo extends AbstractMojo {
         return new File(jar);
     }
 
+    @Override
     public void execute() throws MojoExecutionException {
-        if (getLog().isDebugEnabled()) printState();
+        if (getLog().isDebugEnabled()) {
+            printState();
+        }
 
         Config c = new Config();
 
@@ -396,6 +399,7 @@ public class Launch4jMojo extends AbstractMojo {
                             while ((len = in.read(buf)) >= 0) {
                                 fout.write(buf, 0, len);
                             }
+                            in.close();
                             fout.close();
                             fout = null;
                         } finally {
@@ -403,7 +407,8 @@ public class Launch4jMojo extends AbstractMojo {
                                 try {
                                     fout.close();
                                 } catch (IOException e2) {
-                                } // ignore
+                                    // ignore
+                                }
                             }
                         }
                         outFile.setLastModified(je.getTime());
@@ -415,7 +420,8 @@ public class Launch4jMojo extends AbstractMojo {
                 try {
                     if (jf != null) jf.close();
                 } catch (IOException e) {
-                } // ignore
+                    // ignore
+                }
             }
 
             try {
@@ -435,7 +441,7 @@ public class Launch4jMojo extends AbstractMojo {
     /**
      * Chmods the helper executables ld and windres on systems where that is necessary.
      */
-    private void setPermissions(File workdir) throws MojoExecutionException {
+    private void setPermissions(File workdir) {
         if (!System.getProperty("os.name").startsWith("Windows")) {
             Runtime r = Runtime.getRuntime();
             try {
