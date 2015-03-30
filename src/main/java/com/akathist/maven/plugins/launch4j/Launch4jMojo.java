@@ -22,6 +22,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -281,6 +286,8 @@ public class Launch4jMojo extends AbstractMojo {
             printState();
         }
 
+        File workdir = setupBuildEnvironment();
+        
         Config c = new Config();
 
         c.setHeaderType(headerType);
@@ -297,8 +304,8 @@ public class Launch4jMojo extends AbstractMojo {
         c.setRestartOnCrash(restartOnCrash);
         c.setManifest(manifest);
         c.setIcon(icon);
-        c.setHeaderObjects(objs);
-        c.setLibs(libs);
+        c.setHeaderObjects(relativizeAndCopy(workdir, objs));
+        c.setLibs(relativizeAndCopy(workdir, libs));
         c.setVariables(vars);
 
         if (classPath != null) {
@@ -321,7 +328,6 @@ public class Launch4jMojo extends AbstractMojo {
         }
 
         ConfigPersister.getInstance().setAntConfig(c, getBaseDir());
-        File workdir = setupBuildEnvironment();
         Builder b = new Builder(new MavenLog(getLog()), workdir);
 
         try {
@@ -455,6 +461,36 @@ public class Launch4jMojo extends AbstractMojo {
         }
     }
 
+    /**
+     * If custom header objects or libraries shall be linked, they need to sit inside the launch4j working dir.
+     */
+    private List<String> relativizeAndCopy(File workdir, List<String> paths) throws MojoExecutionException {
+        if(paths == null) return null;
+        
+        List<String> result = new ArrayList<>();
+        for(String path : paths) {
+            Path source = basedir.toPath().resolve(path);
+            Path dest = workdir.toPath().resolve(basedir.toPath().relativize(source));
+
+            if(!source.startsWith(basedir.toPath())) {
+                throw new MojoExecutionException("File must reside in the project directory: " + path);
+            }
+
+            if (Files.exists(source)) {
+                try {
+                    Path target = Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING);
+                    result.add(workdir.toPath().relativize(target).toString());
+                } catch (IOException e) {
+                    throw new MojoExecutionException("Can't copy file to workdir", e);
+                }
+            } else {
+                result.add(path);
+            }
+        }
+
+        return result;
+    }
+	
     /**
      * Downloads the platform-specific parts, if necessary.
      */
