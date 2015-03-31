@@ -10,6 +10,9 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 1.7.5
+- allows add custom headers and libraries to working dir  [#22](../../pull/22)
+
 ## Version notes 1.7.4
 - fixes type in default value for `outfile` parameter  [#17](../../pull/17)
 
