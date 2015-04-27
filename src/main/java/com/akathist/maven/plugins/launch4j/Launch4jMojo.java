@@ -308,8 +308,11 @@ public class Launch4jMojo extends AbstractMojo {
         c.setLibs(relativizeAndCopy(workdir, libs));
         c.setVariables(vars);
 
+        dependencies.addAll(project.getDependencyArtifacts());
+        dependencies.addAll(project.getRuntimeArtifacts());
+
         if (classPath != null) {
-            c.setClassPath(classPath.toL4j(dependencies, project.getRuntimeArtifacts()));
+            c.setClassPath(classPath.toL4j(dependencies));
         }
         if (jre != null) {
             c.setJre(jre.toL4j());
