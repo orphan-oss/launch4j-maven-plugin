@@ -10,6 +10,9 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 1.7.6
+- fixes again problem with including dependencies in scope `runtime`, see [#5](../../issues/5)
+
 ## Version notes 1.7.5
 - allows add custom headers and libraries to working dir  [#22](../../pull/22)
 
@@ -32,7 +35,7 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 ## Version notes 1.7
 - uses the latest version of Launch4j (3.5.0)
 - contains support for `runtimeBits`, see [#6](../../issues/6)
-- fixes problem with including dependencies in scope `runtime`, see [#5](../../issues/5)
+- ~~fixes problem with including dependencies in scope `runtime`, see [#5](../../issues/5)~~
 
 ## Version notes 1.6
 - dropped Launch4j source and based on artifacts from Maven Central, see [#8](../../issues/8)
