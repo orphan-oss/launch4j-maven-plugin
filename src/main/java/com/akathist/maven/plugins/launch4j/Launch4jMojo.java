@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,9 +37,12 @@ import net.sf.launch4j.Builder;
 import net.sf.launch4j.BuilderException;
 import net.sf.launch4j.config.Config;
 import net.sf.launch4j.config.ConfigPersister;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -57,7 +59,7 @@ import org.apache.maven.project.MavenProject;
 /**
  * Wraps a jar in a Windows executable.
  */
-@Mojo(name = "launch4j", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(name = "launch4j", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class Launch4jMojo extends AbstractMojo {
 
     private static final String LAUNCH4J_ARTIFACT_ID = "launch4j";
@@ -307,9 +309,6 @@ public class Launch4jMojo extends AbstractMojo {
         c.setHeaderObjects(relativizeAndCopy(workdir, objs));
         c.setLibs(relativizeAndCopy(workdir, libs));
         c.setVariables(vars);
-
-        dependencies.addAll(project.getDependencyArtifacts());
-        dependencies.addAll(project.getRuntimeArtifacts());
 
         if (classPath != null) {
             c.setClassPath(classPath.toL4j(dependencies));
