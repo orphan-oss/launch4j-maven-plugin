@@ -41,6 +41,18 @@ public class Jre {
     String path;
 
     /**
+     * Sets jre's bundledJre64Bit flag
+     */
+    @Parameter(defaultValue = "false")
+    boolean bundledJre64Bit;
+
+    /**
+     * Sets jre's bundledJreAsFallback flag
+     */
+    @Parameter(defaultValue = "false")
+    boolean bundledJreAsFallback;
+
+    /**
      * Use this property if you want the executable to search the system for a jre.
      * It names the minimum version acceptable, in x.x.x[_xx] format.
      * <p>
@@ -129,6 +141,8 @@ public class Jre {
         net.sf.launch4j.config.Jre ret = new net.sf.launch4j.config.Jre();
 
         ret.setPath(path);
+        ret.setBundledJre64Bit(bundledJre64Bit);
+        ret.setBundledJreAsFallback(bundledJreAsFallback);
         ret.setMinVersion(minVersion);
         ret.setMaxVersion(maxVersion);
         ret.setJdkPreference(jdkPreference);
