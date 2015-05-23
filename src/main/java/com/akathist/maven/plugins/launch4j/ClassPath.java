@@ -86,14 +86,10 @@ public class ClassPath {
             else if (!jarLocation.endsWith("/")) jarLocation += "/";
 
             for (Artifact dependency : dependencies) {
-                if (Artifact.SCOPE_COMPILE.equals(dependency.getScope()) ||
-                        Artifact.SCOPE_RUNTIME.equals(dependency.getScope())) {
-
                     String depFilename;
                     depFilename = dependency.getFile().getName();
-                    // System.out.println("dependency = " + depFilename);
+//                  System.out.println("dependency = " + depFilename);
                     cp.add(jarLocation + depFilename);
-                }
             }
         }
 
