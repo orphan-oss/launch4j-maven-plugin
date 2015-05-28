@@ -13,7 +13,7 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 ## Version notes 1.7.7
 - once again fixes problem with including dependencies in scope `runtime` (now it should be the final solution), see [#5](../../issues/5)
 - adds support for `bundledJreAsFallback` and `bundledJre64Bit` properties, see [#23](../../issues/23)
-- upgrades Launch4j to 3.8.0, see [#23](../../issues/21)
+- upgrades Launch4j to 3.8.0, see [#21](../../issues/21)
 
 ## Version notes 1.7.6
 - fixes again problem with including dependencies in scope `runtime`, see [#5](../../issues/5)
