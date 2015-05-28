@@ -10,6 +10,9 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 1.7.7
+- once again fixes problem with including dependencies in scope `runtime` (now it should be the final solution), see [#5](../../issues/5)
+
 ## Version notes 1.7.6
 - fixes again problem with including dependencies in scope `runtime`, see [#5](../../issues/5)
 
