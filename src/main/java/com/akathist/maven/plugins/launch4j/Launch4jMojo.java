@@ -289,7 +289,7 @@ public class Launch4jMojo extends AbstractMojo {
         }
 
         File workdir = setupBuildEnvironment();
-        
+
         Config c = new Config();
 
         c.setHeaderType(headerType);
@@ -451,10 +451,9 @@ public class Launch4jMojo extends AbstractMojo {
      */
     private void setPermissions(File workdir) {
         if (!System.getProperty("os.name").startsWith("Windows")) {
-            Runtime r = Runtime.getRuntime();
             try {
-                r.exec("chmod 755 " + workdir + "/bin/ld").waitFor();
-                r.exec("chmod 755 " + workdir + "/bin/windres").waitFor();
+                new ProcessBuilder("chmod", "755", workdir + "/bin/ld").start().waitFor();
+                new ProcessBuilder("chmod", "755", workdir + "/bin/windres").start().waitFor();
             } catch (InterruptedException e) {
                 getLog().warn("Interrupted while chmodding platform-specific binaries", e);
             } catch (IOException e) {
@@ -468,7 +467,7 @@ public class Launch4jMojo extends AbstractMojo {
      */
     private List<String> relativizeAndCopy(File workdir, List<String> paths) throws MojoExecutionException {
         if(paths == null) return null;
-        
+
         List<String> result = new ArrayList<>();
         for(String path : paths) {
             Path source = basedir.toPath().resolve(path);
@@ -492,7 +491,7 @@ public class Launch4jMojo extends AbstractMojo {
 
         return result;
     }
-	
+
     /**
      * Downloads the platform-specific parts, if necessary.
      */
