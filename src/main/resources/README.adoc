@@ -132,6 +132,9 @@ launch4j and assembly to the package phase with a POM like this:
                 </classPath>
                 <jre>
                   <minVersion>1.5.0</minVersion>
+                  <opts>
+                    <opt>-Djava.endorsed.dirs=./endorsed</opt>
+                  </opts>
                 </jre>
                 <versionInfo>
                   <fileVersion>1.2.3.4</fileVersion>
