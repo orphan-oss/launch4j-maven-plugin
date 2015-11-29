@@ -5,5 +5,7 @@ target/*
 .settings/*
 .project
 .classpath
+.factorypath
 /target
 .idea
+.java-version
