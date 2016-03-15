@@ -10,6 +10,16 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 1.7.9
+- adds capability of loading Launch4j native external configuration file
+```xml
+<configuration> 
+    <infile>${project.basedir}/etc/bin/config.xml</infile>
+ </configuration>
+```
+By default it will take from ${project.basedir}/src/main/launch4j/${project.artifactId}-launch4j.xml
+Plugin execution goal should be set to "install"
+
 ## Version notes 1.7.8
 - fixes issue with spaces in path to maven repository on non-Windows systems, see [#27](../../issues/27), [#28](../../issues/28)
 
