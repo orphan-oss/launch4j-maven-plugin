@@ -11,13 +11,13 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 # Version Notes
 
 ## Version notes 1.7.9
-- adds capability of loading Launch4j native external configuration file
+- adds capability of loading Launch4j native configuration file
 ```xml
 <configuration> 
-    <infile>${project.basedir}/etc/bin/config.xml</infile>
- </configuration>
+    <infile>${project.basedir}/src/main/resources/my-app-config.xml</infile>
+</configuration>
 ```
-By default it will take from ${project.basedir}/src/main/launch4j/${project.artifactId}-launch4j.xml
+By default it will take from ${project.basedir}/src/main/resources/${project.artifactId}-launch4j.xml
 Plugin execution goal should be set to "install"
 
 ## Version notes 1.7.8

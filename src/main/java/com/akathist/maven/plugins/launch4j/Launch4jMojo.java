@@ -130,7 +130,7 @@ public class Launch4jMojo extends AbstractMojo {
      * The name of the Launch4j native configuration file
      * The path, if relative, is relative to the pom.xml.
      */
-    @Parameter(defaultValue = "${project.basedir}/src/main/launch4j/${project.artifactId}-launch4j.xml")
+    @Parameter(defaultValue = "${project.basedir}/src/main/resources/${project.artifactId}-launch4j.xml")
     private File infile;
 
     /**
@@ -297,15 +297,19 @@ public class Launch4jMojo extends AbstractMojo {
         }
 
         final File workDir = setupBuildEnvironment();
-        if (infile != null && infile.exists()) {
-            try {
-                if (getLog().isDebugEnabled()) {
-                    getLog().debug("Trying to load Launch4j native configuration using file=" + infile.getAbsolutePath());
+        if (infile != null) {
+            if (infile.exists()) {
+                try {
+                    if (getLog().isDebugEnabled()) {
+                        getLog().debug("Trying to load Launch4j native configuration using file=" + infile.getAbsolutePath());
+                    }
+                    ConfigPersister.getInstance().load(infile);
+                } catch (ConfigPersisterException e) {
+                    getLog().error(e);
+                    throw new MojoExecutionException("Could not load Launch4j native configuration file", e);
                 }
-                ConfigPersister.getInstance().load(infile);
-            } catch (ConfigPersisterException e) {
-                getLog().error(e);
-                throw new MojoExecutionException("Could not load Launch4j native configuration file", e);
+            } else {
+                throw new MojoExecutionException("Launch4j native configuration file [" + infile.getAbsolutePath() + "] does not exist!");
             }
         } else {
             final Config c = new Config();
@@ -349,8 +353,9 @@ public class Launch4jMojo extends AbstractMojo {
             ConfigPersister.getInstance().setAntConfig(c, getBaseDir());
         }
 
+        final Builder builder = new Builder(new MavenLog(getLog()), workDir);
         try {
-            new Builder(new MavenLog(getLog()), workDir).build();
+            builder.build();
         } catch (BuilderException e) {
             getLog().error(e);
             throw new MojoExecutionException("Failed to build the executable; please verify your configuration.", e);
