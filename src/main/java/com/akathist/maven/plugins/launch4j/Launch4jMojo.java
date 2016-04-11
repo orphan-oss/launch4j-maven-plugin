@@ -38,6 +38,7 @@ import net.sf.launch4j.BuilderException;
 import net.sf.launch4j.config.Config;
 import net.sf.launch4j.config.ConfigPersister;
 
+import net.sf.launch4j.config.ConfigPersisterException;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -122,8 +123,15 @@ public class Launch4jMojo extends AbstractMojo {
      * in order to avoid opening a DOS window.
      * Choosing gui also enables other options like taskbar icon and a splash screen.
      */
-    @Parameter(required = true)
+    @Parameter
     private String headerType;
+
+    /**
+     * The name of the Launch4j native configuration file
+     * The path, if relative, is relative to the pom.xml.
+     */
+    @Parameter(defaultValue = "${project.basedir}/src/main/resources/${project.artifactId}-launch4j.xml")
+    private File infile;
 
     /**
      * The name of the executable you want launch4j to produce.
@@ -135,10 +143,10 @@ public class Launch4jMojo extends AbstractMojo {
     /**
      * The jar to bundle inside the executable.
      * The path, if relative, is relative to the pom.xml.
-     * <p>
+     * <p/>
      * If you don't want to wrap the jar, then this value should be the runtime path
      * to the jar relative to the executable. You should also set dontWrapJar to true.
-     * <p>
+     * <p/>
      * You can only bundle a single jar. Therefore, you should either create a jar that contains
      * your own code plus all your dependencies, or you should distribute your dependencies alongside
      * the executable.
@@ -238,7 +246,7 @@ public class Launch4jMojo extends AbstractMojo {
     /**
      * Details about the supported jres.
      */
-    @Parameter(required = true)
+    @Parameter
     private Jre jre;
 
     /**
@@ -288,52 +296,66 @@ public class Launch4jMojo extends AbstractMojo {
             printState();
         }
 
-        File workdir = setupBuildEnvironment();
+        final File workDir = setupBuildEnvironment();
+        if (infile != null) {
+            if (infile.exists()) {
+                try {
+                    if (getLog().isDebugEnabled()) {
+                        getLog().debug("Trying to load Launch4j native configuration using file=" + infile.getAbsolutePath());
+                    }
+                    ConfigPersister.getInstance().load(infile);
+                } catch (ConfigPersisterException e) {
+                    getLog().error(e);
+                    throw new MojoExecutionException("Could not load Launch4j native configuration file", e);
+                }
+            } else {
+                throw new MojoExecutionException("Launch4j native configuration file [" + infile.getAbsolutePath() + "] does not exist!");
+            }
+        } else {
+            final Config c = new Config();
 
-        Config c = new Config();
+            c.setHeaderType(headerType);
+            c.setOutfile(outfile);
+            c.setJar(getJar());
+            c.setDontWrapJar(dontWrapJar);
+            c.setErrTitle(errTitle);
+            c.setDownloadUrl(downloadUrl);
+            c.setSupportUrl(supportUrl);
+            c.setCmdLine(cmdLine);
+            c.setChdir(chdir);
+            c.setPriority(priority);
+            c.setStayAlive(stayAlive);
+            c.setRestartOnCrash(restartOnCrash);
+            c.setManifest(manifest);
+            c.setIcon(icon);
+            c.setHeaderObjects(relativizeAndCopy(workDir, objs));
+            c.setLibs(relativizeAndCopy(workDir, libs));
+            c.setVariables(vars);
 
-        c.setHeaderType(headerType);
-        c.setOutfile(outfile);
-        c.setJar(getJar());
-        c.setDontWrapJar(dontWrapJar);
-        c.setErrTitle(errTitle);
-        c.setDownloadUrl(downloadUrl);
-        c.setSupportUrl(supportUrl);
-        c.setCmdLine(cmdLine);
-        c.setChdir(chdir);
-        c.setPriority(priority);
-        c.setStayAlive(stayAlive);
-        c.setRestartOnCrash(restartOnCrash);
-        c.setManifest(manifest);
-        c.setIcon(icon);
-        c.setHeaderObjects(relativizeAndCopy(workdir, objs));
-        c.setLibs(relativizeAndCopy(workdir, libs));
-        c.setVariables(vars);
-
-        if (classPath != null) {
-            c.setClassPath(classPath.toL4j(dependencies));
-        }
-        if (jre != null) {
-            c.setJre(jre.toL4j());
-        }
-        if (singleInstance != null) {
-            c.setSingleInstance(singleInstance.toL4j());
-        }
-        if (splash != null) {
-            c.setSplash(splash.toL4j());
-        }
-        if (versionInfo != null) {
-            c.setVersionInfo(versionInfo.toL4j());
-        }
-        if (messages != null) {
-            c.setMessages(messages.toL4j());
+            if (classPath != null) {
+                c.setClassPath(classPath.toL4j(dependencies));
+            }
+            if (jre != null) {
+                c.setJre(jre.toL4j());
+            }
+            if (singleInstance != null) {
+                c.setSingleInstance(singleInstance.toL4j());
+            }
+            if (splash != null) {
+                c.setSplash(splash.toL4j());
+            }
+            if (versionInfo != null) {
+                c.setVersionInfo(versionInfo.toL4j());
+            }
+            if (messages != null) {
+                c.setMessages(messages.toL4j());
+            }
+            ConfigPersister.getInstance().setAntConfig(c, getBaseDir());
         }
 
-        ConfigPersister.getInstance().setAntConfig(c, getBaseDir());
-        Builder b = new Builder(new MavenLog(getLog()), workdir);
-
+        final Builder builder = new Builder(new MavenLog(getLog()), workDir);
         try {
-            b.build();
+            builder.build();
         } catch (BuilderException e) {
             getLog().error(e);
             throw new MojoExecutionException("Failed to build the executable; please verify your configuration.", e);
@@ -346,14 +368,14 @@ public class Launch4jMojo extends AbstractMojo {
      * The tricky part is that launch4j picks this directory based on where its own jar is sitting.
      * In our case, the jar is going to be sitting in the user's ~/.m2 repository. That's okay: we know
      * maven is allowed to write there. So we'll just add our things to that directory.
-     * <p>
+     * <p/>
      * This approach is not without flaws.
      * It risks two processes writing to the directory at the same time.
      * But fortunately, once the binary bits are in place, we don't do any more writing there,
      * and launch4j doesn't write there either.
      * Usually ~/.m2 will only be one system or another.
      * But if it's an NFS mount shared by several system types, this approach will break.
-     * <p>
+     * <p/>
      * Okay, so here is a better proposal: package the plugin without these varying binary files,
      * and put each set of binaries in its own tarball. Download the tarball you need to ~/.m2 and
      * unpack it. Then different systems won't contend for the same space. But then I'll need to hack
@@ -466,14 +488,14 @@ public class Launch4jMojo extends AbstractMojo {
      * If custom header objects or libraries shall be linked, they need to sit inside the launch4j working dir.
      */
     private List<String> relativizeAndCopy(File workdir, List<String> paths) throws MojoExecutionException {
-        if(paths == null) return null;
+        if (paths == null) return null;
 
         List<String> result = new ArrayList<>();
-        for(String path : paths) {
+        for (String path : paths) {
             Path source = basedir.toPath().resolve(path);
             Path dest = workdir.toPath().resolve(basedir.toPath().relativize(source));
 
-            if(!source.startsWith(basedir.toPath())) {
+            if (!source.startsWith(basedir.toPath())) {
                 throw new MojoExecutionException("File must reside in the project directory: " + path);
             }
 
@@ -498,7 +520,6 @@ public class Launch4jMojo extends AbstractMojo {
     private void retrieveBinaryBits(Artifact a) throws MojoExecutionException {
         try {
             resolver.resolve(a, project.getRemoteArtifactRepositories(), localRepository);
-
         } catch (ArtifactNotFoundException e) {
             throw new MojoExecutionException("Can't find platform-specific components", e);
         } catch (ArtifactResolutionException e) {
