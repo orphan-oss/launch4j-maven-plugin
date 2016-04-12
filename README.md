@@ -19,7 +19,7 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 </configuration>
 ```
 By default it will take from `${project.basedir}/src/main/resources/${project.artifactId}-launch4j.xml`.
-Plugin execution goal should be set to `install`.
+Plugin execution goal should be set to `install`. It's an optional configuration, you can either use your existing configuration as it was in previous version or use native **Launch4j** [config file](http://launch4j.sourceforge.net/docs.html#Configuration_file) via `<infile>`.
 
 ## Version notes 1.7.8
 - fixes issue with spaces in path to maven repository on non-Windows systems, see [#27](../../issues/27), [#28](../../issues/28)
