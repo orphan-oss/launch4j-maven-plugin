@@ -11,6 +11,9 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 1.7.10
+- fixes broken `<configuration/>` when not using `<infile/>`
+
 ## Version notes 1.7.9
 - adds capability of loading Launch4j native configuration file
 ```xml
