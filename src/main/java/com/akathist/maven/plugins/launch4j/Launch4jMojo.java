@@ -130,7 +130,7 @@ public class Launch4jMojo extends AbstractMojo {
      * The name of the Launch4j native configuration file
      * The path, if relative, is relative to the pom.xml.
      */
-    @Parameter(defaultValue = "${project.basedir}/src/main/resources/${project.artifactId}-launch4j.xml")
+    @Parameter
     private File infile;
 
     /**
