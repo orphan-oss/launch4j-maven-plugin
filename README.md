@@ -3,12 +3,26 @@
 Originally hosted at http://9stmaryrd.com/tools/launch4j-maven-plugin/
 
 [![Build Status](https://travis-ci.org/lukaszlenart/launch4j-maven-plugin.svg)](https://travis-ci.org/lukaszlenart/launch4j-maven-plugin)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.akathist.maven.plugins.launch4j/launch4j-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.akathist.maven.plugins.launch4j/launch4j-maven-plugin/)
 
 # Documentation
 
 Please check [this](src/main/resources/README.adoc) document for more detailed info on how to use the plugin. Please also check [Launch4j's Configuration file](http://launch4j.sourceforge.net/docs.html#Configuration_file) page.
 
 # Version Notes
+
+## Version notes 1.7.10
+- fixes broken `<configuration/>` when not using `<infile/>`
+
+## Version notes 1.7.9
+- adds capability of loading Launch4j native configuration file
+```xml
+<configuration> 
+    <infile>${project.basedir}/src/main/resources/my-app-config.xml</infile>
+</configuration>
+```
+By default it will take from `${project.basedir}/src/main/resources/${project.artifactId}-launch4j.xml`.
+Plugin execution goal should be set to `install`. It's an optional configuration, you can either use your existing configuration as it was in previous version or use native **Launch4j** [config file](http://launch4j.sourceforge.net/docs.html#Configuration_file) via `<infile>`.
 
 ## Version notes 1.7.8
 - fixes issue with spaces in path to maven repository on non-Windows systems, see [#27](../../issues/27), [#28](../../issues/28)
