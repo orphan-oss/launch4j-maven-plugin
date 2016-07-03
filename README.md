@@ -5,6 +5,10 @@ Originally hosted at http://9stmaryrd.com/tools/launch4j-maven-plugin/
 [![Build Status](https://travis-ci.org/lukaszlenart/launch4j-maven-plugin.svg)](https://travis-ci.org/lukaszlenart/launch4j-maven-plugin)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.akathist.maven.plugins.launch4j/launch4j-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.akathist.maven.plugins.launch4j/launch4j-maven-plugin/)
 
+ - [Documentation](#documentation)
+ - [Version Notes](#version-notes)
+ - [FAQ](#faq)
+
 # Documentation
 
 Please check [this](src/main/resources/README.adoc) document for more detailed info on how to use the plugin. Please also check [Launch4j's Configuration file](http://launch4j.sourceforge.net/docs.html#Configuration_file) page.
@@ -97,3 +101,14 @@ A: Use the Sonatype OSS repo
     </repository>
 </repositories>
 ```
+
+Q: Can I use Launch4j on 64bit OS?
+A: Yes but you will have to install these libs to avoid problems:
+ - lib32z1
+ - lib32ncurses5
+ - lib32bz2-1.0 ( (has been ia32-libs in older Ubuntu versions)
+ - zlib.i686
+ - ncurses-libs.i686
+ - bzip2-libs.i686
+
+See [#4](../../issues/4) for more details.
