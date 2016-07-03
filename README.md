@@ -103,7 +103,9 @@ A: Use the Sonatype OSS repo
 ```
 
 Q: Can I use Launch4j on 64bit OS?
+
 A: Yes but you will have to install these libs to avoid problems:
+
  - lib32z1
  - lib32ncurses5
  - lib32bz2-1.0 ( (has been ia32-libs in older Ubuntu versions)
