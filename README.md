@@ -15,6 +15,11 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 1.7.12
+- adds support for missing options, see [#45](../../issues/45)
+  - `language` - please use one of the values as defined for the `<language/>` tag
+  - `trademarks` -  a free text used as a trademarks 
+
 ## Version notes 1.7.11
 - upgrades to Launch4j version 3.9
 
