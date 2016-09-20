@@ -627,6 +627,9 @@ public class Launch4jMojo extends AbstractMojo {
             log.debug("versionInfo.companyName = " + versionInfo.companyName);
             log.debug("versionInfo.internalName = " + versionInfo.internalName);
             log.debug("versionInfo.originalFilename = " + versionInfo.originalFilename);
+            log.debug("versionInfo.language = " + versionInfo.language);
+            log.debug("versionInfo.languageIndex = " + versionInfo.languageIndex);
+            log.debug("versionInfo.trademarks = " + versionInfo.trademarks);
         } else {
             log.debug("versionInfo = null");
         }
