@@ -300,7 +300,50 @@ public class Launch4jMojo extends AbstractMojo {
                     if (getLog().isDebugEnabled()) {
                         getLog().debug("Trying to load Launch4j native configuration using file=" + infile.getAbsolutePath());
                     }
+                    // load launch4j configfile from <infile>
                     ConfigPersister.getInstance().load(infile);
+
+                    // overwrite several properties analogous to the ANT task
+                    // https://sourceforge.net/p/launch4j/git/ci/master/tree/src/net/sf/launch4j/ant/Launch4jTask.java#l84
+
+                    // retreive the loaded configuration for manipulation
+                    Config c = ConfigPersister.getInstance().getConfig();
+
+                    String jarDefaultValue = project.getBuild().getDirectory() + "/" + project.getBuild().getFinalName() + ".jar";
+    				if (jar != null && !jar.equals(jarDefaultValue)) {
+						getLog().debug("Overwriting config file property 'jar' (='"+c.getJar().getAbsolutePath()+"') with local value '"+getJar().getAbsolutePath()+"'");
+    					// only overwrite when != defaultValue (should be != null anytime because of the default value)
+    					c.setJar(getJar());
+    				}
+
+                    File outFileDefaultValue = new File(project.getBuild().getDirectory() + "/" + project.getArtifactId() + ".exe");
+    				if (outfile != null && !outfile.getAbsolutePath().equals(outFileDefaultValue.getAbsolutePath())) {
+    					// only overwrite when != defaultValue (should be != null anytime because of the default value)
+						getLog().debug("Overwriting config file property 'outfile' (='"+c.getOutfile().getAbsolutePath()+"') with local value '"+outfile.getAbsolutePath()+"'");
+    					c.setOutfile(outfile);
+    				}
+
+    				if (versionInfo != null) {
+    					if (versionInfo.fileVersion != null) {
+							getLog().debug("Overwriting config file property 'versionInfo.fileVersion' (='"+c.getVersionInfo().getFileVersion()+"') with local value '"+versionInfo.fileVersion+"'");
+    						c.getVersionInfo().setFileVersion(versionInfo.fileVersion);
+    					}
+    					if (versionInfo.txtFileVersion != null) {
+							getLog().debug("Overwriting config file property 'versionInfo.txtFileVersion' (='"+c.getVersionInfo().getTxtFileVersion()+"') with local value '"+versionInfo.txtFileVersion+"'");
+    						c.getVersionInfo().setTxtFileVersion(versionInfo.txtFileVersion);
+    					}
+    					if (versionInfo.productVersion != null) {
+							getLog().debug("Overwriting config file property 'versionInfo.productVersion' (='"+c.getVersionInfo().getProductVersion()+"') with local value '"+versionInfo.productVersion+"'");
+    						c.getVersionInfo().setProductVersion(versionInfo.productVersion);
+    					}
+    					if (versionInfo.txtProductVersion != null) {
+							getLog().debug("Overwriting config file property 'versionInfo.txtProductVersion' (='"+c.getVersionInfo().getTxtProductVersion()+"') with local value '"+versionInfo.txtProductVersion+"'");
+    						c.getVersionInfo().setTxtProductVersion(versionInfo.txtProductVersion);
+    					}
+    		        }
+
+    				ConfigPersister.getInstance().setAntConfig(c, infile.getParentFile());
+
                 } catch (ConfigPersisterException e) {
                     getLog().error(e);
                     throw new MojoExecutionException("Could not load Launch4j native configuration file", e);
