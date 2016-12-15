@@ -15,6 +15,9 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 1.7.14
+- fixes issue with setting `language`, see [#50](../../issues/50)
+
 ## Version notes 1.7.13
 - upgrades maven plugins to latest versions, see [#47](../../issues/47)
 
