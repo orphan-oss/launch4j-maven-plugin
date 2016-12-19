@@ -15,6 +15,9 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 1.7.15
+- allows override some properties loaded from an extrnal Launch4j config file, see [#49](../../issues/49)
+
 ## Version notes 1.7.14
 - fixes issue with setting `language`, see [#50](../../issues/50)
 
