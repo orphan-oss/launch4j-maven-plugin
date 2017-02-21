@@ -97,11 +97,6 @@ public class VersionInfo {
      */
     String trademarks;
 
-    /**
-     * Index of language to be used during installation, default index of ENGLISH_US
-     */
-    int languageIndex = LanguageID.ENGLISH_US.getIndex();
-
     net.sf.launch4j.config.VersionInfo toL4j() {
         net.sf.launch4j.config.VersionInfo ret = new net.sf.launch4j.config.VersionInfo();
 
@@ -123,10 +118,10 @@ public class VersionInfo {
 
     private void setLanguage(net.sf.launch4j.config.VersionInfo ret) {
         LanguageID languageID = LANGUAGE_TO_LANGUAGE_ID.get(language);
-        if (languageID != null) {
-            ret.setLanguage(languageID);
-            ret.setLanguageIndex(languageID.getIndex());
+        if (languageID == null) {
+            languageID = LanguageID.ENGLISH_US;
         }
+        ret.setLanguage(languageID);
     }
 
     @Override
@@ -144,7 +139,6 @@ public class VersionInfo {
                 ", originalFilename='" + originalFilename + '\'' +
                 ", language='" + language + '\'' +
                 ", trademarks='" + trademarks + '\'' +
-                ", languageIndex=" + languageIndex +
                 '}';
     }
 }
