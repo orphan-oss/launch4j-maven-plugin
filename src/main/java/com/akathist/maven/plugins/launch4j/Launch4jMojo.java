@@ -286,6 +286,18 @@ public class Launch4jMojo extends AbstractMojo {
     @Parameter
     private File manifest;
 
+    /**
+     * If set to true it will save final config into a XML file
+     */
+    @Parameter(defaultValue = "false")
+    private boolean saveConfig = false;
+
+    /**
+     * If {@link #saveConfig} is set to true, config will be written to this file
+     */
+    @Parameter(defaultValue = "${project.build.directory}/launch4j-config.xml")
+    private File configOutfile;
+
     private File getJar() {
         return new File(jar);
     }
@@ -403,6 +415,14 @@ public class Launch4jMojo extends AbstractMojo {
         } catch (BuilderException e) {
             getLog().error(e);
             throw new MojoExecutionException("Failed to build the executable; please verify your configuration.", e);
+        }
+
+        if (saveConfig) {
+            try {
+                ConfigPersister.getInstance().save(configOutfile);
+            } catch (ConfigPersisterException e) {
+                throw new MojoExecutionException("Cannot save config into a XML file", e);
+            }
         }
     }
 
