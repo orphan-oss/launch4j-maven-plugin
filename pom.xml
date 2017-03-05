@@ -21,14 +21,14 @@
     <groupId>com.akathist.maven.plugins.launch4j</groupId>
     <artifactId>launch4j-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.7.11-SNAPSHOT</version>
+    <version>1.7.16-SNAPSHOT</version>
 
     <name>Maven Launch4j Plugin</name>
     <description>This plugin creates Windows executables from Java jar files using the Launch4j utility.</description>
     <url>http://9stmaryrd.com/tools/launch4j-maven-plugin/</url>
 
     <properties>
-        <launch4j.version>3.8.0</launch4j.version>
+        <launch4j.version>3.9</launch4j.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
@@ -103,12 +103,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>3.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.2</version>
+                    <version>3.6.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -122,7 +122,7 @@
                         <id>dist-src</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>attached</goal>
+                            <goal>single</goal>
                         </goals>
                         <configuration>
                             <descriptors>
@@ -217,12 +217,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.1</version>
+                <version>2.10.4</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.18.1</version>
+                <version>2.19.1</version>
             </plugin>
         </plugins>
     </reporting>

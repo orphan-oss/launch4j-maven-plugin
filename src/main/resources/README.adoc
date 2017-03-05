@@ -157,7 +157,7 @@ launch4j and assembly to the package phase with a POM like this:
             <execution>
               <id>assembly</id>
               <phase>package</phase>
-              <goals><goal>attached</goal></goals>
+              <goals><goal>single</goal></goals>
               <configuration>
                 <descriptors>
                   <descriptor>assembly.xml</descriptor>
@@ -173,7 +173,7 @@ launch4j and assembly to the package phase with a POM like this:
 ----
 
 Note that when you bind the assembly plugin to a phase, you must use 
-`assembly:attached`, not `assembly:assembly`, to prevent its forking a parallel
+`assembly:single`, not `assembly:assembly`, to prevent its forking a parallel
 lifecycle and running everything twice.
 
 === GUI and console mode
@@ -261,7 +261,7 @@ to create separate executables for each. Then your POM would look like this:
             <execution>
               <id>assembly</id>
               <phase>package</phase>
-              <goals><goal>attached</goal></goals>
+              <goals><goal>single</goal></goals>
               <configuration>
                 <descriptors>
                   <descriptor>assembly.xml</descriptor>
@@ -274,6 +274,31 @@ to create separate executables for each. Then your POM would look like this:
     </build>
     . . .
   </project>
+----
+
+=== Example `assembly.xml`
+
+Here is a simple assmbly defintion to build a zip file with executable artificat included.
+
+----
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+    <id>cdc-upgrade</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>${project.build.directory}/package</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>*.exe</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>
 ----
 
 If you have any questions, please register a ticket!

@@ -286,15 +286,24 @@ public class Launch4jMojo extends AbstractMojo {
     @Parameter
     private File manifest;
 
+    /**
+     * If set to true it will save final config into a XML file
+     */
+    @Parameter(defaultValue = "false")
+    private boolean saveConfig = false;
+
+    /**
+     * If {@link #saveConfig} is set to true, config will be written to this file
+     */
+    @Parameter(defaultValue = "${project.build.directory}/launch4j-config.xml")
+    private File configOutfile;
+
     private File getJar() {
         return new File(jar);
     }
 
     @Override
     public void execute() throws MojoExecutionException {
-        if (getLog().isDebugEnabled()) {
-            printState();
-        }
 
         final File workDir = setupBuildEnvironment();
         if (infile != null) {
@@ -303,7 +312,50 @@ public class Launch4jMojo extends AbstractMojo {
                     if (getLog().isDebugEnabled()) {
                         getLog().debug("Trying to load Launch4j native configuration using file=" + infile.getAbsolutePath());
                     }
+                    // load launch4j configfile from <infile>
                     ConfigPersister.getInstance().load(infile);
+
+                    // overwrite several properties analogous to the ANT task
+                    // https://sourceforge.net/p/launch4j/git/ci/master/tree/src/net/sf/launch4j/ant/Launch4jTask.java#l84
+
+                    // retreive the loaded configuration for manipulation
+                    Config c = ConfigPersister.getInstance().getConfig();
+
+                    String jarDefaultValue = project.getBuild().getDirectory() + "/" + project.getBuild().getFinalName() + ".jar";
+    				if (jar != null && !jar.equals(jarDefaultValue)) {
+						getLog().debug("Overwriting config file property 'jar' (='"+c.getJar().getAbsolutePath()+"') with local value '"+getJar().getAbsolutePath()+"'");
+    					// only overwrite when != defaultValue (should be != null anytime because of the default value)
+    					c.setJar(getJar());
+    				}
+
+                    File outFileDefaultValue = new File(project.getBuild().getDirectory() + "/" + project.getArtifactId() + ".exe");
+    				if (outfile != null && !outfile.getAbsolutePath().equals(outFileDefaultValue.getAbsolutePath())) {
+    					// only overwrite when != defaultValue (should be != null anytime because of the default value)
+						getLog().debug("Overwriting config file property 'outfile' (='"+c.getOutfile().getAbsolutePath()+"') with local value '"+outfile.getAbsolutePath()+"'");
+    					c.setOutfile(outfile);
+    				}
+
+    				if (versionInfo != null) {
+    					if (versionInfo.fileVersion != null) {
+							getLog().debug("Overwriting config file property 'versionInfo.fileVersion' (='"+c.getVersionInfo().getFileVersion()+"') with local value '"+versionInfo.fileVersion+"'");
+    						c.getVersionInfo().setFileVersion(versionInfo.fileVersion);
+    					}
+    					if (versionInfo.txtFileVersion != null) {
+							getLog().debug("Overwriting config file property 'versionInfo.txtFileVersion' (='"+c.getVersionInfo().getTxtFileVersion()+"') with local value '"+versionInfo.txtFileVersion+"'");
+    						c.getVersionInfo().setTxtFileVersion(versionInfo.txtFileVersion);
+    					}
+    					if (versionInfo.productVersion != null) {
+							getLog().debug("Overwriting config file property 'versionInfo.productVersion' (='"+c.getVersionInfo().getProductVersion()+"') with local value '"+versionInfo.productVersion+"'");
+    						c.getVersionInfo().setProductVersion(versionInfo.productVersion);
+    					}
+    					if (versionInfo.txtProductVersion != null) {
+							getLog().debug("Overwriting config file property 'versionInfo.txtProductVersion' (='"+c.getVersionInfo().getTxtProductVersion()+"') with local value '"+versionInfo.txtProductVersion+"'");
+    						c.getVersionInfo().setTxtProductVersion(versionInfo.txtProductVersion);
+    					}
+    		        }
+
+    				ConfigPersister.getInstance().setAntConfig(c, infile.getParentFile());
+
                 } catch (ConfigPersisterException e) {
                     getLog().error(e);
                     throw new MojoExecutionException("Could not load Launch4j native configuration file", e);
@@ -353,12 +405,24 @@ public class Launch4jMojo extends AbstractMojo {
             ConfigPersister.getInstance().setAntConfig(c, getBaseDir());
         }
 
+        if (getLog().isDebugEnabled()) {
+            printState();
+        }
+
         final Builder builder = new Builder(new MavenLog(getLog()), workDir);
         try {
             builder.build();
         } catch (BuilderException e) {
             getLog().error(e);
             throw new MojoExecutionException("Failed to build the executable; please verify your configuration.", e);
+        }
+
+        if (saveConfig) {
+            try {
+                ConfigPersister.getInstance().save(configOutfile);
+            } catch (ConfigPersisterException e) {
+                throw new MojoExecutionException("Cannot save config into a XML file", e);
+            }
         }
     }
 
@@ -563,44 +627,47 @@ public class Launch4jMojo extends AbstractMojo {
      */
     private void printState() {
         Log log = getLog();
+        Config c = ConfigPersister.getInstance().getConfig();
 
-        log.debug("headerType = " + headerType);
-        log.debug("outfile = " + outfile);
-        log.debug("jar = " + jar);
-        log.debug("dontWrapJar = " + dontWrapJar);
-        log.debug("errTitle = " + errTitle);
-        log.debug("downloadUrl = " + downloadUrl);
-        log.debug("supportUrl = " + supportUrl);
-        log.debug("cmdLine = " + cmdLine);
-        log.debug("chdir = " + chdir);
-        log.debug("priority = " + priority);
-        log.debug("stayAlive = " + stayAlive);
-        log.debug("restartOnCrash = " + restartOnCrash);
-        log.debug("icon = " + icon);
-        log.debug("objs = " + objs);
-        log.debug("libs = " + libs);
-        log.debug("vars = " + vars);
-        if (singleInstance != null) {
-            log.debug("singleInstance.mutexName = " + singleInstance.mutexName);
-            log.debug("singleInstance.windowTitle = " + singleInstance.windowTitle);
+        log.debug("headerType = " + c.getHeaderType());
+        log.debug("outfile = " + c.getOutfile());
+        log.debug("jar = " + c.getJar());
+        log.debug("dontWrapJar = " + c.isDontWrapJar());
+        log.debug("errTitle = " + c.getErrTitle());
+        log.debug("downloadUrl = " + c.getDownloadUrl());
+        log.debug("supportUrl = " + c.getSupportUrl());
+        log.debug("cmdLine = " + c.getCmdLine());
+        log.debug("chdir = " + c.getChdir());
+        log.debug("priority = " + c.getPriority());
+        log.debug("stayAlive = " + c.isStayAlive());
+        log.debug("restartOnCrash = " + c.isRestartOnCrash());
+        log.debug("icon = " + c.getIcon());
+        log.debug("objs = " + c.getHeaderObjects());
+        log.debug("libs = " + c.getLibs());
+        log.debug("vars = " + c.getVariables());
+        if (c.getSingleInstance() != null) {
+            log.debug("singleInstance.mutexName = " + c.getSingleInstance().getMutexName());
+            log.debug("singleInstance.windowTitle = " + c.getSingleInstance().getWindowTitle());
         } else {
             log.debug("singleInstance = null");
         }
-        if (jre != null) {
-            log.debug("jre.path = " + jre.path);
-            log.debug("jre.minVersion = " + jre.minVersion);
-            log.debug("jre.maxVersion = " + jre.maxVersion);
-            log.debug("jre.jdkPreference = " + jre.jdkPreference);
-            log.debug("jre.initialHeapSize = " + jre.initialHeapSize);
-            log.debug("jre.initialHeapPercent = " + jre.initialHeapPercent);
-            log.debug("jre.maxHeapSize = " + jre.maxHeapSize);
-            log.debug("jre.maxHeapPercent = " + jre.maxHeapPercent);
-            log.debug("jre.opts = " + jre.opts);
+        if (c.getJre() != null) {
+            log.debug("jre.path = " + c.getJre().getPath());
+            log.debug("jre.minVersion = " + c.getJre().getMinVersion());
+            log.debug("jre.maxVersion = " + c.getJre().getMaxVersion());
+            log.debug("jre.jdkPreference = " + c.getJre().getJdkPreference());
+            log.debug("jre.initialHeapSize = " + c.getJre().getInitialHeapSize());
+            log.debug("jre.initialHeapPercent = " + c.getJre().getInitialHeapPercent());
+            log.debug("jre.maxHeapSize = " + c.getJre().getMaxHeapSize());
+            log.debug("jre.maxHeapPercent = " + c.getJre().getMaxHeapPercent());
+            log.debug("jre.opts = " + c.getJre().getOptions());
         } else {
             log.debug("jre = null");
         }
+        if (c.getClassPath() != null) {
+            log.debug("classPath.mainClass = " + c.getClassPath().getMainClass());
+        }
         if (classPath != null) {
-            log.debug("classPath.mainClass = " + classPath.mainClass);
             log.debug("classPath.addDependencies = " + classPath.addDependencies);
             log.debug("classPath.jarLocation = " + classPath.jarLocation);
             log.debug("classPath.preCp = " + classPath.preCp);
@@ -608,34 +675,37 @@ public class Launch4jMojo extends AbstractMojo {
         } else {
             log.info("classpath = null");
         }
-        if (splash != null) {
-            log.debug("splash.file = " + splash.file);
-            log.debug("splash.waitForWindow = " + splash.waitForWindow);
-            log.debug("splash.timeout = " + splash.timeout);
-            log.debug("splash.timoutErr = " + splash.timeoutErr);
+        if (c.getSplash() != null) {
+            log.debug("splash.file = " + c.getSplash().getFile());
+            log.debug("splash.waitForWindow = " + c.getSplash().getWaitForWindow());
+            log.debug("splash.timeout = " + c.getSplash().getTimeout());
+            log.debug("splash.timoutErr = " + c.getSplash().isTimeoutErr());
         } else {
             log.debug("splash = null");
         }
-        if (versionInfo != null) {
-            log.debug("versionInfo.fileVersion = " + versionInfo.fileVersion);
-            log.debug("versionInfo.txtFileVersion = " + versionInfo.txtFileVersion);
-            log.debug("versionInfo.fileDescription = " + versionInfo.fileDescription);
-            log.debug("versionInfo.copyright = " + versionInfo.copyright);
-            log.debug("versionInfo.productVersion = " + versionInfo.productVersion);
-            log.debug("versionInfo.txtProductVersion = " + versionInfo.txtProductVersion);
-            log.debug("versionInfo.productName = " + versionInfo.productName);
-            log.debug("versionInfo.companyName = " + versionInfo.companyName);
-            log.debug("versionInfo.internalName = " + versionInfo.internalName);
-            log.debug("versionInfo.originalFilename = " + versionInfo.originalFilename);
+        if (c.getVersionInfo() != null) {
+            log.debug("versionInfo.fileVersion = " + c.getVersionInfo().getFileVersion());
+            log.debug("versionInfo.txtFileVersion = " + c.getVersionInfo().getTxtFileVersion());
+            log.debug("versionInfo.fileDescription = " + c.getVersionInfo().getFileDescription());
+            log.debug("versionInfo.copyright = " + c.getVersionInfo().getCopyright());
+            log.debug("versionInfo.productVersion = " + c.getVersionInfo().getProductVersion());
+            log.debug("versionInfo.txtProductVersion = " + c.getVersionInfo().getTxtProductVersion());
+            log.debug("versionInfo.productName = " + c.getVersionInfo().getProductName());
+            log.debug("versionInfo.companyName = " + c.getVersionInfo().getCompanyName());
+            log.debug("versionInfo.internalName = " + c.getVersionInfo().getInternalName());
+            log.debug("versionInfo.originalFilename = " + c.getVersionInfo().getOriginalFilename());
+            log.debug("versionInfo.language = " + c.getVersionInfo().getLanguage());
+            log.debug("versionInfo.languageIndex = " + c.getVersionInfo().getLanguageIndex());
+            log.debug("versionInfo.trademarks = " + c.getVersionInfo().getTrademarks());
         } else {
             log.debug("versionInfo = null");
         }
-        if (messages != null) {
-            log.debug("messages.startupErr = " + messages.startupErr);
-            log.debug("messages.bundledJreErr = " + messages.bundledJreErr);
-            log.debug("messages.jreVersionErr = " + messages.jreVersionErr);
-            log.debug("messages.launcherErr = " + messages.launcherErr);
-            log.debug("messages.instanceAlreadyExistsMsg = " + messages.instanceAlreadyExistsMsg);
+        if (c.getMessages() != null) {
+            log.debug("messages.startupErr = " + c.getMessages().getStartupErr());
+            log.debug("messages.bundledJreErr = " + c.getMessages().getBundledJreErr());
+            log.debug("messages.jreVersionErr = " + c.getMessages().getJreVersionErr());
+            log.debug("messages.launcherErr = " + c.getMessages().getLauncherErr());
+            log.debug("messages.instanceAlreadyExistsMsg = " + c.getMessages().getInstanceAlreadyExistsMsg());
         } else {
             log.debug("messages = null");
         }

@@ -18,10 +18,24 @@
  */
 package com.akathist.maven.plugins.launch4j;
 
+import net.sf.launch4j.config.LanguageID;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Information that appears in the Windows Explorer.
  */
 public class VersionInfo {
+
+    private static Map<String, LanguageID> LANGUAGE_TO_LANGUAGE_ID;
+
+    static {
+        LANGUAGE_TO_LANGUAGE_ID = new HashMap<>();
+        for (LanguageID languageID : LanguageID.values()) {
+            LANGUAGE_TO_LANGUAGE_ID.put(languageID.name(), languageID);
+        }
+    }
 
     /**
      * Version number in x.x.x.x format.
@@ -73,6 +87,16 @@ public class VersionInfo {
      */
     String originalFilename;
 
+    /**
+     * Language to be used during installation, default ENGLISH_US
+     */
+    String language = LanguageID.ENGLISH_US.name();
+
+    /**
+     * Trademarks of author
+     */
+    String trademarks;
+
     net.sf.launch4j.config.VersionInfo toL4j() {
         net.sf.launch4j.config.VersionInfo ret = new net.sf.launch4j.config.VersionInfo();
 
@@ -86,8 +110,18 @@ public class VersionInfo {
         ret.setCompanyName(companyName);
         ret.setInternalName(internalName);
         ret.setOriginalFilename(originalFilename);
+        setLanguage(ret);
+        ret.setTrademarks(trademarks);
 
         return ret;
+    }
+
+    private void setLanguage(net.sf.launch4j.config.VersionInfo ret) {
+        LanguageID languageID = LANGUAGE_TO_LANGUAGE_ID.get(language);
+        if (languageID == null) {
+            languageID = LanguageID.ENGLISH_US;
+        }
+        ret.setLanguage(languageID);
     }
 
     @Override
@@ -103,6 +137,8 @@ public class VersionInfo {
                 ", companyName='" + companyName + '\'' +
                 ", internalName='" + internalName + '\'' +
                 ", originalFilename='" + originalFilename + '\'' +
+                ", language='" + language + '\'' +
+                ", trademarks='" + trademarks + '\'' +
                 '}';
     }
 }
