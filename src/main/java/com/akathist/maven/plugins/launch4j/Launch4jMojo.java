@@ -18,6 +18,23 @@
  */
 package com.akathist.maven.plugins.launch4j;
 
+import net.sf.launch4j.Builder;
+import net.sf.launch4j.BuilderException;
+import net.sf.launch4j.config.Config;
+import net.sf.launch4j.config.ConfigPersister;
+import net.sf.launch4j.config.ConfigPersisterException;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.*;
+import org.apache.maven.project.MavenProject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,37 +42,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import net.sf.launch4j.Builder;
-import net.sf.launch4j.BuilderException;
-import net.sf.launch4j.config.Config;
-import net.sf.launch4j.config.ConfigPersister;
-
-import net.sf.launch4j.config.ConfigPersisterException;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
 
 /**
  * Wraps a jar in a Windows executable.
@@ -462,6 +451,8 @@ public class Launch4jMojo extends AbstractMojo {
         File platJar = a.getFile();
         File dest = platJar.getParentFile();
         File marker = new File(dest, platJar.getName() + ".unpacked");
+        String n = platJar.getName();
+        File workdir = new File(dest, n.substring(0, n.length() - 4));
 
         // If the artifact is a SNAPSHOT, then a.getVersion() will report the long timestamp,
         // but getFile() will be 1.1-SNAPSHOT.
@@ -469,7 +460,7 @@ public class Launch4jMojo extends AbstractMojo {
         // Therefore we need to expand the jar every time, if the marker file is stale.
         if (marker.exists() && marker.lastModified() > platJar.lastModified()) {
             // if (marker.exists() && marker.platJar.getName().indexOf("SNAPSHOT") == -1) {
-            getLog().info("Platform-specific work directory already exists: " + dest.getAbsolutePath());
+            getLog().info("Platform-specific work directory already exists: " + workdir.getAbsolutePath());
         } else {
             JarFile jf = null;
             try {
@@ -526,8 +517,6 @@ public class Launch4jMojo extends AbstractMojo {
             }
         }
 
-        String n = platJar.getName();
-        File workdir = new File(dest, n.substring(0, n.length() - 4));
         setPermissions(workdir);
         return workdir;
     }
@@ -608,7 +597,7 @@ public class Launch4jMojo extends AbstractMojo {
         } else if ("Solaris".equals(os) || "SunOS".equals(os)) {
             plat = "solaris";
         } else if ("Mac OS X".equals(os) || "Darwin".equals(os)) {
-            plat = "mac";
+            plat = (isBelow10_8(System.getProperty("os.version"))) ? "mac" : "osx";
         } else {
             throw new MojoExecutionException("Sorry, Launch4j doesn't support the '" + os + "' OS.");
         }
@@ -617,6 +606,16 @@ public class Launch4jMojo extends AbstractMojo {
                 getLaunch4jVersion(), "jar", "workdir-" + plat);
     }
 
+    private static boolean isBelow10_8(String version) {
+        String[] parts = version.split("\\.");
+        try {
+            int major = Integer.parseInt(parts[0]);
+            int minor = Integer.parseInt(parts[1]);
+            return (major < 10) || (major == 10) && (minor < 8);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 
     private File getBaseDir() {
         return basedir;
