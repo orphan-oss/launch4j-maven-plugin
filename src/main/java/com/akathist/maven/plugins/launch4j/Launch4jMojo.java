@@ -597,7 +597,7 @@ public class Launch4jMojo extends AbstractMojo {
         } else if ("Solaris".equals(os) || "SunOS".equals(os)) {
             plat = "solaris";
         } else if ("Mac OS X".equals(os) || "Darwin".equals(os)) {
-            plat = (isBelow10_8(System.getProperty("os.version"))) ? "mac" : "osx";
+            plat = isBelowMacOSX_10_8() ? "mac" : "osx";
         } else {
             throw new MojoExecutionException("Sorry, Launch4j doesn't support the '" + os + "' OS.");
         }
@@ -606,8 +606,8 @@ public class Launch4jMojo extends AbstractMojo {
                 getLaunch4jVersion(), "jar", "workdir-" + plat);
     }
 
-    private static boolean isBelow10_8(String version) {
-        String[] parts = version.split("\\.");
+    private static boolean isBelowMacOSX_10_8() {
+        String[] parts = System.getProperty("os.version").split("\\.");
         try {
             int major = Integer.parseInt(parts[0]);
             int minor = Integer.parseInt(parts[1]);
