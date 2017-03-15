@@ -606,7 +606,7 @@ public class Launch4jMojo extends AbstractMojo {
                 getLaunch4jVersion(), "jar", "workdir-" + plat);
     }
 
-    private static boolean isBelowMacOSX_10_8() {
+    private boolean isBelowMacOSX_10_8() {
         String[] parts = System.getProperty("os.version").split("\\.");
         try {
             int major = Integer.parseInt(parts[0]);
