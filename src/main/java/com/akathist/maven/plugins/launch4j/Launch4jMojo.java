@@ -357,7 +357,11 @@ public class Launch4jMojo extends AbstractMojo {
 
             c.setHeaderType(headerType);
             c.setOutfile(outfile);
-            c.setJar(getJar());
+
+            if(!dontWrapJar){
+            	c.setJar(getJar());
+            }
+
             c.setDontWrapJar(dontWrapJar);
             c.setErrTitle(errTitle);
             c.setDownloadUrl(downloadUrl);
