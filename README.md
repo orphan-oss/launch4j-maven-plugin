@@ -15,6 +15,9 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 1.7.17
+- adds support for unwrapped jar, see [#55](../../pull/55)
+
 ## Version notes 1.7.16
 - detects different OSX versions to properly use proper binary bundle, see [#54](../../pull/54)
 
