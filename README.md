@@ -15,6 +15,9 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 1.7.18
+- reverts changes introduced in **1.7.17**, see [#55](../../pull/55)
+
 ## Version notes 1.7.17
 - adds support for unwrapped jar, see [#55](../../pull/55)
 
