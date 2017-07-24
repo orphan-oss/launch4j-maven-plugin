@@ -28,7 +28,7 @@
     <url>http://9stmaryrd.com/tools/launch4j-maven-plugin/</url>
 
     <properties>
-        <launch4j.version>3.9</launch4j.version>
+        <launch4j.version>3.11</launch4j.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
