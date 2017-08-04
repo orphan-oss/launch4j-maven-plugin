@@ -15,6 +15,9 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 1.7.19
+- upgrades to the version 3.11 of Launch4j
+
 ## Version notes 1.7.18
 - reverts changes introduced in **1.7.17**, see [#55](../../pull/55)
 
