@@ -586,14 +586,21 @@ public class Launch4jMojo extends AbstractMojo {
     private Artifact chooseBinaryBits() throws MojoExecutionException {
         String plat;
         String os = System.getProperty("os.name");
+        String arch = System.getProperty("os.arch");
         getLog().debug("OS = " + os);
+        getLog().debug("Architecture = " + arch);
 
         // See here for possible values of os.name:
         // http://lopica.sourceforge.net/os.html
         if (os.startsWith("Windows")) {
             plat = "win32";
         } else if ("Linux".equals(os)) {
-            plat = "linux";
+            if ("amd64".equals(arch)) {
+                plat = "linux64";
+            }
+            else {
+                plat = "linux";
+            }
         } else if ("Solaris".equals(os) || "SunOS".equals(os)) {
             plat = "solaris";
         } else if ("Mac OS X".equals(os) || "Darwin".equals(os)) {
