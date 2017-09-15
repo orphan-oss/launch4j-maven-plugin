@@ -15,6 +15,9 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 1.7.21
+- fixes issue with detecting OSX, see [#58](../../issues/58) 
+
 ## Version notes 1.7.20
 - uses the `linux64` platform when run on 64-bit Linux, see [#59](../../pull/59) 
 
