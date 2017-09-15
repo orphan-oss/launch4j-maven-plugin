@@ -15,6 +15,9 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 1.7.20
+- uses the `linux64` platform when run on 64-bit Linux, see [#59](../../pull/59) 
+
 ## Version notes 1.7.19
 - upgrades to the version 3.11 of Launch4j
 
