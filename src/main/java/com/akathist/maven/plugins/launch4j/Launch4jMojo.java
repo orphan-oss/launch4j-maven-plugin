@@ -604,24 +604,13 @@ public class Launch4jMojo extends AbstractMojo {
         } else if ("Solaris".equals(os) || "SunOS".equals(os)) {
             plat = "solaris";
         } else if ("Mac OS X".equals(os) || "Darwin".equals(os)) {
-            plat = isBelowMacOSX_10_8() ? "mac" : "osx";
+            plat = "mac";
         } else {
             throw new MojoExecutionException("Sorry, Launch4j doesn't support the '" + os + "' OS.");
         }
 
         return factory.createArtifactWithClassifier(LAUNCH4J_GROUP_ID, LAUNCH4J_ARTIFACT_ID,
                 getLaunch4jVersion(), "jar", "workdir-" + plat);
-    }
-
-    private boolean isBelowMacOSX_10_8() {
-        String[] parts = System.getProperty("os.version").split("\\.");
-        try {
-            int major = Integer.parseInt(parts[0]);
-            int minor = Integer.parseInt(parts[1]);
-            return (major < 10) || (major == 10) && (minor < 8);
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 
     private File getBaseDir() {
