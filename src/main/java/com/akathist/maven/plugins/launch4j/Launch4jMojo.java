@@ -295,13 +295,28 @@ public class Launch4jMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.directory}/launch4j-config.xml")
     private File configOutfile;
 
+    /**
+     * If set to true, a synchronized block will be used to protect resources
+     */
+    @Parameter(defaultValue = "false")
+    private boolean parallelExecution = false;
+
     private File getJar() {
         return new File(jar);
     }
 
     @Override
     public void execute() throws MojoExecutionException {
+        if (parallelExecution) {
+            synchronized (Launch4jMojo.class) {
+                doExecute();
+            }
+        } else {
+            doExecute();
+        }
+    }
 
+    private void doExecute() throws MojoExecutionException {
         final File workDir = setupBuildEnvironment();
         if (infile != null) {
             if (infile.exists()) {
