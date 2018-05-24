@@ -598,6 +598,9 @@ public class Launch4jMojo extends AbstractMojo {
             if ("amd64".equals(arch)) {
                 plat = "linux64";
             }
+            else if ("arm".equals(arch)) {
+                plat = "linuxarmv6hf";
+            }
             else {
                 plat = "linux";
             }
