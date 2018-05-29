@@ -15,6 +15,9 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 1.7.22
+- upgrades to Launch4j version 3.12, see [#58](../../issues/75) 
+
 ## Version notes 1.7.21
 - fixes issue with detecting OSX, see [#58](../../issues/58) 
 
