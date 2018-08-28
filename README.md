@@ -15,6 +15,9 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 1.7.23
+- adds a `parallelExecution` flag that will allow to run only one instance of the plugin in the given time, see [#72](../../issues/72) 
+
 ## Version notes 1.7.22
 - upgrades to Launch4j version 3.12, see [#75](../../issues/75) 
 
