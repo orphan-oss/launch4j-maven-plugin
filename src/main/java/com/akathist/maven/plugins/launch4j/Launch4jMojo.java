@@ -32,7 +32,11 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.annotations.*;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
@@ -42,7 +46,11 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -287,13 +295,28 @@ public class Launch4jMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.directory}/launch4j-config.xml")
     private File configOutfile;
 
+    /**
+     * If set to true, a synchronized block will be used to protect resources
+     */
+    @Parameter(defaultValue = "false")
+    private boolean parallelExecution = false;
+
     private File getJar() {
         return new File(jar);
     }
 
     @Override
     public void execute() throws MojoExecutionException {
+        if (parallelExecution) {
+            synchronized (Launch4jMojo.class) {
+                doExecute();
+            }
+        } else {
+            doExecute();
+        }
+    }
 
+    private void doExecute() throws MojoExecutionException {
         final File workDir = setupBuildEnvironment();
         if (infile != null) {
             if (infile.exists()) {
@@ -311,39 +334,39 @@ public class Launch4jMojo extends AbstractMojo {
                     Config c = ConfigPersister.getInstance().getConfig();
 
                     String jarDefaultValue = project.getBuild().getDirectory() + "/" + project.getBuild().getFinalName() + ".jar";
-    				if (jar != null && !jar.equals(jarDefaultValue)) {
-						getLog().debug("Overwriting config file property 'jar' (='"+c.getJar().getAbsolutePath()+"') with local value '"+getJar().getAbsolutePath()+"'");
-    					// only overwrite when != defaultValue (should be != null anytime because of the default value)
-    					c.setJar(getJar());
-    				}
+                    if (jar != null && !jar.equals(jarDefaultValue)) {
+                        getLog().debug("Overwriting config file property 'jar' (='" + c.getJar().getAbsolutePath() + "') with local value '" + getJar().getAbsolutePath() + "'");
+                        // only overwrite when != defaultValue (should be != null anytime because of the default value)
+                        c.setJar(getJar());
+                    }
 
                     File outFileDefaultValue = new File(project.getBuild().getDirectory() + "/" + project.getArtifactId() + ".exe");
-    				if (outfile != null && !outfile.getAbsolutePath().equals(outFileDefaultValue.getAbsolutePath())) {
-    					// only overwrite when != defaultValue (should be != null anytime because of the default value)
-						getLog().debug("Overwriting config file property 'outfile' (='"+c.getOutfile().getAbsolutePath()+"') with local value '"+outfile.getAbsolutePath()+"'");
-    					c.setOutfile(outfile);
-    				}
+                    if (outfile != null && !outfile.getAbsolutePath().equals(outFileDefaultValue.getAbsolutePath())) {
+                        // only overwrite when != defaultValue (should be != null anytime because of the default value)
+                        getLog().debug("Overwriting config file property 'outfile' (='" + c.getOutfile().getAbsolutePath() + "') with local value '" + outfile.getAbsolutePath() + "'");
+                        c.setOutfile(outfile);
+                    }
 
-    				if (versionInfo != null) {
-    					if (versionInfo.fileVersion != null) {
-							getLog().debug("Overwriting config file property 'versionInfo.fileVersion' (='"+c.getVersionInfo().getFileVersion()+"') with local value '"+versionInfo.fileVersion+"'");
-    						c.getVersionInfo().setFileVersion(versionInfo.fileVersion);
-    					}
-    					if (versionInfo.txtFileVersion != null) {
-							getLog().debug("Overwriting config file property 'versionInfo.txtFileVersion' (='"+c.getVersionInfo().getTxtFileVersion()+"') with local value '"+versionInfo.txtFileVersion+"'");
-    						c.getVersionInfo().setTxtFileVersion(versionInfo.txtFileVersion);
-    					}
-    					if (versionInfo.productVersion != null) {
-							getLog().debug("Overwriting config file property 'versionInfo.productVersion' (='"+c.getVersionInfo().getProductVersion()+"') with local value '"+versionInfo.productVersion+"'");
-    						c.getVersionInfo().setProductVersion(versionInfo.productVersion);
-    					}
-    					if (versionInfo.txtProductVersion != null) {
-							getLog().debug("Overwriting config file property 'versionInfo.txtProductVersion' (='"+c.getVersionInfo().getTxtProductVersion()+"') with local value '"+versionInfo.txtProductVersion+"'");
-    						c.getVersionInfo().setTxtProductVersion(versionInfo.txtProductVersion);
-    					}
-    		        }
+                    if (versionInfo != null) {
+                        if (versionInfo.fileVersion != null) {
+                            getLog().debug("Overwriting config file property 'versionInfo.fileVersion' (='" + c.getVersionInfo().getFileVersion() + "') with local value '" + versionInfo.fileVersion + "'");
+                            c.getVersionInfo().setFileVersion(versionInfo.fileVersion);
+                        }
+                        if (versionInfo.txtFileVersion != null) {
+                            getLog().debug("Overwriting config file property 'versionInfo.txtFileVersion' (='" + c.getVersionInfo().getTxtFileVersion() + "') with local value '" + versionInfo.txtFileVersion + "'");
+                            c.getVersionInfo().setTxtFileVersion(versionInfo.txtFileVersion);
+                        }
+                        if (versionInfo.productVersion != null) {
+                            getLog().debug("Overwriting config file property 'versionInfo.productVersion' (='" + c.getVersionInfo().getProductVersion() + "') with local value '" + versionInfo.productVersion + "'");
+                            c.getVersionInfo().setProductVersion(versionInfo.productVersion);
+                        }
+                        if (versionInfo.txtProductVersion != null) {
+                            getLog().debug("Overwriting config file property 'versionInfo.txtProductVersion' (='" + c.getVersionInfo().getTxtProductVersion() + "') with local value '" + versionInfo.txtProductVersion + "'");
+                            c.getVersionInfo().setTxtProductVersion(versionInfo.txtProductVersion);
+                        }
+                    }
 
-    				ConfigPersister.getInstance().setAntConfig(c, infile.getParentFile());
+                    ConfigPersister.getInstance().setAntConfig(c, infile.getParentFile());
 
                 } catch (ConfigPersisterException e) {
                     getLog().error(e);
@@ -597,8 +620,7 @@ public class Launch4jMojo extends AbstractMojo {
         } else if ("Linux".equals(os)) {
             if ("amd64".equals(arch)) {
                 plat = "linux64";
-            }
-            else {
+            } else {
                 plat = "linux";
             }
         } else if ("Solaris".equals(os) || "SunOS".equals(os)) {
@@ -610,7 +632,7 @@ public class Launch4jMojo extends AbstractMojo {
         }
 
         return factory.createArtifactWithClassifier(LAUNCH4J_GROUP_ID, LAUNCH4J_ARTIFACT_ID,
-                getLaunch4jVersion(), "jar", "workdir-" + plat);
+            getLaunch4jVersion(), "jar", "workdir-" + plat);
     }
 
     private File getBaseDir() {
@@ -719,8 +741,8 @@ public class Launch4jMojo extends AbstractMojo {
 
         for (Artifact artifact : pluginArtifacts) {
             if (LAUNCH4J_GROUP_ID.equals(artifact.getGroupId()) &&
-                    LAUNCH4J_ARTIFACT_ID.equals(artifact.getArtifactId())
-                    && "core".equals(artifact.getClassifier())) {
+                LAUNCH4J_ARTIFACT_ID.equals(artifact.getArtifactId())
+                && "core".equals(artifact.getClassifier())) {
 
                 version = artifact.getVersion();
                 getLog().debug("Found launch4j version " + version);
