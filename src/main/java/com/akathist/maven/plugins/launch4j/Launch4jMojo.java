@@ -57,7 +57,12 @@ import java.util.jar.JarFile;
 /**
  * Wraps a jar in a Windows executable.
  */
-@Mojo(name = "launch4j", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.RUNTIME)
+@Mojo(
+    name = "launch4j",
+    defaultPhase = LifecyclePhase.PACKAGE,
+    requiresDependencyResolution = ResolutionScope.RUNTIME,
+    threadSafe = true
+)
 public class Launch4jMojo extends AbstractMojo {
 
     private static final String LAUNCH4J_ARTIFACT_ID = "launch4j";
