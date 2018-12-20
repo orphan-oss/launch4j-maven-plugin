@@ -18,11 +18,21 @@
  */
 package com.akathist.maven.plugins.launch4j;
 
-import net.sf.launch4j.Builder;
-import net.sf.launch4j.BuilderException;
-import net.sf.launch4j.config.Config;
-import net.sf.launch4j.config.ConfigPersister;
-import net.sf.launch4j.config.ConfigPersisterException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -39,20 +49,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import net.sf.launch4j.Builder;
+import net.sf.launch4j.BuilderException;
+import net.sf.launch4j.config.Config;
+import net.sf.launch4j.config.ConfigPersister;
+import net.sf.launch4j.config.ConfigPersisterException;
 
 /**
  * Wraps a jar in a Windows executable.
@@ -582,6 +583,7 @@ public class Launch4jMojo extends AbstractMojo {
 
             if (Files.exists(source)) {
                 try {
+                	Files.createDirectories(dest.getParent());
                     Path target = Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING);
                     result.add(workdir.toPath().relativize(target).toString());
                 } catch (IOException e) {
