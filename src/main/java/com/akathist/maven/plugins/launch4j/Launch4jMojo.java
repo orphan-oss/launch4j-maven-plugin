@@ -583,7 +583,7 @@ public class Launch4jMojo extends AbstractMojo {
 
             if (Files.exists(source)) {
                 try {
-                	Files.createDirectories(dest.getParent());
+                    Files.createDirectories(dest.getParent());
                     Path target = Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING);
                     result.add(workdir.toPath().relativize(target).toString());
                 } catch (IOException e) {
