@@ -15,6 +15,9 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 1.7.25
+- creates parent directories of an obj file, see [#99](../../pull/99) 
+
 ## Version notes 1.7.24
 - adds a `threadSafe` flag to the Mojo to properly mark that the plugin is thread safe, see [#72](../../issues/72) 
 
