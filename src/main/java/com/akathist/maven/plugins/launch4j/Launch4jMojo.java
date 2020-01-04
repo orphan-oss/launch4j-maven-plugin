@@ -34,11 +34,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -48,6 +45,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.repository.RepositorySystem;
+import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver;
+import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolverException;
 
 import net.sf.launch4j.Builder;
 import net.sf.launch4j.BuilderException;
@@ -71,6 +72,12 @@ public class Launch4jMojo extends AbstractMojo {
     private static final String LAUNCH4J_GROUP_ID = "net.sf.launch4j";
 
     /**
+     * Maven Session.
+     */
+    @Parameter (defaultValue = "${session}", required = true, readonly = true)
+    private MavenSession session;
+
+    /**
      * The dependencies required by the project.
      */
     @Parameter(defaultValue = "${project.artifacts}", required = true, readonly = true)
@@ -91,8 +98,8 @@ public class Launch4jMojo extends AbstractMojo {
     /**
      * Used to look up Artifacts in the remote repository.
      */
-    @Component(role = ArtifactFactory.class)
-    private ArtifactFactory factory;
+    @Component(role = RepositorySystem.class)
+    private RepositorySystem factory;
 
     /**
      * The user's local repository.
@@ -601,11 +608,16 @@ public class Launch4jMojo extends AbstractMojo {
      * Downloads the platform-specific parts, if necessary.
      */
     private void retrieveBinaryBits(Artifact a) throws MojoExecutionException {
+
+        ProjectBuildingRequest configuration = session.getProjectBuildingRequest();
+        configuration.setRemoteRepositories(project.getRemoteArtifactRepositories());
+        configuration.setLocalRepository(localRepository);
+
         try {
-            resolver.resolve(a, project.getRemoteArtifactRepositories(), localRepository);
-        } catch (ArtifactNotFoundException e) {
-            throw new MojoExecutionException("Can't find platform-specific components", e);
-        } catch (ArtifactResolutionException e) {
+            resolver.resolveArtifact(configuration, a).getArtifact();
+        } catch (IllegalArgumentException e) {
+            throw new MojoExecutionException("Illegal Argument Exception", e);
+        } catch (ArtifactResolverException e) {
             throw new MojoExecutionException("Can't retrieve platform-specific components", e);
         }
     }
