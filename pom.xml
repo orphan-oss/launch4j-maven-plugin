@@ -16,6 +16,7 @@
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
         <version>9</version>
+        <relativePath />
     </parent>
 
     <groupId>com.akathist.maven.plugins.launch4j</groupId>
