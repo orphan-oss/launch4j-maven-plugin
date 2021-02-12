@@ -278,7 +278,7 @@ to create separate executables for each. Then your POM would look like this:
 
 === Example `assembly.xml`
 
-Here is a simple assmbly defintion to build a zip file with executable artificat included.
+Here is a simple assmbly defintion to build a zip file with executable artifact included.
 
 ----
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
