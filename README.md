@@ -15,6 +15,10 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 2.0.0 - 2021-03-17
+- uses Launch4j version 3.14 (which requires Java 8), see [#126](../../pull/126)
+- switches to Java 8 as minimal supported version
+
 ## Version notes 1.7.25
 - creates parent directories of an obj file, see [#99](../../pull/99) 
 
