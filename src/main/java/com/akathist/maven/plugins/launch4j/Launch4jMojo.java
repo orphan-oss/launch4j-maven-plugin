@@ -483,8 +483,13 @@ public class Launch4jMojo extends AbstractMojo {
      * Unzips the given artifact in-place and returns the newly-unzipped top-level directory.
      * Writes a marker file to prevent unzipping more than once.
      */
-    private File unpackWorkDir(Artifact a) throws MojoExecutionException {
-        File platJar = a.getFile();
+    private File unpackWorkDir(Artifact artifact) throws MojoExecutionException {
+        Artifact localArtifact= localRepository.find(artifact);
+        if (localArtifact == null || localArtifact.getFile() == null) {
+            throw new MojoExecutionException("Cannot obtain file path to " + artifact);
+        }
+        getLog().debug("Unpacking " + localArtifact + " into " + localArtifact.getFile());
+        File platJar = localArtifact.getFile();
         File dest = platJar.getParentFile();
         File marker = new File(dest, platJar.getName() + ".unpacked");
         String n = platJar.getName();
@@ -612,6 +617,9 @@ public class Launch4jMojo extends AbstractMojo {
         ProjectBuildingRequest configuration = session.getProjectBuildingRequest();
         configuration.setRemoteRepositories(project.getRemoteArtifactRepositories());
         configuration.setLocalRepository(localRepository);
+        configuration.setProject(session.getCurrentProject());
+
+        getLog().debug("Retrieving artifact: " + a + " stored in " + a.getFile());
 
         try {
             resolver.resolveArtifact(configuration, a).getArtifact();
