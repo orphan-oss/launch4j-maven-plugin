@@ -15,7 +15,11 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
+## Version notes 2.0.1 - 2021-03-21
+- fixes problem with NPE, see [#128](../../issues/128)
+
 ## Version notes 2.0.0 - 2021-03-17
+**DO NOT USE THIS VERSION**
 - uses Launch4j version 3.14 (which requires Java 8), see [#126](../../pull/126)
 - switches to Java 8 as minimal supported version
 
