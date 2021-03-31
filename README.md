@@ -13,6 +13,8 @@ Originally hosted at http://9stmaryrd.com/tools/launch4j-maven-plugin/
 
 Please check [this](src/main/resources/README.adoc) document for more detailed info on how to use the plugin. Please also check [Launch4j's Configuration file](http://launch4j.sourceforge.net/docs.html#Configuration_file) page.
 
+**NOTE**: Since version 2.0.x this plugin requires to be used with Maven 3.6.x at least.
+
 # Version Notes
 
 ## Version notes 2.0.1 - 2021-03-21
