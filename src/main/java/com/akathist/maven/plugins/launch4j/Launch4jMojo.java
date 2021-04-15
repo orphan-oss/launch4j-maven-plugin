@@ -503,10 +503,8 @@ public class Launch4jMojo extends AbstractMojo {
             // if (marker.exists() && marker.platJar.getName().indexOf("SNAPSHOT") == -1) {
             getLog().info("Platform-specific work directory already exists: " + workdir.getAbsolutePath());
         } else {
-            JarFile jf = null;
-            try {
-                // trying to use plexus-archiver here is a miserable waste of time:
-                jf = new JarFile(platJar);
+            // trying to use plexus-archiver here is a miserable waste of time:
+            try(JarFile jf = new JarFile(platJar)){
                 Enumeration<JarEntry> en = jf.entries();
                 while (en.hasMoreElements()) {
                     JarEntry je = en.nextElement();
@@ -516,24 +514,12 @@ public class Launch4jMojo extends AbstractMojo {
                     if (je.isDirectory()) {
                         outFile.mkdirs();
                     } else {
-                        InputStream in = jf.getInputStream(je);
-                        byte[] buf = new byte[1024];
-                        int len;
-                        FileOutputStream fout = null;
-                        try {
-                            fout = new FileOutputStream(outFile);
-                            while ((len = in.read(buf)) >= 0) {
-                                fout.write(buf, 0, len);
-                            }
-                            in.close();
-                            fout.close();
-                            fout = null;
-                        } finally {
-                            if (fout != null) {
-                                try {
-                                    fout.close();
-                                } catch (IOException e2) {
-                                    // ignore
+                        try(InputStream in = jf.getInputStream(je)){
+                            try (FileOutputStream fout = new FileOutputStream(outFile)){
+                                byte[] buf = new byte[1024];
+                                int len;
+                                while ((len = in.read(buf)) >= 0) {
+                                    fout.write(buf, 0, len);
                                 }
                             }
                         }
@@ -542,12 +528,6 @@ public class Launch4jMojo extends AbstractMojo {
                 }
             } catch (IOException e) {
                 throw new MojoExecutionException("Error unarchiving " + platJar, e);
-            } finally {
-                try {
-                    if (jf != null) jf.close();
-                } catch (IOException e) {
-                    // ignore
-                }
             }
 
             try {
