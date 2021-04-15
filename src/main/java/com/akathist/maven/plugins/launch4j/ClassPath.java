@@ -78,7 +78,7 @@ public class ClassPath {
         net.sf.launch4j.config.ClassPath ret = new net.sf.launch4j.config.ClassPath();
         ret.setMainClass(mainClass);
 
-        List<String> cp = new ArrayList<String>();
+        List<String> cp = new ArrayList<>();
         if (preCp != null) addToCp(cp, preCp);
 
         if (addDependencies) {
