@@ -18,7 +18,10 @@ Please check [this](src/main/resources/README.adoc) document for more detailed i
 
 # Version Notes
 
-## Versioned notes 2.1.0 - 2021-05-04
+## Version notes 2.1.1 - 2021-05-04
+- creates parent folder if `outfile` was configured, see [#141](../../issues/141)
+
+## Version notes 2.1.0 - 2021-05-04
 - upgrades Maven API to version 3.8.1 (it should be compatible with Maven 3.6.x), see [#132](../../pull/132), 
   [#133](../../pull/133), [#134](../../pull/134), [#135](../../pull/135), [#136](../../pull/136)
 
