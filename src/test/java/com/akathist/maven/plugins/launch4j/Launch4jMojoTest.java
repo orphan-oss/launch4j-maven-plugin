@@ -17,11 +17,12 @@ public class Launch4jMojoTest extends AbstractMojoTestCase {
     }
 
     public void testWorkingDir() throws Exception {
-        File pom = getTestFile( "src/test/resources/test-plugin-pom.xml" );
-
+        File pom = getTestFile("src/test/resources/test-project/pom.xml");
         Launch4jMojo mojo = (Launch4jMojo) lookupMojo("launch4j", pom);
-
         assertNotNull(mojo);
+
+        File outfilePath = (File) getVariableValueFromObject(mojo, "outfile");
+        assertEquals("binary/test.exe", outfilePath.getPath());
     }
 
 }

@@ -15,9 +15,17 @@
         <plugins>
             <plugin>
                 <artifactId>launch4j-maven-plugin</artifactId>
+                <goals>
+                    <goal>launch4j</goal>
+                </goals>
                 <configuration>
                     <headerType>console</headerType>
-                    <outfile>target/test.exe</outfile>
+                    <outfile>binary/test.exe</outfile>
+                    <dontWrapJar>true</dontWrapJar>
+                    <jar>test-project/example.jar</jar>
+                    <jre>
+                        <minVersion>1.5.0</minVersion>
+                    </jre>
                 </configuration>
             </plugin>
         </plugins>

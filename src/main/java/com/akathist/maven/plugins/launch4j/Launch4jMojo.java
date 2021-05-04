@@ -474,9 +474,25 @@ public class Launch4jMojo extends AbstractMojo {
      * @return the work directory.
      */
     private File setupBuildEnvironment() throws MojoExecutionException {
+        createParentFolder();
         Artifact binaryBits = chooseBinaryBits();
         retrieveBinaryBits(binaryBits);
         return unpackWorkDir(binaryBits);
+    }
+
+    private void createParentFolder() {
+        if (outfile != null) {
+            File parent = outfile.getParentFile();
+            if (!parent.exists()) {
+                getLog().debug("Parent " + parent.getPath() + " does not exist, creating it!");
+                boolean created = parent.mkdirs();
+                if (created) {
+                    getLog().debug("Parent " + parent.getPath() + " has been created!");
+                } else {
+                    getLog().warn("Cannot create parent " + parent.getPath() + "!");
+                }
+            }
+        }
     }
 
     /**
