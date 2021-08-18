@@ -1,2 +1,6 @@
 language: java
 sudo: false
+
+cache:
+  directories:
+  - $HOME/.m2
