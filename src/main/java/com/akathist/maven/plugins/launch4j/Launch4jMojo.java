@@ -525,6 +525,9 @@ public class Launch4jMojo extends AbstractMojo {
                 while (en.hasMoreElements()) {
                     JarEntry je = en.nextElement();
                     File outFile = new File(dest, je.getName());
+                    if (!outFile.toPath().normalize().startsWith(dest.toPath().normalize())) {
+                        throw new RuntimeException("Bad zip entry");
+                    }
                     File parent = outFile.getParentFile();
                     if (parent != null) parent.mkdirs();
                     if (je.isDirectory()) {
