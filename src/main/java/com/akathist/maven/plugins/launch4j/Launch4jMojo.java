@@ -799,7 +799,7 @@ public class Launch4jMojo extends AbstractMojo {
      * @return true to skip execution
      */
     private boolean skipExecution() {
-        getLog().debug("skip = " + System.getProperty("skipLaunch4j"));
+        getLog().debug("skip = " + this.skip);
         getLog().debug("skipLaunch4j = " + System.getProperty("skipLaunch4j"));
         return skip || System.getProperty("skipLaunch4j") != null;
     }
