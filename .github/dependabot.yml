@@ -1,12 +1,14 @@
 version: 2
 updates:
-- package-ecosystem: maven
-  directory: "/"
-  schedule:
-    interval: daily
-    time: "04:00"
-  open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: org.apache.maven:maven-compat
-    versions:
-    - 3.8.1
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    ignore:
+    - dependency-name: org.apache.maven:maven-compat
+      versions:
+      - 3.8.1
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
