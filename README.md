@@ -20,6 +20,10 @@ The full list of all the parameters is available [here](src/main/resources/MOJO.
 
 # Version Notes
 
+## Version notes 2.1.3 - 2022-10-24
+- allows to skip execution of the plugin using either `<skip>true</skip>` configuration option or `-DskipLaunch4j` property, 
+  see [#190](../../pull/190)
+
 ## Version notes 2.1.1 - 2021-05-04
 - creates parent folder if `outfile` was configured, see [#141](../../issues/141)
 
