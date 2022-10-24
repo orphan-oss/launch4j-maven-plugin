@@ -18,21 +18,11 @@
  */
 package com.akathist.maven.plugins.launch4j;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
+import net.sf.launch4j.Builder;
+import net.sf.launch4j.BuilderException;
+import net.sf.launch4j.config.Config;
+import net.sf.launch4j.config.ConfigPersister;
+import net.sf.launch4j.config.ConfigPersisterException;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
@@ -50,20 +40,29 @@ import org.apache.maven.repository.RepositorySystem;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolverException;
 
-import net.sf.launch4j.Builder;
-import net.sf.launch4j.BuilderException;
-import net.sf.launch4j.config.Config;
-import net.sf.launch4j.config.ConfigPersister;
-import net.sf.launch4j.config.ConfigPersisterException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * Wraps a jar in a Windows executable.
  */
 @Mojo(
-    name = "launch4j",
-    defaultPhase = LifecyclePhase.PACKAGE,
-    requiresDependencyResolution = ResolutionScope.RUNTIME,
-    threadSafe = true
+        name = "launch4j",
+        defaultPhase = LifecyclePhase.PACKAGE,
+        requiresDependencyResolution = ResolutionScope.RUNTIME,
+        threadSafe = true
 )
 public class Launch4jMojo extends AbstractMojo {
 
@@ -74,7 +73,7 @@ public class Launch4jMojo extends AbstractMojo {
     /**
      * Maven Session.
      */
-    @Parameter (defaultValue = "${session}", required = true, readonly = true)
+    @Parameter(defaultValue = "${session}", required = true, readonly = true)
     private MavenSession session;
 
     /**
@@ -118,7 +117,7 @@ public class Launch4jMojo extends AbstractMojo {
      * Used to get the Launch4j artifact version.
      */
     @Parameter(defaultValue = "${plugin.artifacts}")
-    private java.util.List<Artifact> pluginArtifacts;
+    private List<Artifact> pluginArtifacts;
 
     /**
      * The base of the current project.
@@ -314,6 +313,12 @@ public class Launch4jMojo extends AbstractMojo {
     @Parameter(defaultValue = "false")
     private boolean parallelExecution = false;
 
+    /**
+     * If set to true, execution of the plugin will be skipped
+     */
+    @Parameter(defaultValue = "false")
+    private boolean skip = false;
+
     private File getJar() {
         return new File(jar);
     }
@@ -330,6 +335,11 @@ public class Launch4jMojo extends AbstractMojo {
     }
 
     private void doExecute() throws MojoExecutionException {
+        if (this.skipExecution()) {
+            getLog().debug("Skipping execution of the plugin");
+            return;
+        }
+
         final File workDir = setupBuildEnvironment();
         if (infile != null) {
             if (infile.exists()) {
@@ -337,13 +347,13 @@ public class Launch4jMojo extends AbstractMojo {
                     if (getLog().isDebugEnabled()) {
                         getLog().debug("Trying to load Launch4j native configuration using file=" + infile.getAbsolutePath());
                     }
-                    // load launch4j configfile from <infile>
+                    // load launch4j config file from <infile>
                     ConfigPersister.getInstance().load(infile);
 
                     // overwrite several properties analogous to the ANT task
                     // https://sourceforge.net/p/launch4j/git/ci/master/tree/src/net/sf/launch4j/ant/Launch4jTask.java#l84
 
-                    // retreive the loaded configuration for manipulation
+                    // retrieve the loaded configuration for manipulation
                     Config c = ConfigPersister.getInstance().getConfig();
 
                     String jarDefaultValue = project.getBuild().getDirectory() + "/" + project.getBuild().getFinalName() + ".jar";
@@ -500,7 +510,7 @@ public class Launch4jMojo extends AbstractMojo {
      * Writes a marker file to prevent unzipping more than once.
      */
     private File unpackWorkDir(Artifact artifact) throws MojoExecutionException {
-        Artifact localArtifact= localRepository.find(artifact);
+        Artifact localArtifact = localRepository.find(artifact);
         if (localArtifact == null || localArtifact.getFile() == null) {
             throw new MojoExecutionException("Cannot obtain file path to " + artifact);
         }
@@ -520,7 +530,7 @@ public class Launch4jMojo extends AbstractMojo {
             getLog().info("Platform-specific work directory already exists: " + workdir.getAbsolutePath());
         } else {
             // trying to use plexus-archiver here is a miserable waste of time:
-            try(JarFile jf = new JarFile(platJar)){
+            try (JarFile jf = new JarFile(platJar)) {
                 Enumeration<JarEntry> en = jf.entries();
                 while (en.hasMoreElements()) {
                     JarEntry je = en.nextElement();
@@ -533,8 +543,8 @@ public class Launch4jMojo extends AbstractMojo {
                     if (je.isDirectory()) {
                         outFile.mkdirs();
                     } else {
-                        try(InputStream in = jf.getInputStream(je)){
-                            try (FileOutputStream fout = new FileOutputStream(outFile)){
+                        try (InputStream in = jf.getInputStream(je)) {
+                            try (FileOutputStream fout = new FileOutputStream(outFile)) {
                                 byte[] buf = new byte[1024];
                                 int len;
                                 while ((len = in.read(buf)) >= 0) {
@@ -658,7 +668,7 @@ public class Launch4jMojo extends AbstractMojo {
         }
 
         return factory.createArtifactWithClassifier(LAUNCH4J_GROUP_ID, LAUNCH4J_ARTIFACT_ID,
-            getLaunch4jVersion(), "jar", "workdir-" + plat);
+                getLaunch4jVersion(), "jar", "workdir-" + plat);
     }
 
     private File getBaseDir() {
@@ -755,20 +765,20 @@ public class Launch4jMojo extends AbstractMojo {
     }
 
     /**
-     * The Launch4j version used by the plugin.
+     * A version of the Launch4j used by the plugin.
      * We want to download the platform-specific bundle whose version matches the Launch4j version,
      * so we have to figure out what version the plugin is using.
      *
-     * @return
-     * @throws MojoExecutionException
+     * @return version of Launch4j
+     * @throws MojoExecutionException when version is null
      */
     private String getLaunch4jVersion() throws MojoExecutionException {
         String version = null;
 
         for (Artifact artifact : pluginArtifacts) {
             if (LAUNCH4J_GROUP_ID.equals(artifact.getGroupId()) &&
-                LAUNCH4J_ARTIFACT_ID.equals(artifact.getArtifactId())
-                && "core".equals(artifact.getClassifier())) {
+                    LAUNCH4J_ARTIFACT_ID.equals(artifact.getArtifactId())
+                    && "core".equals(artifact.getClassifier())) {
 
                 version = artifact.getVersion();
                 getLog().debug("Found launch4j version " + version);
@@ -782,4 +792,16 @@ public class Launch4jMojo extends AbstractMojo {
 
         return version;
     }
+
+    /**
+     * Checks if execution of the plugin should be skipped
+     *
+     * @return true to skip execution
+     */
+    private boolean skipExecution() {
+        getLog().debug("skip = " + System.getProperty("skipLaunch4j"));
+        getLog().debug("skipLaunch4j = " + System.getProperty("skipLaunch4j"));
+        return skip || System.getProperty("skipLaunch4j") != null;
+    }
+
 }
