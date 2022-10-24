@@ -179,3 +179,9 @@ A: Yes but you will have to install these libs to avoid problems:
  - bzip2-libs.i686
 
 See [#4](../../issues/4) for more details.
+
+Q: How can I skip execution of the plugin?
+
+A: You can either use `<skip>true</skip>` configuration option or provide `-DskipLaunch4j` property to JVM
+
+See PR [#190](../../pull/190) for more details.
