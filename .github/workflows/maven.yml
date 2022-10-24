@@ -15,33 +15,32 @@
 
 name: Java CI
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - master
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        java: [ 8, 11, 16 ]
-        experimental: [false]
-        include:
-          - java: 17-ea
-            experimental: true
-
+        java: [ 8, 11, 17 ]
     steps:
-    - uses: actions/checkout@v2.3.4
-    - uses: actions/cache@v2.1.4
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
-    - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v2
-      with:
-        distribution: adopt
-        java-version: ${{ matrix.java }}
-    - name: Build with Maven
-      run: mvn -V test -Ddoclint=all --file pom.xml --no-transfer-progress
+      - name: Checkout code
+        uses: actions/checkout@v3.0.2
+      - name: Set up cache
+        uses: actions/cache@v3.0.10
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: adopt
+          java-version: ${{ matrix.java }}
+      - name: Build with Maven on Java ${{ matrix.java }}
+        run: mvn -V test -Ddoclint=all --file pom.xml --no-transfer-progress
