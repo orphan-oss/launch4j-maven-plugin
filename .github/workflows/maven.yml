@@ -44,3 +44,15 @@ jobs:
           java-version: ${{ matrix.java }}
       - name: Build with Maven on Java ${{ matrix.java }}
         run: mvn -V test -Ddoclint=all --file pom.xml --no-transfer-progress
+      - name: Apply automerge label
+        if: github.actor == 'dependabot[bot]'
+        run: gh pr edit "$PR_URL" --add-label "automerge"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+      - name: Automerge
+        if: github.actor == 'dependabot[bot]'
+        run: gh pr merge -m "$PR_URL"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
