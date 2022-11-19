@@ -19,6 +19,7 @@
 package com.akathist.maven.plugins.launch4j;
 
 import net.sf.launch4j.config.LanguageID;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,7 @@ import java.util.Map;
  */
 public class VersionInfo {
 
-    private static Map<String, LanguageID> LANGUAGE_TO_LANGUAGE_ID;
+    private static final Map<String, LanguageID> LANGUAGE_TO_LANGUAGE_ID;
 
     static {
         LANGUAGE_TO_LANGUAGE_ID = new HashMap<>();
@@ -40,61 +41,73 @@ public class VersionInfo {
     /**
      * Version number in x.x.x.x format.
      */
+    @Parameter
     String fileVersion;
 
     /**
      * Free-form version number, like "1.20.RC1."
      */
+    @Parameter
     String txtFileVersion;
 
     /**
      * File description shown to the user.
      */
+    @Parameter
     String fileDescription;
 
     /**
      * Legal copyright.
      */
+    @Parameter
     String copyright;
 
     /**
      * Version number in x.x.x.x format.
      */
+    @Parameter
     String productVersion;
 
     /**
      * Free-form version number, like "1.20.RC1."
      */
+    @Parameter
     String txtProductVersion;
 
     /**
      * The product name.
      */
+    @Parameter
     String productName;
 
     /**
      * The company name.
      */
+    @Parameter
     String companyName;
 
     /**
      * The internal name. For instance, you could use the filename without extension or the module name.
      */
+    @Parameter
     String internalName;
 
     /**
      * The original filename without path. Setting this lets you determine whether a user has renamed the file.
      */
+    @Parameter
     String originalFilename;
 
     /**
      * Language to be used during installation, default ENGLISH_US
      */
+    @Parameter
     String language = LanguageID.ENGLISH_US.name();
 
     /**
      * Trademarks of author
      */
+    @Parameter
     String trademarks;
 
     net.sf.launch4j.config.VersionInfo toL4j() {

@@ -262,7 +262,7 @@ public class Launch4jMojo extends AbstractMojo {
      * Details about the classpath your application should have.
      * This is required if you are not wrapping a jar.
      */
-    @Parameter
+    @Parameter()
     private ClassPath classPath;
 
     /**
@@ -809,4 +809,37 @@ public class Launch4jMojo extends AbstractMojo {
         return skip || System.getProperty("skipLaunch4j") != null;
     }
 
+    @Override
+    public String toString() {
+        return "Launch4jMojo{" +
+                "headerType='" + headerType + '\'' +
+                ", infile=" + infile +
+                ", outfile=" + outfile +
+                ", jar='" + jar + '\'' +
+                ", dontWrapJar=" + dontWrapJar +
+                ", errTitle='" + errTitle + '\'' +
+                ", downloadUrl='" + downloadUrl + '\'' +
+                ", supportUrl='" + supportUrl + '\'' +
+                ", cmdLine='" + cmdLine + '\'' +
+                ", chdir='" + chdir + '\'' +
+                ", priority='" + priority + '\'' +
+                ", stayAlive=" + stayAlive +
+                ", restartOnCrash=" + restartOnCrash +
+                ", icon=" + icon +
+                ", objs=" + objs +
+                ", libs=" + libs +
+                ", vars=" + vars +
+                ", jre=" + jre +
+                ", classPath=" + classPath +
+                ", singleInstance=" + singleInstance +
+                ", splash=" + splash +
+                ", versionInfo=" + versionInfo +
+                ", messages=" + messages +
+                ", manifest=" + manifest +
+                ", saveConfig=" + saveConfig +
+                ", configOutfile=" + configOutfile +
+                ", parallelExecution=" + parallelExecution +
+                ", skip=" + skip +
+                '}';
+    }
 }

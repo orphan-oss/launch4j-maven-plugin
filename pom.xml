@@ -62,7 +62,25 @@
                     <artifactId>abeille</artifactId>
                     <groupId>net.java.abeille</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.thoughtworks.xstream</groupId>
+                    <artifactId>xstream</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.ant</groupId>
+                    <artifactId>ant</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.10.12</version>
+        </dependency>
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.19</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -103,6 +121,18 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugin-testing</groupId>
+            <artifactId>maven-plugin-testing-harness</artifactId>
+            <version>3.3.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-compat</artifactId>
+            <version>3.8.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

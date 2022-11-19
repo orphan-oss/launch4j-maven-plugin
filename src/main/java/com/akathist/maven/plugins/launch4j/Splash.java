@@ -27,6 +27,7 @@ public class Splash {
     /**
      * The path (relative to the executable when distributed) to the splash page image.
      */
+    @Parameter
     File file;
 
     /**
@@ -61,4 +62,13 @@ public class Splash {
         return ret;
     }
 
+    @Override
+    public String toString() {
+        return "Splash{" +
+                "file=" + file +
+                ", waitForWindow=" + waitForWindow +
+                ", timeout=" + timeout +
+                ", timeoutErr=" + timeoutErr +
+                '}';
+    }
 }

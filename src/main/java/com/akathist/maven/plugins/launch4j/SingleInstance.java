@@ -18,14 +18,17 @@
  */
 package com.akathist.maven.plugins.launch4j;
 
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Details about running your application as a single instance.
  */
 public class SingleInstance {
 
+    @Parameter
     String mutexName;
 
+    @Parameter
     String windowTitle;
 
     net.sf.launch4j.config.SingleInstance toL4j() {

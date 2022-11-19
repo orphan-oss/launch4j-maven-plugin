@@ -1,0 +1,60 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.akathist.maven.plugins.launch4j.unit</groupId>
+    <artifactId>launch4j-default</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>launch4j-default</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <configuration>
+                    <headerType>gui</headerType>
+                    <jar>${project.build.directory}/${project.artifactId}-${project.version}.jar</jar>
+                    <outfile>${project.build.directory}/app.exe</outfile>
+                    <downloadUrl>https://java.com/download</downloadUrl>
+                    <classPath>
+                        <mainClass>pl.org.lenart.launch4j.App</mainClass>
+                        <preCp>anything</preCp>
+                    </classPath>
+                    <jre>
+                        <path>%JAVA_HOME%;%PATH%</path>
+                        <minVersion>1.8</minVersion>
+                        <bundledJreAsFallback>true</bundledJreAsFallback>
+                        <jdkPreference>preferJre</jdkPreference>
+                        <requiresJdk>true</requiresJdk>
+                        <bundledJre64Bit>true</bundledJre64Bit>
+                        <runtimeBits>32</runtimeBits>
+                        <opts>
+                            <opt>-Dname=Lukasz</opt>
+                        </opts>
+                    </jre>
+                    <messages>
+                        <bundledJreErr>Test bundledJreErr</bundledJreErr>
+                    </messages>
+                    <versionInfo>
+                        <fileVersion>1.0.0.0</fileVersion>
+                        <txtFileVersion>${project.version}</txtFileVersion>
+                        <fileDescription>Launch4j Demo App</fileDescription>
+                        <copyright>Lukasz Lenart</copyright>
+                        <productVersion>1.0.0.0</productVersion>
+                        <txtProductVersion>1.0.0.0</txtProductVersion>
+                        <productName>App</productName>
+                        <companyName>Lukasz Lenart</companyName>
+                        <internalName>app</internalName>
+                        <originalFilename>app.exe</originalFilename>
+                        <trademarks>Luk ™</trademarks>
+                    </versionInfo>
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
+
+</project>
