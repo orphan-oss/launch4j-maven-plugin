@@ -20,6 +20,7 @@ package com.akathist.maven.plugins.launch4j;
 
 import java.util.List;
 
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
@@ -28,29 +29,44 @@ import org.apache.maven.plugins.annotations.Parameter;
 public class Jre {
 
     /**
-     * Use this property when you are bundling a jre with your application. It holds the path to the jre.
-     * If relative, this path is from the executable.
-     * <p>
-     * If you specify path only and not minVersion, then the executable will show an error if the jre is not found.
-     * <p>
-     * If you specify path along with minVersion, then the executable will check the path first, and if no jre
-     * is found there, it will search the local system for a jre matching minVersion. If it still doesn't
-     * find anything, it will show the java download page. You may also specify maxVersion to further
-     * constrain the search.
+     * The <path> property is used to specify absolute or relative JRE paths, it does not rely
+     * on the current directory or <chdir>.
+     * Note: the path is not checked until the actual application execution.
+     * The <path> is now required and always used for searching before the registry,
+     * to ensure compatibility with the latest runtimes, which by default
+     * do not add registry keys during installation.
      */
+    @Parameter(required = true)
     String path;
 
     /**
      * Sets jre's bundledJre64Bit flag
+     *
+     * @deprecated Replaced with <requires64Bit> which works during path and registry search.
+     * @since using Launch4j 3.50
      */
     @Parameter(defaultValue = "false")
-    boolean bundledJre64Bit;
+    @Deprecated
+    String bundledJre64Bit;
 
     /**
      * Sets jre's bundledJreAsFallback flag
+     *
+     * @deprecated Removed, path search is always first and registry search second
+     *             in order to improve compatibility with modern runtimes
+     * @since using Launch4j 3.50
      */
     @Parameter(defaultValue = "false")
-    boolean bundledJreAsFallback;
+    @Deprecated
+    String bundledJreAsFallback;
+
+    /**
+     * When set to "true", limits the runtimes to 64-Bit only, "false" will use 64-Bit or 32-Bit
+     * depending on which is found. This option works with path and registry search.
+     * @since version 2.2.0
+     */
+    @Parameter(defaultValue = "false")
+    boolean requires64Bit;
 
     /**
      * Use this property if you want the executable to search the system for a jre.
@@ -93,9 +109,21 @@ public class Jre {
      * <td>Always use a private JDK runtime (fails if there is no JDK installed)</td>
      * </tr>
      * </table>
+     *
+     * @deprecated Replaces with <requiresJdk> which works during path and registry search.
+     * @since using Launch4j 3.50
      */
     @Parameter(defaultValue = "preferJre")
+    @Deprecated
     String jdkPreference;
+
+    /**
+     * When set to "true" only a JDK will be used for execution. An additional check will be performed
+     * if javac is available during path and registry search.
+     * @since version 2.2.0
+     */
+    @Parameter(defaultValue = "false")
+    boolean requiresJdk;
 
     /**
      * Sets java's initial heap size in MB, like the -Xms flag.
@@ -133,25 +161,27 @@ public class Jre {
      * Sets JVM version to use: 32 bits, 64 bits or 64/32 bits
      * Possible values: 32, 64, 64/32 - it will fallback to default value if different option was used
      * Default value is: 64/32
+     *
+     * @deprecated Replaced with <requires64Bit> which works during path and registry search.
+     * @since using Launch4j 3.50
      */
     @Parameter(defaultValue = "64/32")
+    @Deprecated
     String runtimeBits;
 
     net.sf.launch4j.config.Jre toL4j() {
         net.sf.launch4j.config.Jre ret = new net.sf.launch4j.config.Jre();
 
         ret.setPath(path);
-        ret.setBundledJre64Bit(bundledJre64Bit);
-        ret.setBundledJreAsFallback(bundledJreAsFallback);
+        ret.setRequires64Bit(requires64Bit);
         ret.setMinVersion(minVersion);
         ret.setMaxVersion(maxVersion);
-        ret.setJdkPreference(jdkPreference);
+        ret.setRequiresJdk(requiresJdk);
         ret.setInitialHeapSize(initialHeapSize);
         ret.setInitialHeapPercent(initialHeapPercent);
         ret.setMaxHeapSize(maxHeapSize);
         ret.setMaxHeapPercent(maxHeapPercent);
         ret.setOptions(opts);
-        ret.setRuntimeBits(runtimeBits);
 
         return ret;
     }
@@ -160,15 +190,30 @@ public class Jre {
     public String toString() {
         return "Jre{" +
                 "path='" + path + '\'' +
+                ", requires64Bit=" + requires64Bit +
                 ", minVersion='" + minVersion + '\'' +
                 ", maxVersion='" + maxVersion + '\'' +
-                ", jdkPreference='" + jdkPreference + '\'' +
+                ", requiresJdk=" + requiresJdk +
                 ", initialHeapSize=" + initialHeapSize +
                 ", initialHeapPercent=" + initialHeapPercent +
                 ", maxHeapSize=" + maxHeapSize +
                 ", maxHeapPercent=" + maxHeapPercent +
                 ", opts=" + opts +
-                ", runtimeBits='" + runtimeBits + '\'' +
                 '}';
+    }
+
+    public void deprecationWarning(Log log) {
+        if (this.bundledJreAsFallback != null) {
+            log.warn("<bundledJreAsFallback/> has been removed! It has not effect!");
+        }
+        if (this.bundledJre64Bit != null) {
+            log.warn("<bundledJre64Bit/> is deprecated, use <requires64Bit/> instead!");
+        }
+        if (this.runtimeBits != null) {
+            log.warn("<runtimeBits/> is deprecated, use <requires64Bit/> instead!");
+        }
+        if (this.jdkPreference != null) {
+            log.warn("<jdkPreference/> is deprecated, use <requiresJdk/> instead!");
+        }
     }
 }

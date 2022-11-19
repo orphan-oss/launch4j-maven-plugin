@@ -28,6 +28,7 @@ public class Messages {
 
     String startupErr;
 
+    @Deprecated
     String bundledJreErr;
 
     String jreVersionErr;
@@ -36,16 +37,19 @@ public class Messages {
 
     String instanceAlreadyExistsMsg;
 
+    String jreNotFoundErr;
+
 
     Msg toL4j() {
         Msg ret = new Msg();
 
         ret.setStartupErr(startupErr);
-        ret.setBundledJreErr(bundledJreErr);
         ret.setJreVersionErr(jreVersionErr);
         ret.setLauncherErr(launcherErr);
         ret.setInstanceAlreadyExistsMsg(instanceAlreadyExistsMsg);
 
+        /* since Launch4j 3.50 */
+        ret.setJreNotFoundErr(jreNotFoundErr);
         return ret;
     }
 
