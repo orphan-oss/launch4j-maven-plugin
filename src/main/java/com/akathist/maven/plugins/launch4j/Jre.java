@@ -204,7 +204,7 @@ public class Jre {
 
     public void deprecationWarning(Log log) {
         if (this.bundledJreAsFallback != null) {
-            log.warn("<bundledJreAsFallback/> has been removed! It has not effect!");
+            log.warn("<bundledJreAsFallback/> has been removed! It has no effect!");
         }
         if (this.bundledJre64Bit != null) {
             log.warn("<bundledJre64Bit/> is deprecated, use <requires64Bit/> instead!");
