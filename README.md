@@ -20,6 +20,10 @@ The full list of all the parameters is available [here](src/main/resources/MOJO.
 
 # Version Notes
 
+## Version notes 2.2.0 - 2022-11-24
+- upgrades Launch4j to version 3.50 and adopts config to the bew requirements, see Issue [#199](../../issues/199)
+  and PR [#200](../../pull/200) for more details what has to be changed 
+
 ## Version notes 2.1.3 - 2022-10-24
 - allows to skip execution of the plugin using either `<skip>true</skip>` configuration option or `-DskipLaunch4j` property, 
   see [#190](../../pull/190)
