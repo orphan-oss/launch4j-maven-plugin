@@ -262,7 +262,7 @@ public class Launch4jMojo extends AbstractMojo {
      * Details about the classpath your application should have.
      * This is required if you are not wrapping a jar.
      */
-    @Parameter
+    @Parameter()
     private ClassPath classPath;
 
     /**
@@ -423,6 +423,7 @@ public class Launch4jMojo extends AbstractMojo {
                 c.setClassPath(classPath.toL4j(dependencies));
             }
             if (jre != null) {
+                jre.deprecationWarning(getLog());
                 c.setJre(jre.toL4j());
             }
             if (singleInstance != null) {
@@ -435,6 +436,9 @@ public class Launch4jMojo extends AbstractMojo {
                 c.setVersionInfo(versionInfo.toL4j());
             }
             if (messages != null) {
+                if (messages.bundledJreErr != null) {
+                    getLog().warn("<bundledJreErr/> is deprecated, use <jreNotFoundErr/> instead!");
+                }
                 c.setMessages(messages.toL4j());
             }
             ConfigPersister.getInstance().setAntConfig(c, getBaseDir());
@@ -708,7 +712,8 @@ public class Launch4jMojo extends AbstractMojo {
             log.debug("jre.path = " + c.getJre().getPath());
             log.debug("jre.minVersion = " + c.getJre().getMinVersion());
             log.debug("jre.maxVersion = " + c.getJre().getMaxVersion());
-            log.debug("jre.jdkPreference = " + c.getJre().getJdkPreference());
+            log.debug("jre.requiresJdk = " + c.getJre().getRequiresJdk());
+            log.debug("jre.requires64Bit = " + c.getJre().getRequires64Bit());
             log.debug("jre.initialHeapSize = " + c.getJre().getInitialHeapSize());
             log.debug("jre.initialHeapPercent = " + c.getJre().getInitialHeapPercent());
             log.debug("jre.maxHeapSize = " + c.getJre().getMaxHeapSize());
@@ -755,7 +760,7 @@ public class Launch4jMojo extends AbstractMojo {
         }
         if (c.getMessages() != null) {
             log.debug("messages.startupErr = " + c.getMessages().getStartupErr());
-            log.debug("messages.bundledJreErr = " + c.getMessages().getBundledJreErr());
+            log.debug("messages.jreNotFoundErr = " + c.getMessages().getJreNotFoundErr());
             log.debug("messages.jreVersionErr = " + c.getMessages().getJreVersionErr());
             log.debug("messages.launcherErr = " + c.getMessages().getLauncherErr());
             log.debug("messages.instanceAlreadyExistsMsg = " + c.getMessages().getInstanceAlreadyExistsMsg());
@@ -804,4 +809,37 @@ public class Launch4jMojo extends AbstractMojo {
         return skip || System.getProperty("skipLaunch4j") != null;
     }
 
+    @Override
+    public String toString() {
+        return "Launch4jMojo{" +
+                "headerType='" + headerType + '\'' +
+                ", infile=" + infile +
+                ", outfile=" + outfile +
+                ", jar='" + jar + '\'' +
+                ", dontWrapJar=" + dontWrapJar +
+                ", errTitle='" + errTitle + '\'' +
+                ", downloadUrl='" + downloadUrl + '\'' +
+                ", supportUrl='" + supportUrl + '\'' +
+                ", cmdLine='" + cmdLine + '\'' +
+                ", chdir='" + chdir + '\'' +
+                ", priority='" + priority + '\'' +
+                ", stayAlive=" + stayAlive +
+                ", restartOnCrash=" + restartOnCrash +
+                ", icon=" + icon +
+                ", objs=" + objs +
+                ", libs=" + libs +
+                ", vars=" + vars +
+                ", jre=" + jre +
+                ", classPath=" + classPath +
+                ", singleInstance=" + singleInstance +
+                ", splash=" + splash +
+                ", versionInfo=" + versionInfo +
+                ", messages=" + messages +
+                ", manifest=" + manifest +
+                ", saveConfig=" + saveConfig +
+                ", configOutfile=" + configOutfile +
+                ", parallelExecution=" + parallelExecution +
+                ", skip=" + skip +
+                '}';
+    }
 }

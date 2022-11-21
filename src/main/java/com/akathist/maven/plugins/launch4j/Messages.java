@@ -19,34 +19,53 @@
 package com.akathist.maven.plugins.launch4j;
 
 import net.sf.launch4j.config.Msg;
-
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Details about messages you can pass.
  */
 public class Messages {
 
+    @Parameter
     String startupErr;
 
+    @Parameter
+    @Deprecated
     String bundledJreErr;
 
+    @Parameter
     String jreVersionErr;
 
+    @Parameter
     String launcherErr;
 
+    @Parameter
     String instanceAlreadyExistsMsg;
 
+    @Parameter
+    String jreNotFoundErr;
 
     Msg toL4j() {
         Msg ret = new Msg();
 
         ret.setStartupErr(startupErr);
-        ret.setBundledJreErr(bundledJreErr);
         ret.setJreVersionErr(jreVersionErr);
         ret.setLauncherErr(launcherErr);
         ret.setInstanceAlreadyExistsMsg(instanceAlreadyExistsMsg);
 
+        /* since Launch4j 3.50 */
+        ret.setJreNotFoundErr(jreNotFoundErr);
         return ret;
     }
 
+    @Override
+    public String toString() {
+        return "Messages{" +
+                "startupErr='" + startupErr + '\'' +
+                ", jreVersionErr='" + jreVersionErr + '\'' +
+                ", launcherErr='" + launcherErr + '\'' +
+                ", instanceAlreadyExistsMsg='" + instanceAlreadyExistsMsg + '\'' +
+                ", jreNotFoundErr='" + jreNotFoundErr + '\'' +
+                '}';
+    }
 }
