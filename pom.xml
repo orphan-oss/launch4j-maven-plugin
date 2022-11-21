@@ -26,7 +26,7 @@
 
     <name>Maven Launch4j Plugin</name>
     <description>This plugin creates Windows executables from Java jar files using the Launch4j utility.</description>
-    <url>http://9stmaryrd.com/tools/launch4j-maven-plugin/</url>
+    <url>https://orphan.software/</url>
 
     <properties>
         <launch4j.version>3.50</launch4j.version>
@@ -36,14 +36,16 @@
 
     <licenses>
         <license>
-            <name>GNU General Public License</name>
-            <url>http://www.gnu.org/licenses/gpl.txt</url>
+            <name>Apache 2.0 License</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
 
     <scm>
-        <developerConnection>scm:git:git@github.com:lukaszlenart/launch4j-maven-plugin.git</developerConnection>
+        <connection>scm:git:git@github.com:orphan-oss/launch4j-maven-plugin.git</connection>
+        <url>git@github.com:orphan-oss/launch4j-maven-plugin.git</url>
+        <developerConnection>scm:git:git@github.com:orphan-oss/launch4j-maven-plugin.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
