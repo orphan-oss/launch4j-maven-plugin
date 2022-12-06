@@ -13,7 +13,7 @@ Wraps a jar in a Windows executable.
 
 ### Parameter Details
 
-#### **<chdir>**
+#### **\<chdir>**
 
 Changes to the given directory, relative to the executable, before running your jar. If set to `.` the current directory will be where the executable is. If omitted, the directory will not be changed.
 
@@ -22,7 +22,7 @@ Changes to the given directory, relative to the executable, before running your 
 
 * * *
 
-#### **<classPath>**
+#### **\<classPath>**
 
 Details about the classpath your application should have. This is required if you are not wrapping a jar.
 
@@ -31,7 +31,7 @@ Details about the classpath your application should have. This is required if yo
 
 * * *
 
-#### **<cmdLine>**
+#### **\<cmdLine>**
 
 Constant command line arguments to pass to your program's main method. Actual command line arguments entered by the user will appear after these.
 
@@ -40,7 +40,7 @@ Constant command line arguments to pass to your program's main method. Actual co
 
 * * *
 
-#### **<configOutfile>**
+#### **\<configOutfile>**
 
 If `saveConfig` is set to true, config will be written to this file
 
@@ -50,7 +50,7 @@ If `saveConfig` is set to true, config will be written to this file
 
 * * *
 
-#### **<dontWrapJar>**
+#### **\<dontWrapJar>**
 
 Whether the executable should wrap the jar or not.
 
@@ -60,7 +60,7 @@ Whether the executable should wrap the jar or not.
 
 * * *
 
-#### **<downloadUrl>**
+#### **\<downloadUrl>**
 
 downloadUrl (?).
 
@@ -69,7 +69,7 @@ downloadUrl (?).
 
 * * *
 
-#### **<errTitle>**
+#### **\<errTitle>**
 
 The title of the error popup if something goes wrong trying to run your program, like if java can't be found. If this is a console app and not a gui, then this value is used to prefix any error messages, as in ${errTitle}: ${errorMessage}.
 
@@ -78,7 +78,7 @@ The title of the error popup if something goes wrong trying to run your program,
 
 * * *
 
-#### **<headerType>**
+#### **\<headerType>**
 
 Whether you want a gui or console app. Valid values are "gui" and "console." If you say gui, then launch4j will run your app from javaw instead of java in order to avoid opening a DOS window. Choosing gui also enables other options like taskbar icon and a splash screen.
 
@@ -87,7 +87,7 @@ Whether you want a gui or console app. Valid values are "gui" and "console." If 
 
 * * *
 
-#### **<icon>**
+#### **\<icon>**
 
 The icon to use in the taskbar. Must be in ico format.
 
@@ -96,7 +96,7 @@ The icon to use in the taskbar. Must be in ico format.
 
 * * *
 
-#### **<infile>**
+#### **\<infile>**
 
 The name of the Launch4j native configuration file The path, if relative, is relative to the pom.xml.
 
@@ -105,7 +105,7 @@ The name of the Launch4j native configuration file The path, if relative, is rel
 
 * * *
 
-#### **<jar>**
+#### **\<jar>**
 
 The jar to bundle inside the executable. The path, if relative, is relative to the pom.xml. If you don't want to wrap the jar, then this value should be the runtime path to the jar relative to the executable. You should also set dontWrapJar to true. You can only bundle a single jar. Therefore, you should either create a jar that contains your own code plus all your dependencies, or you should distribute your dependencies alongside the executable.
 
@@ -115,7 +115,7 @@ The jar to bundle inside the executable. The path, if relative, is relative to t
 
 * * *
 
-#### **<jre>**
+#### **\<jre>**
 
 Details about the supported jres.
 
@@ -124,7 +124,7 @@ Details about the supported jres.
 
 * * *
 
-#### **<libs>**
+#### **\<libs>**
 
 Win32 libraries to include. Used for custom headers only.
 
@@ -133,7 +133,7 @@ Win32 libraries to include. Used for custom headers only.
 
 * * *
 
-#### **<manifest>**
+#### **\<manifest>**
 
 Windows manifest file (a XML file) with the same name as .exe file (myapp.exe.manifest)
 
@@ -142,7 +142,7 @@ Windows manifest file (a XML file) with the same name as .exe file (myapp.exe.ma
 
 * * *
 
-#### **<messages>**
+#### **\<messages>**
 
 Various messages you can display.
 
@@ -151,7 +151,7 @@ Various messages you can display.
 
 * * *
 
-#### **<objs>**
+#### **\<objs>**
 
 Object files to include. Used for custom headers only.
 
@@ -160,7 +160,7 @@ Object files to include. Used for custom headers only.
 
 * * *
 
-#### **<outfile>**
+#### **\<outfile>**
 
 The name of the executable you want launch4j to produce. The path, if relative, is relative to the pom.xml.
 
@@ -170,7 +170,7 @@ The name of the executable you want launch4j to produce. The path, if relative, 
 
 * * *
 
-#### **<parallelExecution>**
+#### **\<parallelExecution>**
 
 If set to true, a synchronized block will be used to protect resources
 
@@ -180,7 +180,7 @@ If set to true, a synchronized block will be used to protect resources
 
 * * *
 
-#### **<pluginArtifacts>**
+#### **\<pluginArtifacts>**
 
 The dependencies of this plugin. Used to get the Launch4j artifact version.
 
@@ -190,7 +190,7 @@ The dependencies of this plugin. Used to get the Launch4j artifact version.
 
 * * *
 
-#### **<priority>**
+#### **\<priority>**
 
 Priority class of windows process. Valid values are "normal" (default), "idle" and "high".
 
@@ -200,7 +200,7 @@ Priority class of windows process. Valid values are "normal" (default), "idle" a
 
 * * *
 
-#### **<restartOnCrash>**
+#### **\<restartOnCrash>**
 
 If true, when the application exits, any exit code other than 0 is considered a crash and the application will be started again.
 
@@ -210,7 +210,7 @@ If true, when the application exits, any exit code other than 0 is considered a 
 
 * * *
 
-#### **<saveConfig>**
+#### **\<saveConfig>**
 
 If set to true it will save final config into a XML file
 
@@ -220,7 +220,7 @@ If set to true it will save final config into a XML file
 
 * * *
 
-#### **<singleInstance>**
+#### **\<singleInstance>**
 
 Details about whether to run as a single instance.
 
@@ -229,7 +229,7 @@ Details about whether to run as a single instance.
 
 * * *
 
-#### **<skip>**
+#### **\<skip>**
 
 If set to true, execution of the plugin will be skipped
 
@@ -239,7 +239,7 @@ If set to true, execution of the plugin will be skipped
 
 * * *
 
-#### **<splash>**
+#### **\<splash>**
 
 Details about the splash screen.
 
@@ -248,7 +248,7 @@ Details about the splash screen.
 
 * * *
 
-#### **<stayAlive>**
+#### **\<stayAlive>**
 
 If true, the executable waits for the java application to finish before returning its exit code. Defaults to false for gui applications. Has no effect for console applications, which always wait.
 
@@ -258,7 +258,7 @@ If true, the executable waits for the java application to finish before returnin
 
 * * *
 
-#### **<supportUrl>**
+#### **\<supportUrl>**
 
 supportUrl (?).
 
@@ -267,7 +267,7 @@ supportUrl (?).
 
 * * *
 
-#### **<vars>**
+#### **\<vars>**
 
 Variables to set.
 
@@ -276,7 +276,7 @@ Variables to set.
 
 * * *
 
-#### **<versionInfo>**
+#### **\<versionInfo>**
 
 Lots of information you can attach to the windows process.
 
