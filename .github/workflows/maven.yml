@@ -20,6 +20,17 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow to apply a label and merge
+# https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  repository-projects: write
+
+concurrency: ci-${{ github.ref }}
 
 jobs:
   build:
