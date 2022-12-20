@@ -262,7 +262,7 @@ public class Launch4jMojo extends AbstractMojo {
      * Details about the classpath your application should have.
      * This is required if you are not wrapping a jar.
      */
-    @Parameter()
+    @Parameter
     private ClassPath classPath;
 
     /**
@@ -282,6 +282,12 @@ public class Launch4jMojo extends AbstractMojo {
      */
     @Parameter
     private VersionInfo versionInfo;
+
+    /**
+     * If set to true, it will prevent filling out the VersionInfo params with default values.
+     */
+    @Parameter(defaultValue = "false")
+    private boolean disableVersionInfoDefaults;
 
     /**
      * Various messages you can display.
@@ -834,6 +840,7 @@ public class Launch4jMojo extends AbstractMojo {
                 ", singleInstance=" + singleInstance +
                 ", splash=" + splash +
                 ", versionInfo=" + versionInfo +
+                ", disableVersionInfoDefaults=" + disableVersionInfoDefaults +
                 ", messages=" + messages +
                 ", manifest=" + manifest +
                 ", saveConfig=" + saveConfig +
