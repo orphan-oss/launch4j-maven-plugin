@@ -346,6 +346,14 @@ public class Launch4jMojo extends AbstractMojo {
             return;
         }
 
+        if (!disableVersionInfoDefaults) {
+            try {
+                versionInfo.tryFillOutByDefaults(project);
+            } catch (RuntimeException exception) {
+                throw new MojoExecutionException("Cannot fill out VersionInfo by defaults", exception);
+            }
+        }
+
         final File workDir = setupBuildEnvironment();
         if (infile != null) {
             if (infile.exists()) {
