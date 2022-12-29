@@ -67,4 +67,19 @@ public class Launch4jFileVersionGeneratorTest {
         // then
         assertEquals(expected, launch4jFileVersion);
     }
+
+    @Test
+    @Parameters({
+        "0.0.0.0.1, 0.0.0.0",
+        "1.22.333.4444.55555.666666, 1.22.333.4444",
+        "9.8.7.6.5-SNAPSHOT, 9.8.7.6",
+        "3.0.1.12.44.62.1.0.0.0.1-alpha, 3.0.1.12",
+    })
+    public void shouldCutOffTooManyNestedDigits(String projectVersion, String expected) {
+        // when
+        final String launch4jFileVersion = Launch4jFileVersionGenerator.generate(projectVersion);
+
+        // then
+        assertEquals(expected, launch4jFileVersion);
+    }
 }
