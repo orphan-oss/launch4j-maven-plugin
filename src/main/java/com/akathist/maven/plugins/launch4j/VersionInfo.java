@@ -18,13 +18,13 @@
  */
 package com.akathist.maven.plugins.launch4j;
 
+import com.akathist.maven.plugins.launch4j.generators.CopyrightGenerator;
+import com.akathist.maven.plugins.launch4j.generators.Launch4jFileVersionGenerator;
 import net.sf.launch4j.config.LanguageID;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.model.Organization;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -141,40 +141,24 @@ public class VersionInfo {
         ret.setLanguage(languageID);
     }
 
-    // po zmianach zrobić git amend aby usunąć te komenty
     public void tryFillOutByDefaults(MavenProject project) {
         if(project == null) {
             throw new IllegalArgumentException("'project' is required, but it is null.");
         }
 
-        final String defaultVersion = generateDefaultVersion(project.getVersion());
+        final String defaultFileVersion = Launch4jFileVersionGenerator.generate(project.getVersion());
+        fileVersion = getDefaultWhenOriginalIsBlank(fileVersion, defaultFileVersion);
+        productVersion = getDefaultWhenOriginalIsBlank(productVersion, defaultFileVersion);
 
-        fileVersion = getDefaultWhenOriginalIsBlank(fileVersion, defaultVersion);
-        productVersion = getDefaultWhenOriginalIsBlank(productVersion, defaultVersion);
+        final String defaultCopyright = CopyrightGenerator.generate(project.getInceptionYear(), project.getOrganization());
+        copyright = getDefaultWhenOriginalIsBlank(copyright, defaultCopyright);
+
         txtFileVersion = getDefaultWhenOriginalIsBlank(txtFileVersion, project.getVersion());
-        fileDescription = getDefaultWhenOriginalIsBlank(fileDescription, project.getDescription());
-        copyright = getDefaultWhenOriginalIsBlank(copyright, generateDefaultCopyright(project));
+        txtProductVersion = getDefaultWhenOriginalIsBlank(txtProductVersion, project.getVersion());
+
         productName = getDefaultWhenOriginalIsBlank(productName, project.getName());
         internalName = getDefaultWhenOriginalIsBlank(internalName, project.getArtifactId());
-        txtProductVersion = getDefaultWhenOriginalIsBlank(txtProductVersion, project.getVersion());
-    }
-
-    private String generateDefaultVersion(String originalVersion) {
-        /**
-         * jeśli -SNAPSHOT jest to go wydzielić do innej zmiennej
-         * podzielić x.x.x.x.x string.split "." na array/liste
-         * brac tyle x-ów ile jest wypełnione (1, 1.1, 1.2.3, 1.2.3.4) ale max 4 liczby, dla wiekszych (1.2.3.4.5 olać resztę)
-         * jeśli x-ów jest mniej niż 4 to wypełnić pozostałem zerami np. dla 1.2 będzie to 1.2.0.0,
-         * jesli był wcześniej snapshot to dokleić go na koniec (sprawdzić czy się nie wysypie oryginalna wtyczka, być może nie można używać Snapshot?)
-         *
-         * errTitle + orginalFilename też zrobić
-         * opisać komentarze na temat jak dizalaja te defaulty do wersji itp. ma być full opisane
-         *
-         * podzielić ta klase na mniejsze klasy z samą tylko generacją defaultów
-         * napisać testy do tej klasy i do klas od defaultów
-         *
-         */
-        return ".0";
+        fileDescription = getDefaultWhenOriginalIsBlank(fileDescription, project.getDescription());
     }
 
     private String getDefaultWhenOriginalIsBlank(final String originalValue, final String defaultValue) {
@@ -183,30 +167,6 @@ public class VersionInfo {
         }
 
         return originalValue;
-    }
-
-    private String generateDefaultCopyright(MavenProject project) {
-        int buildYear = LocalDate.now().getYear();
-        String inceptionYear = generateDefaultInceptionYear(project.getInceptionYear());
-        String organizationName = generateDefaultOrganizationName(project.getOrganization());
-
-        return String.format("Copyright © %s%d%s. All rights reserved.", inceptionYear, buildYear, organizationName);
-    }
-
-    private String generateDefaultInceptionYear(String inceptionYear) {
-        if(StringUtils.isNotBlank(inceptionYear)) {
-            return inceptionYear + "-";
-        }
-
-        return "";
-    }
-
-    private String generateDefaultOrganizationName(Organization organization) {
-        if(organization != null && organization.getName() != null) {
-            return " " + organization.getName();
-        }
-
-        return "";
     }
 
     @Override
