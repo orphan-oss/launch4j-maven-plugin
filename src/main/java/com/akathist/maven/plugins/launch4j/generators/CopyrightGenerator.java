@@ -8,8 +8,8 @@ import java.time.LocalDate;
 public class CopyrightGenerator {
     /**
      * Parameters should be taken from MavenProject properties:
-     * @param projectInceptionYear from {project.inceptionYear}
-     * @param projectOrganization from {project.organization}
+     * @param projectInceptionYear as ${project.inceptionYear}
+     * @param projectOrganization as ${project.organization}
      */
     public static String generate(String projectInceptionYear, Organization projectOrganization) {
         String inceptionYear = generateInceptionYear(projectInceptionYear);

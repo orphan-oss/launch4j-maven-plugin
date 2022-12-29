@@ -1,58 +1,69 @@
 package com.akathist.maven.plugins.launch4j.generators;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class Launch4jFileVersionGenerator {
-    // todo comment on top which will describe
-
-    /**
-     * Valid examples:
-     *  a
-     * Not valid:
-     *  b
-     */
+    private static final int REQUIRED_NESTED_VERSION_LEVELS = 4;
     private static final String SIMPLE_PROJECT_VERSION_REGEX = "^((\\d(\\.)?)*\\d+)(-\\w+)?$";
-    private static final Pattern simpleProjectVersionPattern = Pattern.compile(SIMPLE_PROJECT_VERSION_REGEX, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+    private static final Pattern simpleProjectVersionPattern = Pattern.compile(
+            SIMPLE_PROJECT_VERSION_REGEX, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE
+    );
 
     /**
-     * Converts original version into a format "x.x.x.x" ('x' as a number), which is required by Launch4j.
-     * For shorter versions like "x.x.x" it will append zeros at the end "x.x.x.0".
-     * Every text flags and variations like "-SNAPSHOT" or "-alpha" will be cut off.
+     * Converts projectVersion into a format "x.x.x.x" ('x' as a number), which is required by Launch4j.
      *
-     * @param originalVersion
-     * @return
+     * For shorter versions like "x.x.x" it will append zeros (to the 4th level) at the end like "x.x.x.0".
+     * Every text flag like "-SNAPSHOT" or "-alpha" will be cut off.
+     * Too many nested numbers (more than 4 levels) will be cut off as well: "1.2.3.4.5.6" -> "1.2.3.4".
+     *
+     * Param should be taken from MavenProject property:
+     * @param projectVersion as ${project.version}
      */
-    public static String generate(String originalVersion) {
-        if(originalVersion == null) {
+    public static String generate(String projectVersion) {
+        if(projectVersion == null) {
             return null;
         }
-
-        if(!simpleProjectVersionPattern.matcher(originalVersion).matches()) {
+        if(!simpleProjectVersionPattern.matcher(projectVersion).matches()) {
             throw new IllegalArgumentException("'project.version' is in invalid format. Regex pattern: " + SIMPLE_PROJECT_VERSION_REGEX);
         }
 
-        String versionNumbers = originalVersion;
+        String versionLevels = removeTextFlags(projectVersion);
+        String limitedVersionLevels = cutOffTooManyNestedLevels(versionLevels);
 
-        if(originalVersion.contains("-")) {
-            String[] split = originalVersion.split("-");
-            versionNumbers = split[0];
+        return appendMissingNestedLevelsByZeros(limitedVersionLevels);
+    }
+
+    private static String removeTextFlags(String version) {
+        if(version.contains("-")) {
+            String[] parts = version.split("-");
+            return parts[0];
         }
 
-        StringBuilder version = new StringBuilder();
-        String[] split = versionNumbers.split("\\.");
+        return version;
+    }
 
-        for (int i = 0; i < 4; i++) {
-            if(i > 0) {
-                version.append(".");
-            }
+    private static String cutOffTooManyNestedLevels(String versionLevels) {
+        String[] levels = versionLevels.split("\\.");
 
-            if(i >= split.length) {
-                version.append("0");
-            } else {
-                version.append(split[i]);
-            }
+        if(levels.length > REQUIRED_NESTED_VERSION_LEVELS) {
+            List<String> limitedLevels = Arrays.asList(levels)
+                    .subList(0, REQUIRED_NESTED_VERSION_LEVELS);
+            return String.join(".", limitedLevels);
         }
 
-        return version.toString();
+        return versionLevels;
+    }
+
+    private static String appendMissingNestedLevelsByZeros(String versionLevels) {
+        String[] levels = versionLevels.split("\\.");
+
+        StringBuilder filledLevels = new StringBuilder(versionLevels);
+        for (int i = levels.length; i < REQUIRED_NESTED_VERSION_LEVELS; i++) {
+            filledLevels.append(".0");
+        }
+
+        return filledLevels.toString();
     }
 }
