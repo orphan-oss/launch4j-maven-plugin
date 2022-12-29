@@ -284,6 +284,8 @@ Lots of information you can attach to the windows process.
 *   **Type**: `com.akathist.maven.plugins.launch4j.VersionInfo`
 *   **Required**: `No`
 
+* * * 
+
 #### **\<disableVersionInfoDefaults>**
 
 If `disableVersionInfoDefaults` is set to true, it will prevent filling out the VersionInfo params with default values.
