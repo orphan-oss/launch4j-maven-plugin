@@ -174,7 +174,7 @@ public class Launch4jMojo extends AbstractMojo {
      * like if java can't be found. If this is a console app and not a gui, then this value
      * is used to prefix any error messages, as in ${errTitle}: ${errorMessage}.
      */
-    @Parameter
+    @Parameter(defaultValue = "${project.name}")
     private String errTitle;
 
     /**
