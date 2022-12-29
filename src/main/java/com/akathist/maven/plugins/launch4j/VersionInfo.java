@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -141,9 +142,12 @@ public class VersionInfo {
         ret.setLanguage(languageID);
     }
 
-    public void tryFillOutByDefaults(MavenProject project) {
+    public void tryFillOutByDefaults(MavenProject project, File outfile) {
         if(project == null) {
             throw new IllegalArgumentException("'project' is required, but it is null.");
+        }
+        if(outfile == null) {
+            throw new IllegalArgumentException("'outfile' is required, but it is null.");
         }
 
         final String defaultFileVersion = Launch4jFileVersionGenerator.generate(project.getVersion());
@@ -159,6 +163,8 @@ public class VersionInfo {
         productName = getDefaultWhenOriginalIsBlank(productName, project.getName());
         internalName = getDefaultWhenOriginalIsBlank(internalName, project.getArtifactId());
         fileDescription = getDefaultWhenOriginalIsBlank(fileDescription, project.getDescription());
+
+        originalFilename = getDefaultWhenOriginalIsBlank(originalFilename, outfile.getName());
     }
 
     private String getDefaultWhenOriginalIsBlank(final String originalValue, final String defaultValue) {
