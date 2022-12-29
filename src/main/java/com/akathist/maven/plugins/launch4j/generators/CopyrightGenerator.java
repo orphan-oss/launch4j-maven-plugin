@@ -6,25 +6,25 @@ import org.apache.maven.model.Organization;
 import java.time.LocalDate;
 
 public class CopyrightGenerator {
-    public static String generate(String originalInceptionYear, Organization organization) {
+    public static String generate(String projectInceptionYear, Organization projectOrganization) {
+        String inceptionYear = generateInceptionYear(projectInceptionYear);
         int buildYear = LocalDate.now().getYear();
-        String inceptionYear = generateDefaultInceptionYear(originalInceptionYear);
-        String organizationName = generateDefaultOrganizationName(organization);
+        String organizationName = generateOrganizationName(projectOrganization);
 
         return String.format("Copyright © %s%d%s. All rights reserved.", inceptionYear, buildYear, organizationName);
     }
 
-    private static String generateDefaultInceptionYear(String inceptionYear) {
-        if(StringUtils.isNotBlank(inceptionYear)) {
-            return inceptionYear + "-";
+    private static String generateInceptionYear(String projectInceptionYear) {
+        if(StringUtils.isNotBlank(projectInceptionYear)) {
+            return projectInceptionYear + "-";
         }
 
         return "";
     }
 
-    private static String generateDefaultOrganizationName(Organization organization) {
-        if(organization != null && organization.getName() != null) {
-            return " " + organization.getName();
+    private static String generateOrganizationName(Organization projectOrganization) {
+        if(projectOrganization != null && StringUtils.isNotBlank(projectOrganization.getName())) {
+            return " " + projectOrganization.getName();
         }
 
         return "";
