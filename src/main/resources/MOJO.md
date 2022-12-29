@@ -75,6 +75,7 @@ The title of the error popup if something goes wrong trying to run your program,
 
 *   **Type**: `java.lang.String`
 *   **Required**: `No`
+*   **Default**: `${project.name}`
 
 * * *
 
