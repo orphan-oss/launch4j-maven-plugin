@@ -20,6 +20,17 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow to apply a label and merge
+# https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  repository-projects: write
+
+concurrency: ci-${{ github.ref }}
 
 jobs:
   build:
@@ -29,9 +40,9 @@ jobs:
         java: [ 8, 11, 17 ]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3.1.0
+        uses: actions/checkout@v3.2.0
       - name: Set up cache
-        uses: actions/cache@v3.0.11
+        uses: actions/cache@v3.2.1
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
