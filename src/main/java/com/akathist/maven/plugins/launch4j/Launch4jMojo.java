@@ -348,6 +348,9 @@ public class Launch4jMojo extends AbstractMojo {
 
         if (!disableVersionInfoDefaults) {
             try {
+                if(versionInfo == null) {
+                    versionInfo = new VersionInfo();
+                }
                 versionInfo.tryFillOutByDefaults(project, outfile);
             } catch (RuntimeException exception) {
                 throw new MojoExecutionException("Cannot fill out VersionInfo by defaults", exception);
