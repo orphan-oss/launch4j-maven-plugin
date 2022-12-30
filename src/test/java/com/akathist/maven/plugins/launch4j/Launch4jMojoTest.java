@@ -66,6 +66,7 @@ public class Launch4jMojoTest extends AbstractMojoTestCase {
                 "language='ENGLISH_US', " +
                 "trademarks='Luk ™'" +
                 "}, " +
+                "disableVersionInfoDefaults=false, " +
                 "messages=Messages{" +
                 "startupErr='null', " +
                 "jreVersionErr='null', " +
