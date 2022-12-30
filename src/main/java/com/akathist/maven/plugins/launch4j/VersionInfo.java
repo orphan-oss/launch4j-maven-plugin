@@ -22,6 +22,7 @@ import com.akathist.maven.plugins.launch4j.generators.CopyrightGenerator;
 import com.akathist.maven.plugins.launch4j.generators.Launch4jFileVersionGenerator;
 import net.sf.launch4j.config.LanguageID;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.model.Organization;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
@@ -154,8 +155,15 @@ public class VersionInfo {
         fileVersion = getDefaultWhenOriginalIsBlank(fileVersion, defaultFileVersion);
         productVersion = getDefaultWhenOriginalIsBlank(productVersion, defaultFileVersion);
 
-        final String defaultCopyright = CopyrightGenerator.generate(project.getInceptionYear(), project.getOrganization());
+        Organization projectOrganization = project.getOrganization();
+
+        final String defaultCopyright = CopyrightGenerator.generate(project.getInceptionYear(), projectOrganization);
         copyright = getDefaultWhenOriginalIsBlank(copyright, defaultCopyright);
+
+        if(projectOrganization != null) {
+            companyName = getDefaultWhenOriginalIsBlank(companyName, projectOrganization.getName());
+            trademarks = getDefaultWhenOriginalIsBlank(companyName, projectOrganization.getName());
+        }
 
         txtFileVersion = getDefaultWhenOriginalIsBlank(txtFileVersion, project.getVersion());
         txtProductVersion = getDefaultWhenOriginalIsBlank(txtProductVersion, project.getVersion());
