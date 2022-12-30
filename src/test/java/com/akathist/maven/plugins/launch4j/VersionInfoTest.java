@@ -50,6 +50,68 @@ public class VersionInfoTest {
     }
 
     @Test
+    public void shouldConvertIntoL4jFormatProperly() {
+        // when
+        net.sf.launch4j.config.VersionInfo l4jVersionInfo = versionInfo.toL4j();
+
+        // then
+        assertEquals(versionInfo.fileVersion, l4jVersionInfo.getFileVersion());
+        assertEquals(versionInfo.txtFileVersion, l4jVersionInfo.getTxtFileVersion());
+        assertEquals(versionInfo.fileDescription, l4jVersionInfo.getFileDescription());
+        assertEquals(versionInfo.copyright, l4jVersionInfo.getCopyright());
+        assertEquals(versionInfo.productVersion, l4jVersionInfo.getProductVersion());
+        assertEquals(versionInfo.txtProductVersion, l4jVersionInfo.getTxtProductVersion());
+        assertEquals(versionInfo.productName, l4jVersionInfo.getProductName());
+        assertEquals(versionInfo.companyName, l4jVersionInfo.getCompanyName());
+        assertEquals(versionInfo.internalName, l4jVersionInfo.getInternalName());
+        assertEquals(versionInfo.originalFilename, l4jVersionInfo.getOriginalFilename());
+        assertEquals(versionInfo.trademarks, l4jVersionInfo.getTrademarks());
+        assertEquals(versionInfo.language, l4jVersionInfo.getLanguage().name());
+    }
+
+    @Test
+    public void shouldConvertIntoL4jFormat_For_All_Languages() {
+        for (LanguageID languageId : LanguageID.values()) {
+            // given
+            versionInfo.language = languageId.name();
+
+            // when
+            net.sf.launch4j.config.VersionInfo l4jVersionInfo = versionInfo.toL4j();
+
+            // then
+            assertEquals(languageId, l4jVersionInfo.getLanguage());
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowException_WhenTryingToFillOutDefaults_WithEmptyProject() {
+        // expect throws
+        versionInfo.tryFillOutByDefaults(null, outfile);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowException_WhenTryingToFillOutDefaults_WithEmptyOutfile() {
+        // expect throws
+        versionInfo.tryFillOutByDefaults(project, null);
+    }
+
+    @Test
+    public void should_Not_FillOut_ByDefaultVersion_InL4jFormat_When_VersionInfoPropsWere_Filled() {
+        // given
+        String projectVersion = "4.3.2.1";
+        doReturn(projectVersion).when(project).getVersion();
+
+        // when
+        versionInfo.tryFillOutByDefaults(project, outfile);
+
+        // then
+        assertNotEquals(projectVersion, versionInfo.fileVersion);
+        assertEquals(fileVersion, versionInfo.fileVersion);
+        assertNotEquals(projectVersion, versionInfo.productVersion);
+        assertEquals(productVersion, versionInfo.productVersion);
+    }
+
+    @Test
     public void shouldFillOut_ByDefaultVersion_InL4jFormat_When_VersionInfoPropsWere_Empty() {
         // given
         String projectVersion = "1.2.3.4";
@@ -129,6 +191,7 @@ public class VersionInfoTest {
         // given
         String organizationName = "Example OSS";
         doReturn(organizationName).when(organization).getName();
+        doReturn(organization).when(project).getOrganization();
 
         // when
         versionInfo.tryFillOutByDefaults(project, outfile);
@@ -145,6 +208,7 @@ public class VersionInfoTest {
         // given
         String organizationName = "Other OSS";
         doReturn(organizationName).when(organization).getName();
+        doReturn(organization).when(project).getOrganization();
 
         versionInfo.companyName = null;
         versionInfo.trademarks = null;
@@ -245,8 +309,6 @@ public class VersionInfoTest {
         assertEquals(projectArtifactId, versionInfo.internalName);
         assertEquals(projectDescription, versionInfo.fileDescription);
     }
-
-    // TODO: exception tryFillOutOriginalFileNameByDefault
 
     @Test
     public void should_Not_FillOut_ByDefault_LastSegmentOfOutfilePath_When_OriginalFilenameWas_Filled() {
