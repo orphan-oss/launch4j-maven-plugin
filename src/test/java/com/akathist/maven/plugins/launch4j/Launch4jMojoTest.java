@@ -5,9 +5,8 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import java.io.File;
 
 public class Launch4jMojoTest extends AbstractMojoTestCase {
-
-    public void testMojoGoal() throws Exception {
-        File testPom = new File(getBasedir(), "src/test/resources/unit/launch4j-default/launch4j-default-plugin-config.xml");
+    public void testPrintOutFulfilledConfiguration() throws Exception {
+        File testPom = new File(getBasedir(), "src/test/resources/unit/launch4j-config/launch4j-full-plugin-config.xml");
 
         Launch4jMojo mojo = (Launch4jMojo) lookupMojo("launch4j", testPom);
 
@@ -66,7 +65,7 @@ public class Launch4jMojoTest extends AbstractMojoTestCase {
                 "language='ENGLISH_US', " +
                 "trademarks='Luk ™'" +
                 "}, " +
-                "disableVersionInfoDefaults=false, " +
+                "disableVersionInfoDefaults=true, " +
                 "messages=Messages{" +
                 "startupErr='null', " +
                 "jreVersionErr='null', " +
@@ -81,5 +80,4 @@ public class Launch4jMojoTest extends AbstractMojoTestCase {
                 "skip=false" +
                 "}", mojo.toString());
     }
-
 }
