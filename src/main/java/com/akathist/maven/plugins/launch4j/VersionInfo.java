@@ -184,24 +184,24 @@ public class VersionInfo {
                 project.getDescription()
         );
 
-        originalFilename = getDefaultWhenOriginalIsBlank(originalFilename, outfile.getName());
+        originalFilename = getDefaultWhenOriginalIsBlank(originalFilename, outfile.getName(), "originalFilename", "${project.version}");
     }
 
     private void tryFillOutByDefaultVersionInL4jFormat(String version) {
         final String defaultFileVersion = Launch4jFileVersionGenerator.generate(version);
-        fileVersion = getDefaultWhenOriginalIsBlank(fileVersion, defaultFileVersion);
-        productVersion = getDefaultWhenOriginalIsBlank(productVersion, defaultFileVersion);
+        fileVersion = getDefaultWhenOriginalIsBlank(fileVersion, defaultFileVersion, "fileVersion", "${project.version}");
+        productVersion = getDefaultWhenOriginalIsBlank(productVersion, defaultFileVersion, "productVersion", "${project.version}");
     }
 
     private void tryFillOutCopyrightByDefaults(String inceptionYear, Organization organization) {
         final String defaultCopyright = CopyrightGenerator.generate(inceptionYear, organization);
-        copyright = getDefaultWhenOriginalIsBlank(copyright, defaultCopyright);
+        copyright = getDefaultWhenOriginalIsBlank(copyright, defaultCopyright, "copyright", "${project.inceptionYear},${project.organization.name}");
     }
 
     private void tryFillOutOrganizationRelatedDefaults(Organization organization) {
         if (organization != null) {
-            companyName = getDefaultWhenOriginalIsBlank(companyName, organization.getName());
-            trademarks = getDefaultWhenOriginalIsBlank(trademarks, organization.getName());
+            companyName = getDefaultWhenOriginalIsBlank(companyName, organization.getName(), "companyName", "${project.organization.name}");
+            trademarks = getDefaultWhenOriginalIsBlank(trademarks, organization.getName(), "trademarks", "${project.organization.name}");
         }
     }
 
@@ -209,16 +209,24 @@ public class VersionInfo {
                                                   String name,
                                                   String artifactId,
                                                   String description) {
-        txtFileVersion = getDefaultWhenOriginalIsBlank(txtFileVersion, version);
-        txtProductVersion = getDefaultWhenOriginalIsBlank(txtProductVersion, version);
-        productName = getDefaultWhenOriginalIsBlank(productName, name);
-        internalName = getDefaultWhenOriginalIsBlank(internalName, artifactId);
-        fileDescription = getDefaultWhenOriginalIsBlank(fileDescription, description);
+        txtFileVersion = getDefaultWhenOriginalIsBlank(txtFileVersion, version, "txtFileVersion", "${project.version}");
+        txtProductVersion = getDefaultWhenOriginalIsBlank(txtProductVersion, version, "txtProductVersion", "${project.version}");
+        productName = getDefaultWhenOriginalIsBlank(productName, name, "productName", "${project.name}");
+        internalName = getDefaultWhenOriginalIsBlank(internalName, artifactId, "internalName", "${project.artifactId}");
+        fileDescription = getDefaultWhenOriginalIsBlank(fileDescription, description, "fileDescription", "${project.description}");
     }
 
-    private String getDefaultWhenOriginalIsBlank(final String originalValue, final String defaultValue) {
-        if (StringUtils.isBlank(originalValue) && StringUtils.isNotBlank(defaultValue)) {
-            return defaultValue;
+    private String getDefaultWhenOriginalIsBlank(final String originalValue,
+                                                 final String defaultValue,
+                                                 final String originalParameterName,
+                                                 final String defaultValueFormulaParams) {
+        if (StringUtils.isBlank(originalValue)) {
+            if(StringUtils.isNotBlank(defaultValue)) {
+                return defaultValue;
+            }
+
+            throw new IllegalStateException("Please fill the missing configuration values. " +
+                    "Error when trying to fulfill default value for VersionInfo parameter:'" + originalParameterName + "' with formula params:'" + defaultValueFormulaParams + "'.");
         }
 
         return originalValue;

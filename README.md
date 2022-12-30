@@ -24,6 +24,7 @@ The full list of all the parameters is available [here](src/main/resources/MOJO.
 - provides default values for plugin configuration, especially for `<VersionInfo>`, see Issue [#98](../../issues/98)
 - adds a `disableVersionInfoDefaults` parameter to be able to disable provided defaults, see PR [#205](../../pull/205)
 - adds documentation notes regarding a new defaults, see [VERSIONINFO.md](src/main/resources/VERSIONINFO.md)
+- throwing exceptions with detailed description of default values formula, when cannot fulfill default values (no configuration data for formula), it helps plugin user with debugging what is wrong
 
 ## Version notes 2.2.0 - 2022-11-24
 - upgrades Launch4j to version 3.50 and adopts config to the bew requirements, see Issue [#199](../../issues/199)

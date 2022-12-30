@@ -221,7 +221,7 @@ public class VersionInfoTest {
         assertEquals(organizationName, versionInfo.trademarks);
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void should_Not_FillOutByDefaults_SimpleValues_From_MavenProject_When_ProjectPropsWere_Empty() {
         // given
         doReturn(null).when(project).getVersion();
@@ -237,15 +237,8 @@ public class VersionInfoTest {
         doReturn(null).when(project).getDescription();
         versionInfo.fileDescription = null;
 
-        // when
+        // expect throws
         versionInfo.tryFillOutByDefaults(project, outfile);
-
-        // then
-        assertNull(versionInfo.txtFileVersion);
-        assertNull(versionInfo.txtProductVersion);
-        assertNull(versionInfo.productName);
-        assertNull(versionInfo.internalName);
-        assertNull(versionInfo.fileDescription);
     }
 
     @Test
