@@ -34,7 +34,6 @@ import java.util.Map;
  * Information that appears in the Windows Explorer.
  */
 public class VersionInfo {
-
     private static final Map<String, LanguageID> LANGUAGE_TO_LANGUAGE_ID;
 
     static {
@@ -116,6 +115,27 @@ public class VersionInfo {
     @Parameter
     String trademarks;
 
+    public VersionInfo() {
+    }
+
+    public VersionInfo(String fileVersion, String txtFileVersion, String fileDescription,
+                       String copyright, String productVersion, String txtProductVersion,
+                       String productName, String companyName, String internalName,
+                       String originalFilename, String language, String trademarks) {
+        this.fileVersion = fileVersion;
+        this.txtFileVersion = txtFileVersion;
+        this.fileDescription = fileDescription;
+        this.copyright = copyright;
+        this.productVersion = productVersion;
+        this.txtProductVersion = txtProductVersion;
+        this.productName = productName;
+        this.companyName = companyName;
+        this.internalName = internalName;
+        this.originalFilename = originalFilename;
+        this.language = language;
+        this.trademarks = trademarks;
+    }
+
     net.sf.launch4j.config.VersionInfo toL4j() {
         net.sf.launch4j.config.VersionInfo ret = new net.sf.launch4j.config.VersionInfo();
 
@@ -144,39 +164,60 @@ public class VersionInfo {
     }
 
     public void tryFillOutByDefaults(MavenProject project, File outfile) {
-        if(project == null) {
+        if (project == null) {
             throw new IllegalArgumentException("'project' is required, but it is null.");
         }
-        if(outfile == null) {
+        if (outfile == null) {
             throw new IllegalArgumentException("'outfile' is required, but it is null.");
         }
 
-        final String defaultFileVersion = Launch4jFileVersionGenerator.generate(project.getVersion());
-        fileVersion = getDefaultWhenOriginalIsBlank(fileVersion, defaultFileVersion);
-        productVersion = getDefaultWhenOriginalIsBlank(productVersion, defaultFileVersion);
+        String version = project.getVersion();
+        Organization organization = project.getOrganization();
 
-        Organization projectOrganization = project.getOrganization();
-
-        final String defaultCopyright = CopyrightGenerator.generate(project.getInceptionYear(), projectOrganization);
-        copyright = getDefaultWhenOriginalIsBlank(copyright, defaultCopyright);
-
-        if(projectOrganization != null) {
-            companyName = getDefaultWhenOriginalIsBlank(companyName, projectOrganization.getName());
-            trademarks = getDefaultWhenOriginalIsBlank(companyName, projectOrganization.getName());
-        }
-
-        txtFileVersion = getDefaultWhenOriginalIsBlank(txtFileVersion, project.getVersion());
-        txtProductVersion = getDefaultWhenOriginalIsBlank(txtProductVersion, project.getVersion());
-
-        productName = getDefaultWhenOriginalIsBlank(productName, project.getName());
-        internalName = getDefaultWhenOriginalIsBlank(internalName, project.getArtifactId());
-        fileDescription = getDefaultWhenOriginalIsBlank(fileDescription, project.getDescription());
+        tryFillOutByDefaultVersionInL4jFormat(version);
+        tryFillOutCopyrightByDefaults(project.getInceptionYear(), organization);
+        tryFillOutOrganizationRelatedDefaults(organization);
+        tryFillOutSimpleValuesByDefaults(
+                version,
+                project.getName(),
+                project.getArtifactId(),
+                project.getDescription()
+        );
 
         originalFilename = getDefaultWhenOriginalIsBlank(originalFilename, outfile.getName());
     }
 
+    private void tryFillOutByDefaultVersionInL4jFormat(String version) {
+        final String defaultFileVersion = Launch4jFileVersionGenerator.generate(version);
+        fileVersion = getDefaultWhenOriginalIsBlank(fileVersion, defaultFileVersion);
+        productVersion = getDefaultWhenOriginalIsBlank(productVersion, defaultFileVersion);
+    }
+
+    private void tryFillOutCopyrightByDefaults(String inceptionYear, Organization organization) {
+        final String defaultCopyright = CopyrightGenerator.generate(inceptionYear, organization);
+        copyright = getDefaultWhenOriginalIsBlank(copyright, defaultCopyright);
+    }
+
+    private void tryFillOutOrganizationRelatedDefaults(Organization organization) {
+        if (organization != null) {
+            companyName = getDefaultWhenOriginalIsBlank(companyName, organization.getName());
+            trademarks = getDefaultWhenOriginalIsBlank(trademarks, organization.getName());
+        }
+    }
+
+    private void tryFillOutSimpleValuesByDefaults(String version,
+                                                  String name,
+                                                  String artifactId,
+                                                  String description) {
+        txtFileVersion = getDefaultWhenOriginalIsBlank(txtFileVersion, version);
+        txtProductVersion = getDefaultWhenOriginalIsBlank(txtProductVersion, version);
+        productName = getDefaultWhenOriginalIsBlank(productName, name);
+        internalName = getDefaultWhenOriginalIsBlank(internalName, artifactId);
+        fileDescription = getDefaultWhenOriginalIsBlank(fileDescription, description);
+    }
+
     private String getDefaultWhenOriginalIsBlank(final String originalValue, final String defaultValue) {
-        if(StringUtils.isBlank(originalValue) && StringUtils.isNotBlank(defaultValue)) {
+        if (StringUtils.isBlank(originalValue) && StringUtils.isNotBlank(defaultValue)) {
             return defaultValue;
         }
 
