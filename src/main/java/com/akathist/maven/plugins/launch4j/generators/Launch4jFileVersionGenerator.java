@@ -11,6 +11,9 @@ public class Launch4jFileVersionGenerator {
             SIMPLE_PROJECT_VERSION_REGEX, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE
     );
 
+    private Launch4jFileVersionGenerator() {
+    }
+
     /**
      * Converts projectVersion into a format "x.x.x.x" ('x' as a number), which is required by Launch4j.
      *

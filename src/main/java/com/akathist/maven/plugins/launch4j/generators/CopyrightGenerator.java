@@ -6,6 +6,9 @@ import org.apache.maven.model.Organization;
 import java.time.LocalDate;
 
 public class CopyrightGenerator {
+    private CopyrightGenerator() {
+    }
+
     /**
      * Parameters should be taken from MavenProject properties:
      * @param projectInceptionYear as ${project.inceptionYear}
