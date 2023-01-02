@@ -163,7 +163,7 @@ public class VersionInfo {
         ret.setLanguage(languageID);
     }
 
-    public void tryFillOutByDefaults(MavenProject project, File outfile) {
+    void tryFillOutByDefaults(MavenProject project, File outfile) {
         if (project == null) {
             throw new IllegalArgumentException("'project' is required, but it is null.");
         }
