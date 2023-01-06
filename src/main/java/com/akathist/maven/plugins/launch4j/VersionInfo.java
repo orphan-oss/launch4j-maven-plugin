@@ -18,9 +18,15 @@
  */
 package com.akathist.maven.plugins.launch4j;
 
+import com.akathist.maven.plugins.launch4j.generators.CopyrightGenerator;
+import com.akathist.maven.plugins.launch4j.generators.Launch4jFileVersionGenerator;
 import net.sf.launch4j.config.LanguageID;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.model.Organization;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +34,6 @@ import java.util.Map;
  * Information that appears in the Windows Explorer.
  */
 public class VersionInfo {
-
     private static final Map<String, LanguageID> LANGUAGE_TO_LANGUAGE_ID;
 
     static {
@@ -110,6 +115,27 @@ public class VersionInfo {
     @Parameter
     String trademarks;
 
+    public VersionInfo() {
+    }
+
+    public VersionInfo(String fileVersion, String txtFileVersion, String fileDescription,
+                       String copyright, String productVersion, String txtProductVersion,
+                       String productName, String companyName, String internalName,
+                       String originalFilename, String language, String trademarks) {
+        this.fileVersion = fileVersion;
+        this.txtFileVersion = txtFileVersion;
+        this.fileDescription = fileDescription;
+        this.copyright = copyright;
+        this.productVersion = productVersion;
+        this.txtProductVersion = txtProductVersion;
+        this.productName = productName;
+        this.companyName = companyName;
+        this.internalName = internalName;
+        this.originalFilename = originalFilename;
+        this.language = language;
+        this.trademarks = trademarks;
+    }
+
     net.sf.launch4j.config.VersionInfo toL4j() {
         net.sf.launch4j.config.VersionInfo ret = new net.sf.launch4j.config.VersionInfo();
 
@@ -135,6 +161,75 @@ public class VersionInfo {
             languageID = LanguageID.ENGLISH_US;
         }
         ret.setLanguage(languageID);
+    }
+
+    void tryFillOutByDefaults(MavenProject project, File outfile) {
+        if (project == null) {
+            throw new IllegalArgumentException("'project' is required, but it is null.");
+        }
+        if (outfile == null) {
+            throw new IllegalArgumentException("'outfile' is required, but it is null.");
+        }
+
+        String version = project.getVersion();
+        Organization organization = project.getOrganization();
+
+        tryFillOutByDefaultVersionInL4jFormat(version);
+        tryFillOutCopyrightByDefaults(project.getInceptionYear(), organization);
+        tryFillOutOrganizationRelatedDefaults(organization);
+        tryFillOutSimpleValuesByDefaults(
+                version,
+                project.getName(),
+                project.getArtifactId(),
+                project.getDescription()
+        );
+
+        originalFilename = getDefaultWhenOriginalIsBlank(originalFilename, outfile.getName(), "originalFilename", "${project.version}");
+    }
+
+    private void tryFillOutByDefaultVersionInL4jFormat(String version) {
+        final String defaultFileVersion = Launch4jFileVersionGenerator.generate(version);
+        fileVersion = getDefaultWhenOriginalIsBlank(fileVersion, defaultFileVersion, "fileVersion", "${project.version}");
+        productVersion = getDefaultWhenOriginalIsBlank(productVersion, defaultFileVersion, "productVersion", "${project.version}");
+    }
+
+    private void tryFillOutCopyrightByDefaults(String inceptionYear, Organization organization) {
+        final String defaultCopyright = CopyrightGenerator.generate(inceptionYear, organization);
+        copyright = getDefaultWhenOriginalIsBlank(copyright, defaultCopyright, "copyright", "${project.inceptionYear},${project.organization.name}");
+    }
+
+    private void tryFillOutOrganizationRelatedDefaults(Organization organization) {
+        if (organization != null) {
+            companyName = getDefaultWhenOriginalIsBlank(companyName, organization.getName(), "companyName", "${project.organization.name}");
+            trademarks = getDefaultWhenOriginalIsBlank(trademarks, organization.getName(), "trademarks", "${project.organization.name}");
+        }
+    }
+
+    private void tryFillOutSimpleValuesByDefaults(String version,
+                                                  String name,
+                                                  String artifactId,
+                                                  String description) {
+        txtFileVersion = getDefaultWhenOriginalIsBlank(txtFileVersion, version, "txtFileVersion", "${project.version}");
+        txtProductVersion = getDefaultWhenOriginalIsBlank(txtProductVersion, version, "txtProductVersion", "${project.version}");
+        productName = getDefaultWhenOriginalIsBlank(productName, name, "productName", "${project.name}");
+        internalName = getDefaultWhenOriginalIsBlank(internalName, artifactId, "internalName", "${project.artifactId}");
+        fileDescription = getDefaultWhenOriginalIsBlank(fileDescription, description, "fileDescription", "${project.description}");
+    }
+
+    private String getDefaultWhenOriginalIsBlank(final String originalValue,
+                                                 final String defaultValue,
+                                                 final String originalParameterName,
+                                                 final String defaultValueFormulaParams) {
+        if (StringUtils.isBlank(originalValue)) {
+            if(StringUtils.isNotBlank(defaultValue)) {
+                return defaultValue;
+            }
+
+            throw new IllegalStateException("Please fill the missing configuration values. " +
+                    "Error when trying to fulfill default value for VersionInfo parameter:'" + originalParameterName + "' with formula params:'" + defaultValueFormulaParams + "'.");
+        }
+
+        return originalValue;
     }
 
     @Override
