@@ -13,6 +13,7 @@ public class CopyrightGenerator {
      * Parameters should be taken from MavenProject properties:
      * @param projectInceptionYear as ${project.inceptionYear}
      * @param projectOrganization as ${project.organization}
+     * @return a string representing copyrights
      */
     public static String generate(String projectInceptionYear, Organization projectOrganization) {
         String inceptionYear = generateInceptionYear(projectInceptionYear);

@@ -16,13 +16,14 @@ public class Launch4jFileVersionGenerator {
 
     /**
      * Converts projectVersion into a format "x.x.x.x" ('x' as a number), which is required by Launch4j.
-     *
+     * <p>
      * For shorter versions like "x.x.x" it will append zeros (to the 4th level) at the end like "x.x.x.0".
      * Every text flag like "-SNAPSHOT" or "-alpha" will be cut off.
-     * Too many nested numbers (more than 4 levels) will be cut off as well: "1.2.3.4.5.6" -> "1.2.3.4".
-     *
+     * Too many nested numbers (more than 4 levels) will be cut off as well: "1.2.3.4.5.6" into "1.2.3.4".
+     * <p>
      * Param should be taken from MavenProject property:
      * @param projectVersion as ${project.version}
+     * @return a string representing a file version of format x.x.x.x
      */
     public static String generate(String projectVersion) {
         if(projectVersion == null) {
