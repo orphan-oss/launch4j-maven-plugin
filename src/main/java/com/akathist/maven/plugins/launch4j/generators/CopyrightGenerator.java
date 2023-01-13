@@ -1,7 +1,6 @@
 package com.akathist.maven.plugins.launch4j.generators;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.model.Organization;
 
 import java.time.LocalDate;
 
@@ -12,13 +11,13 @@ public class CopyrightGenerator {
     /**
      * Parameters should be taken from MavenProject properties:
      * @param projectInceptionYear as ${project.inceptionYear}
-     * @param projectOrganization as ${project.organization}
+     * @param projectOrganizationName as ${project.organization.name}
      * @return a string representing copyrights
      */
-    public static String generate(String projectInceptionYear, Organization projectOrganization) {
+    public static String generate(String projectInceptionYear, String projectOrganizationName) {
         String inceptionYear = generateInceptionYear(projectInceptionYear);
         int buildYear = LocalDate.now().getYear();
-        String organizationName = generateOrganizationName(projectOrganization);
+        String organizationName = generateOrganizationName(projectOrganizationName);
 
         return String.format("Copyright © %s%d%s. All rights reserved.", inceptionYear, buildYear, organizationName);
     }
@@ -31,9 +30,9 @@ public class CopyrightGenerator {
         return "";
     }
 
-    private static String generateOrganizationName(Organization projectOrganization) {
-        if(projectOrganization != null && StringUtils.isNotBlank(projectOrganization.getName())) {
-            return " " + projectOrganization.getName();
+    private static String generateOrganizationName(String projectOrganizationName) {
+        if(StringUtils.isNotBlank(projectOrganizationName)) {
+            return " " + projectOrganizationName;
         }
 
         return "";
