@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -335,6 +336,8 @@ public class VersionInfoTest {
     @Test
     public void shouldFillOut_ByDummyValues_When_OriginalValues_Empty_And_ProjectParams_Empty() {
         // given
+        final String buildYear = String.valueOf(LocalDate.now().getYear());
+
         VersionInfo emptyValuesVersionInfo = new VersionInfo();
         emptyValuesVersionInfo.setLog(log);
 
@@ -345,7 +348,7 @@ public class VersionInfoTest {
         assertEquals("1.0.0.0", emptyValuesVersionInfo.fileVersion);
         assertEquals("1.0.0", emptyValuesVersionInfo.txtFileVersion);
         assertEquals("A Java project.", emptyValuesVersionInfo.fileDescription);
-        assertEquals("Copyright © 2020-2023 Default organization. All rights reserved.", emptyValuesVersionInfo.copyright);
+        assertEquals("Copyright © 2020-" + buildYear + " Default organization. All rights reserved.", emptyValuesVersionInfo.copyright);
         assertEquals("1.0.0.0", emptyValuesVersionInfo.productVersion);
         assertEquals("1.0.0", emptyValuesVersionInfo.txtProductVersion);
         assertEquals("Java Project", emptyValuesVersionInfo.productName);
