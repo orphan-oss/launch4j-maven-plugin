@@ -1,6 +1,5 @@
 package com.akathist.maven.plugins.launch4j.generators;
 
-import org.apache.maven.model.Organization;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,11 +50,8 @@ public class CopyrightGeneratorTest {
         // given
         final String organizationName = "SoftwareMill";
 
-        Organization projectOrganization = new Organization();
-        projectOrganization.setName(organizationName);
-
         // when
-        final String copyright = CopyrightGenerator.generate(null, projectOrganization);
+        final String copyright = CopyrightGenerator.generate(null, organizationName);
 
         // then
         String expected = concatAndWrapWithCopyright(
@@ -70,11 +66,8 @@ public class CopyrightGeneratorTest {
         final String projectInceptionYear = "2020";
         final String organizationName = "Orphan OSS";
 
-        Organization projectOrganization = new Organization();
-        projectOrganization.setName(organizationName);
-
         // when
-        final String copyright = CopyrightGenerator.generate(projectInceptionYear, projectOrganization);
+        final String copyright = CopyrightGenerator.generate(projectInceptionYear, organizationName);
 
         // then
         String expected = concatAndWrapWithCopyright(

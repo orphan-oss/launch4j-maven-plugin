@@ -2,17 +2,23 @@ package com.akathist.maven.plugins.launch4j;
 
 import net.sf.launch4j.config.LanguageID;
 import org.apache.maven.model.Organization;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VersionInfoTest {
@@ -37,6 +43,8 @@ public class VersionInfoTest {
     MavenProject project;
     @Mock
     File outfile;
+    @Mock
+    Log log;
 
     // Subject
     private VersionInfo versionInfo;
@@ -46,7 +54,8 @@ public class VersionInfoTest {
         versionInfo = new VersionInfo(fileVersion, txtFileVersion, fileDescription,
                 copyright, productVersion, txtProductVersion,
                 productName, companyName, internalName,
-                originalFilename, language, trademarks);
+                originalFilename, language, trademarks,
+                log);
     }
 
     @Test
@@ -173,20 +182,6 @@ public class VersionInfoTest {
     }
 
     @Test
-    public void should_Not_FillOutByDefaults_From_MavenProject_OrganizationName_When_OrganizationWas_Empty() {
-        // given
-        versionInfo.companyName = null;
-        versionInfo.trademarks = null;
-
-        // when
-        versionInfo.tryFillOutByDefaults(project, outfile);
-
-        // then
-        assertNull(versionInfo.companyName);
-        assertNull(versionInfo.trademarks);
-    }
-
-    @Test
     public void should_Not_FillOutByDefaults_From_OrganizationName_When_VersionInfoPropsWere_Filled() {
         // given
         String organizationName = "Example OSS";
@@ -219,26 +214,6 @@ public class VersionInfoTest {
         // then
         assertEquals(organizationName, versionInfo.companyName);
         assertEquals(organizationName, versionInfo.trademarks);
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void should_Not_FillOutByDefaults_SimpleValues_From_MavenProject_When_ProjectPropsWere_Empty() {
-        // given
-        doReturn(null).when(project).getVersion();
-        versionInfo.txtFileVersion = null;
-        versionInfo.txtProductVersion = null;
-
-        doReturn(null).when(project).getName();
-        versionInfo.productName = null;
-
-        doReturn(null).when(project).getArtifactId();
-        versionInfo.internalName = null;
-
-        doReturn(null).when(project).getDescription();
-        versionInfo.fileDescription = null;
-
-        // expect throws
-        versionInfo.tryFillOutByDefaults(project, outfile);
     }
 
     @Test
@@ -329,6 +304,58 @@ public class VersionInfoTest {
 
         // then
         assertEquals(outfileName, versionInfo.originalFilename);
+    }
+
+    @Test
+    public void shouldLogWarningsAboutDummyValues() {
+        // given
+        ArgumentCaptor<String> logMessageCaptor = ArgumentCaptor.forClass(String.class);
+        List<String> missingParamNames = Arrays.asList(
+                "project.version",
+                "project.name",
+                "project.artifactId",
+                "project.description",
+                "project.inceptionYear",
+                "project.organization.name",
+                "outfile"
+        );
+
+        // when
+        versionInfo.tryFillOutByDefaults(project, outfile);
+
+        // then
+        verify(log, times(missingParamNames.size())).warn(logMessageCaptor.capture());
+        List<String> logMessages = logMessageCaptor.getAllValues();
+
+
+        missingParamNames.forEach(missingParamName -> {
+            assertTrue(logMessages.stream().anyMatch(message -> message.contains(missingParamName)));
+        });
+    }
+
+    @Test
+    public void shouldFillOut_ByDummyValues_When_OriginalValues_Empty_And_ProjectParams_Empty() {
+        // given
+        final String buildYear = String.valueOf(LocalDate.now().getYear());
+
+        VersionInfo emptyValuesVersionInfo = new VersionInfo();
+        emptyValuesVersionInfo.setLog(log);
+
+        // when
+        emptyValuesVersionInfo.tryFillOutByDefaults(project, outfile);
+
+        // then
+        assertEquals("1.0.0.0", emptyValuesVersionInfo.fileVersion);
+        assertEquals("1.0.0", emptyValuesVersionInfo.txtFileVersion);
+        assertEquals("A Java project.", emptyValuesVersionInfo.fileDescription);
+        assertEquals("Copyright © 2020-" + buildYear + " Default organization. All rights reserved.", emptyValuesVersionInfo.copyright);
+        assertEquals("1.0.0.0", emptyValuesVersionInfo.productVersion);
+        assertEquals("1.0.0", emptyValuesVersionInfo.txtProductVersion);
+        assertEquals("Java Project", emptyValuesVersionInfo.productName);
+        assertEquals("Default organization", emptyValuesVersionInfo.companyName);
+        assertEquals("java-project", emptyValuesVersionInfo.internalName);
+        assertEquals("Default organization", emptyValuesVersionInfo.trademarks);
+        assertEquals("app.exe", emptyValuesVersionInfo.originalFilename);
     }
 
     @Test

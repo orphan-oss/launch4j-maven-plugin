@@ -23,6 +23,7 @@ import com.akathist.maven.plugins.launch4j.generators.Launch4jFileVersionGenerat
 import net.sf.launch4j.config.LanguageID;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.Organization;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
@@ -115,13 +116,16 @@ public class VersionInfo {
     @Parameter
     String trademarks;
 
+    private Log log;
+
     public VersionInfo() {
     }
 
     public VersionInfo(String fileVersion, String txtFileVersion, String fileDescription,
                        String copyright, String productVersion, String txtProductVersion,
                        String productName, String companyName, String internalName,
-                       String originalFilename, String language, String trademarks) {
+                       String originalFilename, String language, String trademarks,
+                       Log log) {
         this.fileVersion = fileVersion;
         this.txtFileVersion = txtFileVersion;
         this.fileDescription = fileDescription;
@@ -134,6 +138,11 @@ public class VersionInfo {
         this.originalFilename = originalFilename;
         this.language = language;
         this.trademarks = trademarks;
+        this.log = log;
+    }
+
+    public void setLog(Log log) {
+        this.log = log;
     }
 
     net.sf.launch4j.config.VersionInfo toL4j() {
@@ -171,65 +180,83 @@ public class VersionInfo {
             throw new IllegalArgumentException("'outfile' is required, but it is null.");
         }
 
-        String version = project.getVersion();
+        String version = getDefaultWhenSourceIsBlankAndLogWarn(project.getVersion(), "1.0.0", "project.version");
         Organization organization = project.getOrganization();
+        String organizationName = "Default organization";
+        if(organization == null) {
+            logWarningAboutDummyValue("project.organization.name", organizationName);
+        } else {
+            organizationName = getDefaultWhenSourceIsBlankAndLogWarn(organization.getName(), organizationName, "project.organization.name");
+        }
 
         tryFillOutByDefaultVersionInL4jFormat(version);
-        tryFillOutCopyrightByDefaults(project.getInceptionYear(), organization);
-        tryFillOutOrganizationRelatedDefaults(organization);
+        tryFillOutCopyrightByDefaults(
+                getDefaultWhenSourceIsBlankAndLogWarn(project.getInceptionYear(), "2020", "project.inceptionYear"),
+                organizationName
+        );
+        tryFillOutOrganizationRelatedDefaults(organizationName);
         tryFillOutSimpleValuesByDefaults(
                 version,
-                project.getName(),
-                project.getArtifactId(),
-                project.getDescription()
+                getDefaultWhenSourceIsBlankAndLogWarn(project.getName(), "Java Project", "project.name"),
+                getDefaultWhenSourceIsBlankAndLogWarn(project.getArtifactId(), "java-project", "project.artifactId"),
+                getDefaultWhenSourceIsBlankAndLogWarn(project.getDescription(), "A Java project.", "project.description")
         );
 
-        originalFilename = getDefaultWhenOriginalIsBlank(originalFilename, outfile.getName(), "originalFilename", "${project.version}");
+        String outfileName = getDefaultWhenSourceIsBlankAndLogWarn(outfile.getName(), "app.exe", "outfile");
+        originalFilename = getDefaultWhenSourceIsBlank(originalFilename, outfileName);
     }
 
     private void tryFillOutByDefaultVersionInL4jFormat(String version) {
-        final String defaultFileVersion = Launch4jFileVersionGenerator.generate(version);
-        fileVersion = getDefaultWhenOriginalIsBlank(fileVersion, defaultFileVersion, "fileVersion", "${project.version}");
-        productVersion = getDefaultWhenOriginalIsBlank(productVersion, defaultFileVersion, "productVersion", "${project.version}");
+        String defaultFileVersion = Launch4jFileVersionGenerator.generate(version);
+
+        fileVersion = getDefaultWhenSourceIsBlank(fileVersion, defaultFileVersion);
+        productVersion = getDefaultWhenSourceIsBlank(productVersion, defaultFileVersion);
     }
 
-    private void tryFillOutCopyrightByDefaults(String inceptionYear, Organization organization) {
-        final String defaultCopyright = CopyrightGenerator.generate(inceptionYear, organization);
-        copyright = getDefaultWhenOriginalIsBlank(copyright, defaultCopyright, "copyright", "${project.inceptionYear},${project.organization.name}");
+    private void tryFillOutCopyrightByDefaults(String inceptionYear, String organizationName) {
+        final String defaultCopyright = CopyrightGenerator.generate(inceptionYear, organizationName);
+        copyright = getDefaultWhenSourceIsBlank(copyright, defaultCopyright);
     }
 
-    private void tryFillOutOrganizationRelatedDefaults(Organization organization) {
-        if (organization != null) {
-            companyName = getDefaultWhenOriginalIsBlank(companyName, organization.getName(), "companyName", "${project.organization.name}");
-            trademarks = getDefaultWhenOriginalIsBlank(trademarks, organization.getName(), "trademarks", "${project.organization.name}");
-        }
+    private void tryFillOutOrganizationRelatedDefaults(String organizationName) {
+        companyName = getDefaultWhenSourceIsBlank(companyName, organizationName);
+        trademarks = getDefaultWhenSourceIsBlank(trademarks, organizationName);
     }
 
     private void tryFillOutSimpleValuesByDefaults(String version,
                                                   String name,
                                                   String artifactId,
                                                   String description) {
-        txtFileVersion = getDefaultWhenOriginalIsBlank(txtFileVersion, version, "txtFileVersion", "${project.version}");
-        txtProductVersion = getDefaultWhenOriginalIsBlank(txtProductVersion, version, "txtProductVersion", "${project.version}");
-        productName = getDefaultWhenOriginalIsBlank(productName, name, "productName", "${project.name}");
-        internalName = getDefaultWhenOriginalIsBlank(internalName, artifactId, "internalName", "${project.artifactId}");
-        fileDescription = getDefaultWhenOriginalIsBlank(fileDescription, description, "fileDescription", "${project.description}");
+        txtFileVersion = getDefaultWhenSourceIsBlank(txtFileVersion, version);
+        txtProductVersion = getDefaultWhenSourceIsBlank(txtProductVersion, version);
+        productName = getDefaultWhenSourceIsBlank(productName, name);
+        internalName = getDefaultWhenSourceIsBlank(internalName, artifactId);
+        fileDescription = getDefaultWhenSourceIsBlank(fileDescription, description);
     }
 
-    private String getDefaultWhenOriginalIsBlank(final String originalValue,
-                                                 final String defaultValue,
-                                                 final String originalParameterName,
-                                                 final String defaultValueFormulaParams) {
-        if (StringUtils.isBlank(originalValue)) {
-            if(StringUtils.isNotBlank(defaultValue)) {
-                return defaultValue;
-            }
-
-            throw new IllegalStateException("Please fill the missing configuration values. " +
-                    "Error when trying to fulfill default value for VersionInfo parameter:'" + originalParameterName + "' with formula params:'" + defaultValueFormulaParams + "'.");
+    private String getDefaultWhenSourceIsBlank(final String source, final String defaultValue) {
+        if (StringUtils.isBlank(source)) {
+            return defaultValue;
         }
 
-        return originalValue;
+        return source;
+    }
+
+    private String getDefaultWhenSourceIsBlankAndLogWarn(final String source,
+                                                         final String defaultValue,
+                                                         final String sourceParamName) {
+        if (StringUtils.isBlank(source)) {
+            logWarningAboutDummyValue(sourceParamName, defaultValue);
+
+            return defaultValue;
+        }
+
+        return source;
+    }
+
+    private void logWarningAboutDummyValue(final String sourceParamName, final String dummyValue) {
+        log.warn("Configuration param ${" + sourceParamName + "} is empty, so a dummy value \"" + dummyValue + "\" " +
+                "might be used instead to fulfill some of VersionInfo params by defaults.");
     }
 
     @Override
