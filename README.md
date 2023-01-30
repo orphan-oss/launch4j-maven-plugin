@@ -20,6 +20,10 @@ The full list of all the parameters is available [here](src/main/resources/MOJO.
 
 # Version Notes
 
+## Version notes 2.3.2 - 2023-01-30
+- fixes broken Project Reports when running `maven-project-info-reports-plugin`, 
+  see Issue [#223](../../issues/223) and PR [#227](../../pull/227)
+
 ## Version notes 2.3.1 - 2023-01-16
 - logs only warnings instead of throwing exception, when cannot fulfill default values for `<VersionInfo>`
   (no configuration data required by the formula), see Issue [#213](../../issues/213) and PR [#216](../../pull/216)
