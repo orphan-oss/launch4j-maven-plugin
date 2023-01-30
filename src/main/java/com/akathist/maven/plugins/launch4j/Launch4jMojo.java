@@ -648,7 +648,6 @@ public class Launch4jMojo extends AbstractMojo {
         ProjectBuildingRequest configuration = session.getProjectBuildingRequest();
         configuration.setRemoteRepositories(project.getRemoteArtifactRepositories());
         configuration.setLocalRepository(localRepository);
-        configuration.setProject(session.getCurrentProject());
 
         getLog().debug("Retrieving artifact: " + a + " stored in " + a.getFile());
 
