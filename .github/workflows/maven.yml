@@ -57,7 +57,7 @@ jobs:
         run: mvn -V test -Ddoclint=all --file pom.xml --no-transfer-progress
 
   automerge:
-    if: github.event_name == 'pull_request' && github.actor == 'dependabot[bot]'
+    if: github.event_name == 'pull_request' && github.actor == 'renovate'
     runs-on: ubuntu-latest
     needs: [build]
     steps:
