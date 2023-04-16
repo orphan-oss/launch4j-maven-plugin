@@ -58,6 +58,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 /**
  * Wraps a jar in a Windows executable.
@@ -84,19 +85,13 @@ public class Launch4jMojo extends AbstractMojo {
      * The dependencies required by the project.
      */
     @Parameter(defaultValue = "${project.artifacts}", required = true, readonly = true)
-    private Set<Artifact> dependencies;
+    private Set<org.apache.maven.artifact.Artifact> dependencies;
 
     /**
      * The user's current project.
      */
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
     private MavenProject project;
-
-    /**
-     * The user's plugins (including, I hope, this one).
-     */
-    @Parameter(defaultValue = "${project.build.plugins}", required = true, readonly = true)
-    private List<Artifact> plugins;
 
     /**
      * Used to look up Artifacts in the remote repository.
@@ -121,7 +116,7 @@ public class Launch4jMojo extends AbstractMojo {
      * Used to get the Launch4j artifact version.
      */
     @Parameter(defaultValue = "${plugin.artifacts}")
-    private List<Artifact> pluginArtifacts;
+    private List<org.apache.maven.artifact.Artifact> oldPluginArtifacts;
 
     /**
      * The base of the current project.
@@ -442,7 +437,10 @@ public class Launch4jMojo extends AbstractMojo {
             c.setVariables(vars);
 
             if (classPath != null) {
-                c.setClassPath(classPath.toL4j(dependencies));
+                Set<Artifact> newArtifacts = dependencies.stream().map(old ->
+                        new DefaultArtifact(old.getGroupId(), old.getArtifactId(), old.getClassifier(), null, old.getVersion())
+                ).collect(Collectors.toSet());
+                c.setClassPath(classPath.toL4j(newArtifacts));
             }
             if (jre != null) {
                 jre.deprecationWarning(getLog());
@@ -810,6 +808,10 @@ public class Launch4jMojo extends AbstractMojo {
      */
     private String getLaunch4jVersion() throws MojoExecutionException {
         String version = null;
+
+        Set<Artifact> pluginArtifacts = oldPluginArtifacts.stream().map(old ->
+                new DefaultArtifact(old.getGroupId(), old.getArtifactId(), old.getClassifier(), null, old.getVersion())
+        ).collect(Collectors.toSet());
 
         for (Artifact artifact : pluginArtifacts) {
             if (LAUNCH4J_GROUP_ID.equals(artifact.getGroupId()) &&
