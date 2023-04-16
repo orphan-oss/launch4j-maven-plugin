@@ -23,8 +23,6 @@ import net.sf.launch4j.BuilderException;
 import net.sf.launch4j.config.Config;
 import net.sf.launch4j.config.ConfigPersister;
 import net.sf.launch4j.config.ConfigPersisterException;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -36,9 +34,15 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.repository.RepositorySystem;
-import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver;
-import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolverException;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.impl.ArtifactResolver;
+import org.eclipse.aether.repository.LocalArtifactRequest;
+import org.eclipse.aether.repository.LocalArtifactResult;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -98,13 +102,13 @@ public class Launch4jMojo extends AbstractMojo {
      * Used to look up Artifacts in the remote repository.
      */
     @Component(role = RepositorySystem.class)
-    private RepositorySystem factory;
+    private RepositorySystem repositorySystem;
 
     /**
      * The user's local repository.
      */
-    @Parameter(defaultValue = "${localRepository}", required = true, readonly = true)
-    private ArtifactRepository localRepository;
+    @Parameter(defaultValue = "${repositorySystemSession}", required = true, readonly = true)
+    private RepositorySystemSession repositorySystemSession;
 
     /**
      * The artifact resolver used to grab the binary bits that launch4j needs.
@@ -508,8 +512,11 @@ public class Launch4jMojo extends AbstractMojo {
     private File setupBuildEnvironment() throws MojoExecutionException {
         createParentFolder();
         Artifact binaryBits = chooseBinaryBits();
-        retrieveBinaryBits(binaryBits);
-        return unpackWorkDir(binaryBits);
+        if (retrieveBinaryBits(binaryBits)) {
+            return unpackWorkDir(binaryBits);
+        } else {
+            throw new MojoExecutionException("Artifact: " + binaryBits + " is not available!");
+        }
     }
 
     private void createParentFolder() {
@@ -532,7 +539,8 @@ public class Launch4jMojo extends AbstractMojo {
      * Writes a marker file to prevent unzipping more than once.
      */
     private File unpackWorkDir(Artifact artifact) throws MojoExecutionException {
-        Artifact localArtifact = localRepository.find(artifact);
+        LocalArtifactRequest request = new LocalArtifactRequest(artifact, null, null);
+        LocalArtifactResult localArtifact = repositorySystemSession.getLocalRepositoryManager().find(repositorySystemSession, request);
         if (localArtifact == null || localArtifact.getFile() == null) {
             throw new MojoExecutionException("Cannot obtain file path to " + artifact);
         }
@@ -643,19 +651,20 @@ public class Launch4jMojo extends AbstractMojo {
     /**
      * Downloads the platform-specific parts, if necessary.
      */
-    private void retrieveBinaryBits(Artifact a) throws MojoExecutionException {
+    private boolean retrieveBinaryBits(Artifact a) throws MojoExecutionException {
 
         ProjectBuildingRequest configuration = session.getProjectBuildingRequest();
         configuration.setRemoteRepositories(project.getRemoteArtifactRepositories());
-        configuration.setLocalRepository(localRepository);
+        // configuration.setLocalRepository(localRepository);
 
         getLog().debug("Retrieving artifact: " + a + " stored in " + a.getFile());
 
         try {
-            resolver.resolveArtifact(configuration, a).getArtifact();
+            ArtifactRequest request = new ArtifactRequest(a, null, null);
+            return resolver.resolveArtifact(repositorySystemSession, request).getLocalArtifactResult().isAvailable();
         } catch (IllegalArgumentException e) {
             throw new MojoExecutionException("Illegal Argument Exception", e);
-        } catch (ArtifactResolverException e) {
+        } catch (ArtifactResolutionException e) {
             throw new MojoExecutionException("Can't retrieve platform-specific components", e);
         }
     }
@@ -688,8 +697,13 @@ public class Launch4jMojo extends AbstractMojo {
             throw new MojoExecutionException("Sorry, Launch4j doesn't support the '" + os + "' OS.");
         }
 
-        return factory.createArtifactWithClassifier(LAUNCH4J_GROUP_ID, LAUNCH4J_ARTIFACT_ID,
-                getLaunch4jVersion(), "jar", "workdir-" + plat);
+        Artifact artifact = new DefaultArtifact(LAUNCH4J_GROUP_ID, LAUNCH4J_ARTIFACT_ID, getLaunch4jVersion(), "jar", "workdir-" + plat);
+        ArtifactRequest request = new ArtifactRequest(artifact, null, null);
+        try {
+            return repositorySystem.resolveArtifact(repositorySystemSession, request).getArtifact();
+        } catch (ArtifactResolutionException e) {
+            throw new MojoExecutionException(e);
+        }
     }
 
     private File getBaseDir() {
