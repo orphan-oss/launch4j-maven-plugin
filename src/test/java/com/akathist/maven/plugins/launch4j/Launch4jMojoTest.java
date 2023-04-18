@@ -15,7 +15,7 @@ public class Launch4jMojoTest extends AbstractMojoTestCase {
         assertEquals("Launch4jMojo{" +
                 "headerType='gui', " +
                 "infile=null, " +
-                "outfile=${project.build.directory}/app.exe, " +
+                "outfile=${project.build.directory}" + File.separator + "app.exe, " +
                 "jar='${project.build.directory}/${project.artifactId}-${project.version}.jar', " +
                 "dontWrapJar=false, " +
                 "errTitle='null', " +
