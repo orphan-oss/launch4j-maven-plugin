@@ -23,6 +23,7 @@ import net.sf.launch4j.BuilderException;
 import net.sf.launch4j.config.Config;
 import net.sf.launch4j.config.ConfigPersister;
 import net.sf.launch4j.config.ConfigPersisterException;
+
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -33,7 +34,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingRequest;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
@@ -41,6 +41,7 @@ import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.impl.ArtifactResolver;
 import org.eclipse.aether.repository.LocalArtifactRequest;
 import org.eclipse.aether.repository.LocalArtifactResult;
+import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 
@@ -80,6 +81,9 @@ public class Launch4jMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${session}", required = true, readonly = true)
     private MavenSession session;
+
+    @Parameter(defaultValue = "${project.remoteProjectRepositories}", required = true, readonly = true)
+    private List<RemoteRepository> repositories;
 
     /**
      * The dependencies required by the project.
@@ -651,15 +655,11 @@ public class Launch4jMojo extends AbstractMojo {
      */
     private boolean retrieveBinaryBits(Artifact a) throws MojoExecutionException {
 
-        ProjectBuildingRequest configuration = session.getProjectBuildingRequest();
-        configuration.setRemoteRepositories(project.getRemoteArtifactRepositories());
-        // configuration.setLocalRepository(localRepository);
-
         getLog().debug("Retrieving artifact: " + a + " stored in " + a.getFile());
 
         try {
-            ArtifactRequest request = new ArtifactRequest(a, null, null);
-            return resolver.resolveArtifact(repositorySystemSession, request).getLocalArtifactResult().isAvailable();
+            ArtifactRequest request = new ArtifactRequest(a, repositories, null);
+            return repositorySystem.resolveArtifact(repositorySystemSession, request).getLocalArtifactResult().isAvailable();
         } catch (IllegalArgumentException e) {
             throw new MojoExecutionException("Illegal Argument Exception", e);
         } catch (ArtifactResolutionException e) {
@@ -695,10 +695,11 @@ public class Launch4jMojo extends AbstractMojo {
             throw new MojoExecutionException("Sorry, Launch4j doesn't support the '" + os + "' OS.");
         }
 
-        Artifact artifact = new DefaultArtifact(LAUNCH4J_GROUP_ID, LAUNCH4J_ARTIFACT_ID, getLaunch4jVersion(), "jar", "workdir-" + plat);
-        ArtifactRequest request = new ArtifactRequest(artifact, null, null);
+        Artifact artifact = new DefaultArtifact(LAUNCH4J_GROUP_ID, LAUNCH4J_ARTIFACT_ID, "workdir-" + plat, "jar", getLaunch4jVersion());
         try {
-            return repositorySystem.resolveArtifact(repositorySystemSession, request).getArtifact();
+            ArtifactRequest request = new ArtifactRequest(artifact, repositories, null);
+
+            return repositorySystem.resolveArtifact(repositorySystemSession, request).getLocalArtifactResult().getRequest().getArtifact();
         } catch (ArtifactResolutionException e) {
             throw new MojoExecutionException(e);
         }
