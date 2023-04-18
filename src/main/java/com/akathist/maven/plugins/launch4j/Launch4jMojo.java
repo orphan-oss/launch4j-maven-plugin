@@ -659,7 +659,7 @@ public class Launch4jMojo extends AbstractMojo {
 
         try {
             ArtifactRequest request = new ArtifactRequest(a, repositories, null);
-            return repositorySystem.resolveArtifact(repositorySystemSession, request).getLocalArtifactResult().isAvailable();
+            return repositorySystem.resolveArtifact(repositorySystemSession, request).isResolved();
         } catch (IllegalArgumentException e) {
             throw new MojoExecutionException("Illegal Argument Exception", e);
         } catch (ArtifactResolutionException e) {
@@ -699,7 +699,7 @@ public class Launch4jMojo extends AbstractMojo {
         try {
             ArtifactRequest request = new ArtifactRequest(artifact, repositories, null);
 
-            return repositorySystem.resolveArtifact(repositorySystemSession, request).getLocalArtifactResult().getRequest().getArtifact();
+            return repositorySystem.resolveArtifact(repositorySystemSession, request).getArtifact();
         } catch (ArtifactResolutionException e) {
             throw new MojoExecutionException(e);
         }
