@@ -19,7 +19,7 @@ The full list of all the parameters is available [here](src/main/resources/MOJO.
 
 # Version Notes
 
-Please check the [releases](releases) page for the exact versions notes
+Please check the [releases](../../releases) page for the exact versions notes
 
 ## Version notes 2.3.3 - 2023-03-11
 - updates maven wrapper to official 3.1.1, adds sha-512 & sha-256 checksums, adds a profiler extension,
