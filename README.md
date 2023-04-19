@@ -2,7 +2,6 @@
 
 Originally hosted at http://9stmaryrd.com/tools/launch4j-maven-plugin/
 
-[![Build Status](https://travis-ci.org/lukaszlenart/launch4j-maven-plugin.svg)](https://travis-ci.org/lukaszlenart/launch4j-maven-plugin)
 [![GH Actions](https://github.com/lukaszlenart/launch4j-maven-plugin/actions/workflows/maven.yml/badge.svg)](https://github.com/lukaszlenart/launch4j-maven-plugin/actions/workflows/maven.yml)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.akathist.maven.plugins.launch4j/launch4j-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.akathist.maven.plugins.launch4j/launch4j-maven-plugin/)
 
@@ -19,6 +18,8 @@ The full list of all the parameters is available [here](src/main/resources/MOJO.
 **NOTE**: Since version 2.0.x this plugin requires to be used with Maven 3.6.x at least.
 
 # Version Notes
+
+Please check the [releases](releases) page for the exact versions notes
 
 ## Version notes 2.3.3 - 2023-03-11
 - updates maven wrapper to official 3.1.1, adds sha-512 & sha-256 checksums, adds a profiler extension,
