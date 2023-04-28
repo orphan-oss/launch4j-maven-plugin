@@ -390,7 +390,7 @@ public class Launch4jMojo extends AbstractMojo {
                         getLog().debug("Overwriting config file property 'outfile' (='" + c.getOutfile().getAbsolutePath() + "') with local value '" + outfile.getAbsolutePath() + "'");
                         c.setOutfile(outfile);
                     }
-                    
+
                     if (icon != null) {
                     	c.setIcon(icon);
                     }
@@ -445,10 +445,7 @@ public class Launch4jMojo extends AbstractMojo {
             c.setVariables(vars);
 
             if (classPath != null) {
-                Set<Artifact> newArtifacts = dependencies.stream().map(old ->
-                        new DefaultArtifact(old.getGroupId(), old.getArtifactId(), old.getClassifier(), null, old.getVersion())
-                ).collect(Collectors.toSet());
-                c.setClassPath(classPath.toL4j(newArtifacts));
+                c.setClassPath(classPath.toL4j(dependencies));
             }
             if (jre != null) {
                 jre.deprecationWarning(getLog());

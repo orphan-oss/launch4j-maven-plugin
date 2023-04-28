@@ -18,8 +18,8 @@
  */
 package com.akathist.maven.plugins.launch4j;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.eclipse.aether.artifact.Artifact;
 
 import java.util.ArrayList;
 import java.util.Arrays;
