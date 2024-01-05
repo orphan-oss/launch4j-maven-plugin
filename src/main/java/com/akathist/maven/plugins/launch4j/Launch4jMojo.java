@@ -542,7 +542,9 @@ public class Launch4jMojo extends AbstractMojo {
      * Writes a marker file to prevent unzipping more than once.
      */
     private File unpackWorkDir(Artifact artifact) throws MojoExecutionException {
-        LocalArtifactRequest request = new LocalArtifactRequest(artifact, null, null);
+	// Need to add repositories param, otherwise it fails to locate artifacts that
+        // are on the disk but were donwloaded from non-central repo.
+        LocalArtifactRequest request = new LocalArtifactRequest(artifact, repositories, null);
         LocalArtifactResult localArtifact = repositorySystemSession.getLocalRepositoryManager().find(repositorySystemSession, request);
         if (localArtifact == null || localArtifact.getFile() == null) {
             throw new MojoExecutionException("Cannot obtain file path to " + artifact);
