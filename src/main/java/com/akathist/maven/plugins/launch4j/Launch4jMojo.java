@@ -542,11 +542,24 @@ public class Launch4jMojo extends AbstractMojo {
      * Writes a marker file to prevent unzipping more than once.
      */
     private File unpackWorkDir(Artifact artifact) throws MojoExecutionException {
+
+        getLog().debug("Trying normal search first, all-repo search if normal fails");
         LocalArtifactRequest request = new LocalArtifactRequest(artifact, null, null);
         LocalArtifactResult localArtifact = repositorySystemSession.getLocalRepositoryManager().find(repositorySystemSession, request);
         if (localArtifact == null || localArtifact.getFile() == null) {
-            throw new MojoExecutionException("Cannot obtain file path to " + artifact);
+            getLog().warn("Cannot obtain file path to " + artifact + ", trying all-repo search");
+
+            request = new LocalArtifactRequest(artifact, repositories, null);
+            localArtifact = repositorySystemSession.getLocalRepositoryManager().find(repositorySystemSession, request);
+            if (localArtifact == null || localArtifact.getFile() == null) {
+                String err = "Cannot obtain file path to " + artifact + " with both normal and all-repo search";
+                getLog().error(err);
+                throw new MojoExecutionException(err);
+            }
         }
+
+        boolean artifactIsSnapshot = !artifact.getVersion().equals(artifact.getBaseVersion());
+	
         getLog().debug("Unpacking " + localArtifact + " into " + localArtifact.getFile());
         File platJar = localArtifact.getFile();
         File dest = platJar.getParentFile();
@@ -557,6 +570,19 @@ public class Launch4jMojo extends AbstractMojo {
         // If the artifact is a SNAPSHOT, then a.getVersion() will report the long timestamp,
         // but getFile() will be 1.1-SNAPSHOT.
         // Since getFile() doesn't use the timestamp, all timestamps wind up in the same place.
+	
+        // WRONG. getFile returns names like
+        // "lbfork-launch4j-3.53-20240105.004437-1-workdir-win32.jar" as of
+        // 2024-01-05.
+        // QUESTION: maybe it depends on Maven's version? Need to support both.
+        // FIX: if it contains expanded version replace it back by expandable version.
+        if (artifactIsSnapshot && workdir.toString().contains(artifact.getVersion())) {
+            String oldWorkdirStr = workdir.toString();
+            String newWorkdirStr = oldWorkdirStr.replace(artifact.getVersion(), artifact.getBaseVersion());
+            getLog().info("Unexpected workdir, correcting from " + oldWorkdirStr + " to " + newWorkdirStr);
+            workdir = new File(newWorkdirStr);
+        }
+	
         // Therefore we need to expand the jar every time, if the marker file is stale.
         if (marker.exists() && marker.lastModified() > platJar.lastModified()) {
             // if (marker.exists() && marker.platJar.getName().indexOf("SNAPSHOT") == -1) {
@@ -601,6 +627,7 @@ public class Launch4jMojo extends AbstractMojo {
         }
 
         setPermissions(workdir);
+        getLog().info("Using workdir " + workdir);
         return workdir;
     }
 
@@ -821,13 +848,13 @@ public class Launch4jMojo extends AbstractMojo {
                     && "core".equals(artifact.getClassifier())) {
 
                 version = artifact.getVersion();
-                getLog().debug("Found launch4j version " + version);
+                getLog().info("Found launch4j version " + version);
                 break;
             }
         }
 
         if (version == null) {
-            throw new MojoExecutionException("Impossible to find which Launch4j version to use");
+            throw new MojoExecutionException("Impossible to find which Launch4j version to use, no compatible version found in classpath");
         }
 
         return version;
