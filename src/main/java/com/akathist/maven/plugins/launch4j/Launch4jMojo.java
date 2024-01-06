@@ -542,14 +542,23 @@ public class Launch4jMojo extends AbstractMojo {
      * Writes a marker file to prevent unzipping more than once.
      */
     private File unpackWorkDir(Artifact artifact) throws MojoExecutionException {
-	// Need to add repositories param, otherwise it fails to locate artifacts that
-        // are on the disk but were donwloaded from non-central repo.
-        LocalArtifactRequest request = new LocalArtifactRequest(artifact, repositories, null);
+
+	// trying normal search first, all-repo search if normal failed
+        LocalArtifactRequest request = new LocalArtifactRequest(artifact, null, null);
         LocalArtifactResult localArtifact = repositorySystemSession.getLocalRepositoryManager().find(repositorySystemSession, request);
         if (localArtifact == null || localArtifact.getFile() == null) {
-            throw new MojoExecutionException("Cannot obtain file path to " + artifact);
-        }
-	boolean artifactIsSnapshot = !artifact.getVersion().equals(artifact.getBaseVersion());
+            getLog().warn("Cannot obtain file path to " + artifact + ", trying all-repo search");
+
+            request = new LocalArtifactRequest(artifact, repositories, null);
+            localArtifact = repositorySystemSession.getLocalRepositoryManager().find(repositorySystemSession, request);
+            if (localArtifact == null || localArtifact.getFile() == null) {
+		String err = "Cannot obtain file path to " + artifact + " with both normal and all-repo search";
+                getLog().error(err);
+                throw new MojoExecutionException(err);
+            }
+	}
+
+        boolean artifactIsSnapshot = !artifact.getVersion().equals(artifact.getBaseVersion());
 	
         getLog().debug("Unpacking " + localArtifact + " into " + localArtifact.getFile());
         File platJar = localArtifact.getFile();
@@ -845,7 +854,7 @@ public class Launch4jMojo extends AbstractMojo {
         }
 
         if (version == null) {
-            throw new MojoExecutionException("Impossible to find which Launch4j version to use");
+            throw new MojoExecutionException("Impossible to find which Launch4j version to use, no compatible version found in classpath");
         }
 
         return version;
