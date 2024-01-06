@@ -348,6 +348,8 @@ public class Launch4jMojo extends AbstractMojo {
             getLog().debug("Skipping execution of the plugin");
             return;
         }
+	
+        fillSensibleHeaderTypeDefaults();
 
         if (!disableVersionInfoDefaults) {
             try {
@@ -487,6 +489,21 @@ public class Launch4jMojo extends AbstractMojo {
             } catch (ConfigPersisterException e) {
                 throw new MojoExecutionException("Cannot save config into a XML file", e);
             }
+        }
+    }
+    
+    private void fillSensibleHeaderTypeDefaults() throws MojoExecutionException {
+        if (headerType == null) {
+            if (classPath != null && classPath.mainClass != null) {
+                if (classPath.mainClass.toLowerCase().contains("gui")) {
+                    getLog().warn("headerType not set, defaulting to \"gui\" because the main class is named " + classPath.mainClass);
+                    headerType = "gui";
+                    return;
+                }
+            }
+
+            getLog().warn("headerType not set, defaulting to \"console\"");
+            headerType = "console";
         }
     }
 
