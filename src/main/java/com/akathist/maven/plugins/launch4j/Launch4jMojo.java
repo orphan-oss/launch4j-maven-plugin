@@ -543,7 +543,7 @@ public class Launch4jMojo extends AbstractMojo {
      */
     private File unpackWorkDir(Artifact artifact) throws MojoExecutionException {
 
-	// trying normal search first, all-repo search if normal failed
+        getLog().debug("Trying normal search first, all-repo search if normal fails");
         LocalArtifactRequest request = new LocalArtifactRequest(artifact, null, null);
         LocalArtifactResult localArtifact = repositorySystemSession.getLocalRepositoryManager().find(repositorySystemSession, request);
         if (localArtifact == null || localArtifact.getFile() == null) {
@@ -552,11 +552,11 @@ public class Launch4jMojo extends AbstractMojo {
             request = new LocalArtifactRequest(artifact, repositories, null);
             localArtifact = repositorySystemSession.getLocalRepositoryManager().find(repositorySystemSession, request);
             if (localArtifact == null || localArtifact.getFile() == null) {
-		String err = "Cannot obtain file path to " + artifact + " with both normal and all-repo search";
+                String err = "Cannot obtain file path to " + artifact + " with both normal and all-repo search";
                 getLog().error(err);
                 throw new MojoExecutionException(err);
             }
-	}
+        }
 
         boolean artifactIsSnapshot = !artifact.getVersion().equals(artifact.getBaseVersion());
 	
