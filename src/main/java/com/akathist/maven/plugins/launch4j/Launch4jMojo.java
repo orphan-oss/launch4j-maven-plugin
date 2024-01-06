@@ -238,6 +238,12 @@ public class Launch4jMojo extends AbstractMojo {
     private File icon;
 
     /**
+     * Whether the executable should ask for admin rights (Windows only).
+     */
+    @Parameter(defaultValue = "false")
+    private boolean requireAdminRights;
+
+    /**
      * Object files to include. Used for custom headers only.
      */
     @Parameter
@@ -348,6 +354,8 @@ public class Launch4jMojo extends AbstractMojo {
             getLog().debug("Skipping execution of the plugin");
             return;
         }
+	
+        processRequireAdminRights();
 
         if (!disableVersionInfoDefaults) {
             try {
@@ -490,6 +498,21 @@ public class Launch4jMojo extends AbstractMojo {
         }
     }
 
+    private void processRequireAdminRights() throws MojoExecutionException {
+        if (requireAdminRights) {
+            getLog().warn("Modifying the resulting exe to always require Admin rights.");
+            getLog().warn("Make sure it's necessary. Consider writing your own manifest file.");
+            
+            if (manifest != null)
+            {
+                getLog().warn("manifest param is already set, overriding. Make sure that's what's intended.");
+            }
+            
+            
+            getLog().error("not implemented yet");
+        }
+    }
+	
     /**
      * Prepares a little directory for launch4j to do its thing. Launch4j needs a bunch of object files
      * (in the w32api and head directories) and the ld and windres binaries (in the bin directory).
@@ -861,6 +884,7 @@ public class Launch4jMojo extends AbstractMojo {
                 ", stayAlive=" + stayAlive +
                 ", restartOnCrash=" + restartOnCrash +
                 ", icon=" + icon +
+                ", requireAdminRights=" + requireAdminRights +
                 ", objs=" + objs +
                 ", libs=" + libs +
                 ", vars=" + vars +
