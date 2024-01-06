@@ -350,6 +350,7 @@ public class Launch4jMojo extends AbstractMojo {
         }
 	
         fillSensibleHeaderTypeDefaults();
+        fillSensibleJreDefaults();
 
         if (!disableVersionInfoDefaults) {
             try {
@@ -504,6 +505,18 @@ public class Launch4jMojo extends AbstractMojo {
 
             getLog().warn("headerType not set, defaulting to \"console\"");
             headerType = "console";
+        }
+    }
+
+    private void fillSensibleJreDefaults() throws MojoExecutionException {
+        if (jre == null) {
+            jre = new Jre();
+        }
+
+        if (jre.path == null) {
+            String pathDef = "%JAVA_HOME%;%PATH%";
+            getLog().warn("jre.path not set, defaulting to \"" + pathDef + "\"");
+            jre.path = pathDef;
         }
     }
 
