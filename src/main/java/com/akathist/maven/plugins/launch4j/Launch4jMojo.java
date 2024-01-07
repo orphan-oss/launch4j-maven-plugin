@@ -72,9 +72,11 @@ import java.util.stream.Collectors;
 )
 public class Launch4jMojo extends AbstractMojo {
 
-    private static final String LAUNCH4J_ARTIFACT_ID = "launch4j";
+    // intentionally non-static non-final, so they can be changed
+    // via reflection if someone absolutely positively needs to
+    private String LAUNCH4J_ARTIFACT_ID = "launch4j";
 
-    private static final String LAUNCH4J_GROUP_ID = "net.sf.launch4j";
+    private String LAUNCH4J_GROUP_ID = "net.sf.launch4j";
 
     /**
      * Maven Session.
