@@ -27,6 +27,7 @@ public class Launch4jMojoTest extends AbstractMojoTestCase {
                 "stayAlive=false, " +
                 "restartOnCrash=false, " +
                 "icon=null, " +
+                "requireAdminRights=false, " +
                 "objs=null, " +
                 "libs=null, " +
                 "vars=null, " +
