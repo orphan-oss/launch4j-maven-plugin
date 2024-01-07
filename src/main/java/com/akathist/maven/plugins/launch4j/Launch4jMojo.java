@@ -53,6 +53,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -76,6 +77,12 @@ public class Launch4jMojo extends AbstractMojo {
 
     private static final String LAUNCH4J_GROUP_ID = "net.sf.launch4j";
 
+    // intentionally non-static non-final so it can be hacked with reflection if someone really needs to
+    private String DEF_REQADMMAN_RES = "META-INF/resources/manifest-requireAdminRights-v1.xml";
+
+    // intentionally non-static non-final so it can be hacked with reflection if someone really needs to
+    private String DEF_REQADMMAN_FILE = "target/manifest-requireAdminRights.xml";
+    
     /**
      * Maven Session.
      */
@@ -502,14 +509,27 @@ public class Launch4jMojo extends AbstractMojo {
         if (requireAdminRights) {
             getLog().warn("Modifying the resulting exe to always require Admin rights.");
             getLog().warn("Make sure it's necessary. Consider writing your own manifest file.");
-            
-            if (manifest != null)
-            {
+
+            if (manifest != null) {
                 getLog().warn("manifest param is already set, overriding. Make sure that's what's intended.");
             }
-            
-            
-            getLog().error("not implemented yet");
+
+            try {
+                File manFile = new File(basedir, DEF_REQADMMAN_FILE);
+                byte[] manBytes = FileUtils.readResourceAsBytes(DEF_REQADMMAN_RES);
+
+                FileUtils.writeBytesIfDiff(manFile, manBytes);
+
+                byte[] savedBytes = FileUtils.readBytes(manFile);
+                if (Arrays.equals(manBytes, savedBytes)) {
+                    getLog().info("Manifest file written to " + manFile);
+                }
+
+                manifest = manFile;
+            } catch (Exception e) {
+                getLog().error(e);
+                throw new MojoExecutionException(e);
+            }
         }
     }
 	
