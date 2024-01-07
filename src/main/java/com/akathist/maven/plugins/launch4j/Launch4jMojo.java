@@ -135,7 +135,7 @@ public class Launch4jMojo extends AbstractMojo {
      * in order to avoid opening a DOS window.
      * Choosing gui also enables other options like taskbar icon and a splash screen.
      */
-    @Parameter
+    @Parameter(defaultValue = "console", required = true)
     private String headerType;
 
     /**
@@ -349,7 +349,6 @@ public class Launch4jMojo extends AbstractMojo {
             return;
         }
 	
-        fillSensibleHeaderTypeDefaults();
         fillSensibleJreDefaults();
 
         if (!disableVersionInfoDefaults) {
@@ -493,21 +492,6 @@ public class Launch4jMojo extends AbstractMojo {
         }
     }
     
-    private void fillSensibleHeaderTypeDefaults() throws MojoExecutionException {
-        if (headerType == null) {
-            if (classPath != null && classPath.mainClass != null) {
-                if (classPath.mainClass.toLowerCase().contains("gui")) {
-                    getLog().warn("headerType not set, defaulting to \"gui\" because the main class is named " + classPath.mainClass);
-                    headerType = "gui";
-                    return;
-                }
-            }
-
-            getLog().warn("headerType not set, defaulting to \"console\"");
-            headerType = "console";
-        }
-    }
-
     private void fillSensibleJreDefaults() throws MojoExecutionException {
         if (jre == null) {
             jre = new Jre();
