@@ -81,7 +81,7 @@ public class Launch4jMojo extends AbstractMojo {
     private String DEF_REQADMMAN_RES = "META-INF/resources/manifest-requireAdminRights-v1.xml";
 
     // intentionally non-static non-final so it can be hacked with reflection if someone really needs to
-    private String DEF_REQADMMAN_FILE = "target/manifest-requireAdminRights.xml";
+    private String DEF_REQADMMAN_FILE = "target/classes/META-INF/manifest-requireAdminRights.xml";
     
     /**
      * Maven Session.

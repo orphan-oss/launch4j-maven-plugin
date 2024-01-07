@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-public class FileUtils {
+public final class FileUtils {
 
     public static final int DEF_BUF_SIZE = 4 * 1024;
 
