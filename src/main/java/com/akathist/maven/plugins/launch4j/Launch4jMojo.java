@@ -515,6 +515,9 @@ public class Launch4jMojo extends AbstractMojo {
             }
 
             try {
+                File metaInfDir = new File(basedir, "target/classes/META-INF");
+                metaInfDir.mkdir();
+                
                 File manFile = new File(basedir, DEF_REQADMMAN_FILE);
                 byte[] manBytes = FileUtils.readResourceAsBytes(DEF_REQADMMAN_RES);
 
