@@ -72,11 +72,11 @@ import java.util.stream.Collectors;
 )
 public class Launch4jMojo extends AbstractMojo {
 
-    // intentionally non-static non-final, so they can be changed
-    // via reflection if someone absolutely positively needs to
-    private String LAUNCH4J_ARTIFACT_ID = "launch4j";
+    @Parameter(defaultValue = "launch4j", required = true)
+    private String launch4jArtifactId;
 
-    private String LAUNCH4J_GROUP_ID = "net.sf.launch4j";
+    @Parameter(defaultValue = "net.sf.launch4j", required = true)
+    private String launch4jGroupId;
 
     /**
      * Maven Session.
@@ -698,7 +698,7 @@ public class Launch4jMojo extends AbstractMojo {
             throw new MojoExecutionException("Sorry, Launch4j doesn't support the '" + os + "' OS.");
         }
 
-        Artifact artifact = new DefaultArtifact(LAUNCH4J_GROUP_ID, LAUNCH4J_ARTIFACT_ID, "workdir-" + plat, "jar", getLaunch4jVersion());
+        Artifact artifact = new DefaultArtifact(launch4jGroupId, launch4jArtifactId, "workdir-" + plat, "jar", getLaunch4jVersion());
         try {
             ArtifactRequest request = new ArtifactRequest(artifact, repositories, null);
 
@@ -818,8 +818,8 @@ public class Launch4jMojo extends AbstractMojo {
         ).collect(Collectors.toSet());
 
         for (Artifact artifact : pluginArtifacts) {
-            if (LAUNCH4J_GROUP_ID.equals(artifact.getGroupId()) &&
-                    LAUNCH4J_ARTIFACT_ID.equals(artifact.getArtifactId())
+            if (launch4jGroupId.equals(artifact.getGroupId()) &&
+                    launch4jArtifactId.equals(artifact.getArtifactId())
                     && "core".equals(artifact.getClassifier())) {
 
                 version = artifact.getVersion();
