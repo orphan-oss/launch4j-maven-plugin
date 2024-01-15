@@ -137,7 +137,7 @@ public class Launch4jMojo extends AbstractMojo {
      * in order to avoid opening a DOS window.
      * Choosing gui also enables other options like taskbar icon and a splash screen.
      */
-    @Parameter
+    @Parameter(defaultValue = "console", required = true)
     private String headerType;
 
     /**
@@ -350,6 +350,8 @@ public class Launch4jMojo extends AbstractMojo {
             getLog().debug("Skipping execution of the plugin");
             return;
         }
+	
+        fillSensibleJreDefaults();
 
         if (!disableVersionInfoDefaults) {
             try {
@@ -489,6 +491,18 @@ public class Launch4jMojo extends AbstractMojo {
             } catch (ConfigPersisterException e) {
                 throw new MojoExecutionException("Cannot save config into a XML file", e);
             }
+        }
+    }
+    
+    private void fillSensibleJreDefaults() throws MojoExecutionException {
+        if (jre == null) {
+            jre = new Jre();
+        }
+
+        if (jre.path == null) {
+            String pathDef = "%JAVA_HOME%;%PATH%";
+            getLog().warn("jre.path not set, defaulting to \"" + pathDef + "\"");
+            jre.path = pathDef;
         }
     }
 
