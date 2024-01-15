@@ -53,6 +53,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -78,6 +79,12 @@ public class Launch4jMojo extends AbstractMojo {
     @Parameter(defaultValue = "net.sf.launch4j", required = true)
     private String launch4jGroupId;
 
+    // intentionally non-static non-final so it can be hacked with reflection if someone really needs to
+    private String DEF_REQADMMAN_RES = "META-INF/resources/manifest-requireAdminRights-v1.xml";
+
+    // intentionally non-static non-final so it can be hacked with reflection if someone really needs to
+    private String DEF_REQADMMAN_FILE = "target/classes/META-INF/manifest-requireAdminRights.xml";
+    
     /**
      * Maven Session.
      */
@@ -240,6 +247,12 @@ public class Launch4jMojo extends AbstractMojo {
     private File icon;
 
     /**
+     * Whether the executable should ask for admin rights (Windows only).
+     */
+    @Parameter(defaultValue = "false")
+    private boolean requireAdminRights;
+
+    /**
      * Object files to include. Used for custom headers only.
      */
     @Parameter
@@ -351,6 +364,8 @@ public class Launch4jMojo extends AbstractMojo {
             return;
         }
 	
+        processRequireAdminRights();
+
         fillSensibleJreDefaults();
 
         if (!disableVersionInfoDefaults) {
@@ -506,6 +521,37 @@ public class Launch4jMojo extends AbstractMojo {
         }
     }
 
+    private void processRequireAdminRights() throws MojoExecutionException {
+        if (requireAdminRights) {
+            getLog().warn("Modifying the resulting exe to always require Admin rights.");
+            getLog().warn("Make sure it's necessary. Consider writing your own manifest file.");
+
+            if (manifest != null) {
+                getLog().warn("manifest param is already set, overriding. Make sure that's what's intended.");
+            }
+
+            try {
+                File metaInfDir = new File(basedir, "target/classes/META-INF");
+                metaInfDir.mkdir();
+                
+                File manFile = new File(basedir, DEF_REQADMMAN_FILE);
+                byte[] manBytes = FileUtils.readResourceAsBytes(DEF_REQADMMAN_RES);
+
+                FileUtils.writeBytesIfDiff(manFile, manBytes);
+
+                byte[] savedBytes = FileUtils.readBytes(manFile);
+                if (Arrays.equals(manBytes, savedBytes)) {
+                    getLog().info("Manifest file written to " + manFile);
+                }
+
+                manifest = manFile;
+            } catch (Exception e) {
+                getLog().error(e);
+                throw new MojoExecutionException(e);
+            }
+        }
+    }
+	
     /**
      * Prepares a little directory for launch4j to do its thing. Launch4j needs a bunch of object files
      * (in the w32api and head directories) and the ld and windres binaries (in the bin directory).
@@ -904,6 +950,7 @@ public class Launch4jMojo extends AbstractMojo {
                 ", stayAlive=" + stayAlive +
                 ", restartOnCrash=" + restartOnCrash +
                 ", icon=" + icon +
+                ", requireAdminRights=" + requireAdminRights +
                 ", objs=" + objs +
                 ", libs=" + libs +
                 ", vars=" + vars +
