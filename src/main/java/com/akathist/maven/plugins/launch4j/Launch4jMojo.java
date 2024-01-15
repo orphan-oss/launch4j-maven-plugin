@@ -73,9 +73,11 @@ import java.util.stream.Collectors;
 )
 public class Launch4jMojo extends AbstractMojo {
 
-    private static final String LAUNCH4J_ARTIFACT_ID = "launch4j";
+    @Parameter(defaultValue = "launch4j", required = true)
+    private String launch4jArtifactId;
 
-    private static final String LAUNCH4J_GROUP_ID = "net.sf.launch4j";
+    @Parameter(defaultValue = "net.sf.launch4j", required = true)
+    private String launch4jGroupId;
 
     // intentionally non-static non-final so it can be hacked with reflection if someone really needs to
     private String DEF_REQADMMAN_RES = "META-INF/resources/manifest-requireAdminRights-v1.xml";
@@ -142,7 +144,7 @@ public class Launch4jMojo extends AbstractMojo {
      * in order to avoid opening a DOS window.
      * Choosing gui also enables other options like taskbar icon and a splash screen.
      */
-    @Parameter
+    @Parameter(defaultValue = "console", required = true)
     private String headerType;
 
     /**
@@ -364,6 +366,8 @@ public class Launch4jMojo extends AbstractMojo {
 	
         processRequireAdminRights();
 
+        fillSensibleJreDefaults();
+
         if (!disableVersionInfoDefaults) {
             try {
                 if(versionInfo == null) {
@@ -504,6 +508,18 @@ public class Launch4jMojo extends AbstractMojo {
             }
         }
     }
+    
+    private void fillSensibleJreDefaults() throws MojoExecutionException {
+        if (jre == null) {
+            jre = new Jre();
+        }
+
+        if (jre.path == null) {
+            String pathDef = "%JAVA_HOME%;%PATH%";
+            getLog().warn("jre.path not set, defaulting to \"" + pathDef + "\"");
+            jre.path = pathDef;
+        }
+    }
 
     private void processRequireAdminRights() throws MojoExecutionException {
         if (requireAdminRights) {
@@ -588,11 +604,24 @@ public class Launch4jMojo extends AbstractMojo {
      * Writes a marker file to prevent unzipping more than once.
      */
     private File unpackWorkDir(Artifact artifact) throws MojoExecutionException {
+
+        getLog().debug("Trying normal search first, all-repo search if normal fails");
         LocalArtifactRequest request = new LocalArtifactRequest(artifact, null, null);
         LocalArtifactResult localArtifact = repositorySystemSession.getLocalRepositoryManager().find(repositorySystemSession, request);
         if (localArtifact == null || localArtifact.getFile() == null) {
-            throw new MojoExecutionException("Cannot obtain file path to " + artifact);
+            getLog().warn("Cannot obtain file path to " + artifact + ", trying all-repo search");
+
+            request = new LocalArtifactRequest(artifact, repositories, null);
+            localArtifact = repositorySystemSession.getLocalRepositoryManager().find(repositorySystemSession, request);
+            if (localArtifact == null || localArtifact.getFile() == null) {
+                String err = "Cannot obtain file path to " + artifact + " with both normal and all-repo search";
+                getLog().error(err);
+                throw new MojoExecutionException(err);
+            }
         }
+
+        boolean artifactIsSnapshot = !artifact.getVersion().equals(artifact.getBaseVersion());
+	
         getLog().debug("Unpacking " + localArtifact + " into " + localArtifact.getFile());
         File platJar = localArtifact.getFile();
         File dest = platJar.getParentFile();
@@ -603,6 +632,19 @@ public class Launch4jMojo extends AbstractMojo {
         // If the artifact is a SNAPSHOT, then a.getVersion() will report the long timestamp,
         // but getFile() will be 1.1-SNAPSHOT.
         // Since getFile() doesn't use the timestamp, all timestamps wind up in the same place.
+	
+        // WRONG. getFile returns names like
+        // "lbfork-launch4j-3.53-20240105.004437-1-workdir-win32.jar" as of
+        // 2024-01-05.
+        // QUESTION: maybe it depends on Maven's version? Need to support both.
+        // FIX: if it contains expanded version replace it back by expandable version.
+        if (artifactIsSnapshot && workdir.toString().contains(artifact.getVersion())) {
+            String oldWorkdirStr = workdir.toString();
+            String newWorkdirStr = oldWorkdirStr.replace(artifact.getVersion(), artifact.getBaseVersion());
+            getLog().info("Unexpected workdir, correcting from " + oldWorkdirStr + " to " + newWorkdirStr);
+            workdir = new File(newWorkdirStr);
+        }
+	
         // Therefore we need to expand the jar every time, if the marker file is stale.
         if (marker.exists() && marker.lastModified() > platJar.lastModified()) {
             // if (marker.exists() && marker.platJar.getName().indexOf("SNAPSHOT") == -1) {
@@ -647,6 +689,7 @@ public class Launch4jMojo extends AbstractMojo {
         }
 
         setPermissions(workdir);
+        getLog().info("Using workdir " + workdir);
         return workdir;
     }
 
@@ -742,7 +785,7 @@ public class Launch4jMojo extends AbstractMojo {
             throw new MojoExecutionException("Sorry, Launch4j doesn't support the '" + os + "' OS.");
         }
 
-        Artifact artifact = new DefaultArtifact(LAUNCH4J_GROUP_ID, LAUNCH4J_ARTIFACT_ID, "workdir-" + plat, "jar", getLaunch4jVersion());
+        Artifact artifact = new DefaultArtifact(launch4jGroupId, launch4jArtifactId, "workdir-" + plat, "jar", getLaunch4jVersion());
         try {
             ArtifactRequest request = new ArtifactRequest(artifact, repositories, null);
 
@@ -862,18 +905,18 @@ public class Launch4jMojo extends AbstractMojo {
         ).collect(Collectors.toSet());
 
         for (Artifact artifact : pluginArtifacts) {
-            if (LAUNCH4J_GROUP_ID.equals(artifact.getGroupId()) &&
-                    LAUNCH4J_ARTIFACT_ID.equals(artifact.getArtifactId())
+            if (launch4jGroupId.equals(artifact.getGroupId()) &&
+                    launch4jArtifactId.equals(artifact.getArtifactId())
                     && "core".equals(artifact.getClassifier())) {
 
                 version = artifact.getVersion();
-                getLog().debug("Found launch4j version " + version);
+                getLog().info("Found launch4j version " + version);
                 break;
             }
         }
 
         if (version == null) {
-            throw new MojoExecutionException("Impossible to find which Launch4j version to use");
+            throw new MojoExecutionException("Impossible to find which Launch4j version to use, no compatible version found in classpath");
         }
 
         return version;
