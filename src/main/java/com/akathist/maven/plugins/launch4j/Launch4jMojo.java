@@ -940,8 +940,11 @@ public class Launch4jMojo extends AbstractMojo {
      */
     private boolean skipExecution() {
         getLog().debug("skip = " + this.skip);
-        getLog().debug("skipLaunch4j = " + System.getProperty("skipLaunch4j"));
-        return skip || System.getProperty("skipLaunch4j") != null;
+	String sysProp = System.getProperty("skipLaunch4j");
+        getLog().debug("skipLaunch4j = " + sysProp);
+
+	return skip || (sysProp != null && !sysProp.equalsIgnoreCase("false"));
+	
     }
     
     private boolean skipIfNativeImage() {
