@@ -343,6 +343,13 @@ public class Launch4jMojo extends AbstractMojo {
     @Parameter(defaultValue = "false")
     private boolean skip = false;
 
+    /**
+     * If set to true, make best effort to skip execution if other plugins are
+     * generating native image / exe file
+     */
+    @Parameter(defaultValue = "false")
+    private boolean skipIfNativeImage = false;
+
     private File getJar() {
         return new File(jar);
     }
@@ -363,6 +370,10 @@ public class Launch4jMojo extends AbstractMojo {
             getLog().debug("Skipping execution of the plugin");
             return;
         }
+	
+	if (this.skipIfNativeImage()) {
+	    getLog().debug("Parameter 'skipIfNativeImage' not implemented yet.");
+	}
 	
         processRequireAdminRights();
 
@@ -931,6 +942,14 @@ public class Launch4jMojo extends AbstractMojo {
         getLog().debug("skip = " + this.skip);
         getLog().debug("skipLaunch4j = " + System.getProperty("skipLaunch4j"));
         return skip || System.getProperty("skipLaunch4j") != null;
+    }
+    
+    private boolean skipIfNativeImage() {
+        getLog().debug("skipIfNativeImage = " + this.skipIfNativeImage);
+	String sysProp = System.getProperty("skipLaunch4jIfNativeImage");
+        getLog().debug("skipLaunch4jIfNativeImage = " + sysProp);
+	
+        return skipIfNativeImage || (sysProp != null && !sysProp.equalsIgnoreCase("false"));
     }
 
     @Override
