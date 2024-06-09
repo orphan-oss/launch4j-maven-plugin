@@ -61,6 +61,9 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginExecution;
 
 /**
  * Wraps a jar in a Windows executable.
@@ -371,8 +374,12 @@ public class Launch4jMojo extends AbstractMojo {
             return;
         }
 	
-	if (this.skipIfNativeImage()) {
-	    getLog().debug("Parameter 'skipIfNativeImage' not implemented yet.");
+	if (this.skipIfNativeImageParam()) {
+	    getLog().info("skipIfNativeImage enabled. Consider rewriting your pom with profiles");
+	    getLog().debug("Checking if any other plugin generates a native image / exe file");
+	    if (isNativeImageGenerationActive()) {
+		return;
+	    }
 	}
 	
         processRequireAdminRights();
@@ -947,13 +954,55 @@ public class Launch4jMojo extends AbstractMojo {
 	
     }
     
-    private boolean skipIfNativeImage() {
+    private boolean skipIfNativeImageParam() {
         getLog().debug("skipIfNativeImage = " + this.skipIfNativeImage);
 	String sysProp = System.getProperty("skipLaunch4jIfNativeImage");
         getLog().debug("skipLaunch4jIfNativeImage = " + sysProp);
 	
         return skipIfNativeImage || (sysProp != null && !sysProp.equalsIgnoreCase("false"));
     }
+    
+   private boolean isNativeImageGenerationActive() {
+	String graalKey = "org.graalvm.buildtools:native-maven-plugin";
+	Log log = getLog();
+	MavenProject curProj = session.getCurrentProject();
+	Build build = curProj.getBuild();
+	String packaging = curProj.getPackaging();
+
+	if (packaging.equalsIgnoreCase("native-image")) {
+	    log.info("Current project's packaging is set to native-image, skipping.");
+	    return true;
+	}
+
+	// check if there's a Graal plugin and if it has any enabled compile executions
+	Plugin graalPlugin = build.getPluginsAsMap().get(graalKey);
+
+	// check if 1) there's a goal with "compile", 2) with no skip params, 3) and no skip sysprops
+	if (graalPlugin != null) {
+            for (PluginExecution pe : graalPlugin.getExecutions()) {
+	        String goalsStr = pe.getGoals().toString().toLowerCase();
+	        String confStr = pe.getConfiguration().toString().toLowerCase();
+	    
+	        if (!goalsStr.contains("compile") || pe.getPhase() == null) {
+                    continue;
+	        }
+		if (confStr.contains("<skip>true") || confStr.contains("<skipNativeBuild>true"))
+		{
+		    continue;
+		}
+		String sysProp = System.getProperty("skipNativeBuild");
+		if (sysProp != null && !sysProp.equalsIgnoreCase("false")) {
+		    continue;
+		}
+		
+                log.info("There is an active Graal plugin execution, skipping.");
+		return true;
+            }
+	}
+
+	return false;
+    }
+
 
     @Override
     public String toString() {
