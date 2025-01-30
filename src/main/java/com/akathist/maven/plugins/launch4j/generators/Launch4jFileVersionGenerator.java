@@ -2,11 +2,12 @@ package com.akathist.maven.plugins.launch4j.generators;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Launch4jFileVersionGenerator {
     private static final int REQUIRED_NESTED_VERSION_LEVELS = 4;
-    private static final String SIMPLE_PROJECT_VERSION_REGEX = "^((\\d(\\.)?)*\\d+)(-\\w+)?$";
+    private static final String SIMPLE_PROJECT_VERSION_REGEX = "^((\\d(\\.)?)*\\d+)(-\\w+)?(?:-(?<prerelease>[\\w.-]+))?(?:\\+(?<build>[\\w.-]+))?$";
     private static final Pattern simpleProjectVersionPattern = Pattern.compile(
             SIMPLE_PROJECT_VERSION_REGEX, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE
     );
@@ -40,12 +41,13 @@ public class Launch4jFileVersionGenerator {
     }
 
     private static String removeTextFlags(String version) {
-        if(version.contains("-")) {
-            String[] parts = version.split("-");
-            return parts[0];
+        Pattern pattern = Pattern.compile("[-+]");
+        Matcher matcher = pattern.matcher(version);
+        if (matcher.find()) {
+            return version.substring(0, matcher.start());
+        } else {
+            return version;
         }
-
-        return version;
     }
 
     private static String cutOffTooManyNestedLevels(String versionLevels) {

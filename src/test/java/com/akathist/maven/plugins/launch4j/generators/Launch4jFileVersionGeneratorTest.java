@@ -59,6 +59,13 @@ public class Launch4jFileVersionGeneratorTest {
         "1.2.1-alpha, 1.2.1.0",
         "1.2.3.4-beta, 1.2.3.4",
         "0.0.1-snapshot, 0.0.1.0",
+        "1.2.3.4-alpha+001, 1.2.3.4",
+        "1.2.3-alpha+001, 1.2.3.0",
+        "1.2.3.4-alpha+001, 1.2.3.4",
+        "1.2.3+20130313144700, 1.2.3.0",
+        "1.2.3.4+20130313144700, 1.2.3.4",
+        "1.2.3-beta+exp.sha.5114f85, 1.2.3.0",
+        "1.2.3.4-beta+exp.sha.5114f85, 1.2.3.4",
     })
     public void shouldCutOffTextFlags(String projectVersion, String expected) {
         // when
