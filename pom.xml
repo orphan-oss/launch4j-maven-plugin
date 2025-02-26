@@ -1,22 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Maven Launch4j Plugin Copyright (c) 2006 Paul Jungwirth This program
-    is free software; you can redistribute it and/or modify it under the terms
-    of the GNU General Public License as published by the Free Software Foundation;
-    either version 2 of the License, or (at your option) any later version. This
-    program is distributed in the hope that it will be useful, but WITHOUT ANY
-    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-    FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License along with
-    this program; if not, write to the Free Software Foundation, Inc., 51 Franklin
-    St, Fifth Floor, Boston, MA 02110-1301 USA -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<!--
+Maven Launch4j Plugin 1.0
+A plugin for using Launch4j in Maven projects.
+
+Copyright (c) 2006 Paul Jungwirth
+Copyright (c) 2011-2025 Lukasz Lenart
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+A complete copy of this license may be found in src/main/legal/LICENSE.txt of the source distribution.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
         <version>9</version>
-        <relativePath />
+        <relativePath/>
     </parent>
 
     <groupId>com.akathist.maven.plugins.launch4j</groupId>
@@ -211,9 +225,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.21.0</version>
-                <configuration>
-                    <relativizeDecorationLinks>false</relativizeDecorationLinks>
-                </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>org.apache.maven.doxia</groupId>
@@ -260,7 +271,7 @@
                                                 </goals>
                                             </pluginExecutionFilter>
                                             <action>
-                                                <ignore />
+                                                <ignore/>
                                             </action>
                                         </pluginExecution>
                                     </pluginExecutions>
