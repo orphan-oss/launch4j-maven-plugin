@@ -36,8 +36,8 @@
 
     <licenses>
         <license>
-            <name>Apache 2.0 License</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <name>GNU General Public License</name>
+            <url>https://www.gnu.org/licenses/gpl.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
