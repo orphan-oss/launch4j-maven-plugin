@@ -1,10 +1,11 @@
 /*
  * Maven Launch4j Plugin
  * Copyright (c) 2006 Paul Jungwirth
+ * Copyright (c) 2011-2025 Lukasz Lenart
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -84,7 +85,7 @@ public class Launch4jMojo extends AbstractMojo {
 
     // intentionally non-static non-final so it can be hacked with reflection if someone really needs to
     private String DEF_REQADMMAN_FILE = "target/classes/META-INF/manifest-requireAdminRights.xml";
-    
+
     /**
      * Maven Session.
      */
@@ -363,7 +364,7 @@ public class Launch4jMojo extends AbstractMojo {
             getLog().debug("Skipping execution of the plugin");
             return;
         }
-	
+
         processRequireAdminRights();
 
         fillSensibleJreDefaults();
@@ -508,7 +509,7 @@ public class Launch4jMojo extends AbstractMojo {
             }
         }
     }
-    
+
     private void fillSensibleJreDefaults() throws MojoExecutionException {
         if (jre == null) {
             jre = new Jre();
@@ -533,7 +534,7 @@ public class Launch4jMojo extends AbstractMojo {
             try {
                 File metaInfDir = new File(basedir, "target/classes/META-INF");
                 metaInfDir.mkdir();
-                
+
                 File manFile = new File(basedir, DEF_REQADMMAN_FILE);
                 byte[] manBytes = FileUtils.readResourceAsBytes(DEF_REQADMMAN_RES);
 
@@ -551,7 +552,7 @@ public class Launch4jMojo extends AbstractMojo {
             }
         }
     }
-	
+
     /**
      * Prepares a little directory for launch4j to do its thing. Launch4j needs a bunch of object files
      * (in the w32api and head directories) and the ld and windres binaries (in the bin directory).
@@ -621,7 +622,7 @@ public class Launch4jMojo extends AbstractMojo {
         }
 
         boolean artifactIsSnapshot = !artifact.getVersion().equals(artifact.getBaseVersion());
-	
+
         getLog().debug("Unpacking " + localArtifact + " into " + localArtifact.getFile());
         File platJar = localArtifact.getFile();
         File dest = platJar.getParentFile();
@@ -632,7 +633,7 @@ public class Launch4jMojo extends AbstractMojo {
         // If the artifact is a SNAPSHOT, then a.getVersion() will report the long timestamp,
         // but getFile() will be 1.1-SNAPSHOT.
         // Since getFile() doesn't use the timestamp, all timestamps wind up in the same place.
-	
+
         // WRONG. getFile returns names like
         // "lbfork-launch4j-3.53-20240105.004437-1-workdir-win32.jar" as of
         // 2024-01-05.
@@ -644,7 +645,7 @@ public class Launch4jMojo extends AbstractMojo {
             getLog().info("Unexpected workdir, correcting from " + oldWorkdirStr + " to " + newWorkdirStr);
             workdir = new File(newWorkdirStr);
         }
-	
+
         // Therefore we need to expand the jar every time, if the marker file is stale.
         if (marker.exists() && marker.lastModified() > platJar.lastModified()) {
             // if (marker.exists() && marker.platJar.getName().indexOf("SNAPSHOT") == -1) {
