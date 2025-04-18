@@ -19,7 +19,7 @@ on:
   pull_request:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow to apply a label and merge
