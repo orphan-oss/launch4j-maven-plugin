@@ -50,8 +50,8 @@ A complete copy of this license may be found in src/main/legal/LICENSE.txt of th
 
     <licenses>
         <license>
-            <name>GNU General Public License</name>
-            <url>https://www.gnu.org/licenses/gpl.txt</url>
+            <name>GNU General Public License v3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
