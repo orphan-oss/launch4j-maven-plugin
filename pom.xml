@@ -35,7 +35,7 @@ A complete copy of this license may be found in src/main/legal/LICENSE.txt of th
     <groupId>com.akathist.maven.plugins.launch4j</groupId>
     <artifactId>launch4j-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>2.6.0</version>
+    <version>2.6.1-SNAPSHOT</version>
 
     <name>Maven Launch4j Plugin</name>
     <description>This plugin creates Windows executables from Java jar files using the Launch4j utility.</description>
