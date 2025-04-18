@@ -19,12 +19,12 @@
  */
 package com.akathist.maven.plugins.launch4j;
 
+import com.akathist.maven.plugins.launch4j.tools.ResourceIO;
 import net.sf.launch4j.Builder;
 import net.sf.launch4j.BuilderException;
 import net.sf.launch4j.config.Config;
 import net.sf.launch4j.config.ConfigPersister;
 import net.sf.launch4j.config.ConfigPersisterException;
-
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -81,7 +81,7 @@ public class Launch4jMojo extends AbstractMojo {
     private String launch4jGroupId;
 
     // intentionally non-static non-final so it can be hacked with reflection if someone really needs to
-    private String DEF_REQADMMAN_RES = "META-INF/resources/manifest-requireAdminRights-v1.xml";
+    private String DEF_REQADMMAN_RES = "META-INF/resources/manifest-require_admin_rights-v1.xml";
 
     // intentionally non-static non-final so it can be hacked with reflection if someone really needs to
     private String DEF_REQADMMAN_FILE = "target/classes/META-INF/manifest-requireAdminRights.xml";
@@ -371,7 +371,7 @@ public class Launch4jMojo extends AbstractMojo {
 
         if (!disableVersionInfoDefaults) {
             try {
-                if(versionInfo == null) {
+                if (versionInfo == null) {
                     versionInfo = new VersionInfo();
                 }
                 versionInfo.setLog(getLog());
@@ -412,7 +412,7 @@ public class Launch4jMojo extends AbstractMojo {
                     }
 
                     if (icon != null) {
-                    	c.setIcon(icon);
+                        c.setIcon(icon);
                     }
 
                     if (versionInfo != null) {
@@ -536,11 +536,11 @@ public class Launch4jMojo extends AbstractMojo {
                 metaInfDir.mkdir();
 
                 File manFile = new File(basedir, DEF_REQADMMAN_FILE);
-                byte[] manBytes = FileUtils.readResourceAsBytes(DEF_REQADMMAN_RES);
+                byte[] manBytes = ResourceIO.readResourceAsBytes(DEF_REQADMMAN_RES);
 
-                FileUtils.writeBytesIfDiff(manFile, manBytes);
+                ResourceIO.writeBytesIfDiff(manFile, manBytes);
 
-                byte[] savedBytes = FileUtils.readBytes(manFile);
+                byte[] savedBytes = ResourceIO.readBytes(manFile);
                 if (Arrays.equals(manBytes, savedBytes)) {
                     getLog().info("Manifest file written to " + manFile);
                 }
