@@ -159,7 +159,7 @@ A complete copy of this license may be found in src/main/legal/LICENSE.txt of th
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-compat</artifactId>
-            <version>3.9.9</version>
+            <version>3.9.10</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
