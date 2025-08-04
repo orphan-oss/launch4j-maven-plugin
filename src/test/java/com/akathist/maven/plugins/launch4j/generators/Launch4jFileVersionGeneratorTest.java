@@ -89,4 +89,40 @@ public class Launch4jFileVersionGeneratorTest {
         // then
         assertEquals(expected, launch4jFileVersion);
     }
+
+    @Test
+    @Parameters({
+        "302.08, 302.8.0.0",
+        "1.02.3, 1.2.3.0",
+        "01.02.03.04, 1.2.3.4",
+        "10.00.01, 10.0.1.0",
+        "0.08.09, 0.8.9.0",
+        "302.08-SNAPSHOT, 302.8.0.0",
+        "1.02.03.04.05.06, 1.2.3.4",
+        "000.001.002, 0.1.2.0"
+    })
+    public void shouldStripLeadingZerosFromVersionComponents(String projectVersion, String expected) {
+        // when
+        final String launch4jFileVersion = Launch4jFileVersionGenerator.generate(projectVersion);
+
+        // then
+        assertEquals(expected, launch4jFileVersion);
+    }
+
+    @Test
+    @Parameters({
+        "0, 0.0.0.0",
+        "00, 0.0.0.0",
+        "000, 0.0.0.0",
+        "0.0, 0.0.0.0",
+        "00.00, 0.0.0.0",
+        "000.000, 0.0.0.0"
+    })
+    public void shouldHandleZeroVersionsCorrectly(String projectVersion, String expected) {
+        // when
+        final String launch4jFileVersion = Launch4jFileVersionGenerator.generate(projectVersion);
+
+        // then
+        assertEquals(expected, launch4jFileVersion);
+    }
 }
