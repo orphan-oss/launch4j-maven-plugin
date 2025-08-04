@@ -10,3 +10,4 @@ target/*
 .idea
 .java-version
 .mvn/wrapper/maven-wrapper.jar
+.claude
