@@ -39,6 +39,7 @@ public class Launch4jFileVersionGenerator {
      * For shorter versions like "x.x.x" it will append zeros (to the 4th level) at the end like "x.x.x.0".
      * Every text flag like "-SNAPSHOT" or "-alpha" will be cut off.
      * Too many nested numbers (more than 4 levels) will be cut off as well: "1.2.3.4.5.6" into "1.2.3.4".
+     * Leading zeros in version components are stripped to avoid "digit exceeds base" errors in windres.
      * <p>
      * Param should be taken from MavenProject property:
      * @param projectVersion as ${project.version}
@@ -53,7 +54,8 @@ public class Launch4jFileVersionGenerator {
         }
 
         String versionLevels = removeTextFlags(projectVersion);
-        String limitedVersionLevels = cutOffTooManyNestedLevels(versionLevels);
+        String normalizedVersionLevels = stripLeadingZeros(versionLevels);
+        String limitedVersionLevels = cutOffTooManyNestedLevels(normalizedVersionLevels);
 
         return appendMissingNestedLevelsByZeros(limitedVersionLevels);
     }
@@ -66,6 +68,32 @@ public class Launch4jFileVersionGenerator {
         } else {
             return version;
         }
+    }
+
+    /**
+     * Strips leading zeros from each version component to prevent "digit exceeds base" errors in windres.
+     * For example, "302.08.01" becomes "302.8.1".
+     * Special case: "0" remains "0" (doesn't become empty string).
+     * 
+     * @param version version string with components separated by dots
+     * @return version string with leading zeros stripped from each component
+     */
+    private static String stripLeadingZeros(String version) {
+        String[] levels = version.split("\\.");
+        
+        for (int i = 0; i < levels.length; i++) {
+            // Parse as integer and convert back to string to remove leading zeros
+            // This handles the special case where "000" becomes "0"
+            try {
+                levels[i] = String.valueOf(Integer.parseInt(levels[i]));
+            } catch (NumberFormatException e) {
+                // This should not happen given the regex validation, but keep original if it does
+                // The existing validation should have caught invalid numbers already
+                throw new IllegalArgumentException("Invalid number format in version component: " + levels[i], e);
+            }
+        }
+        
+        return String.join(".", levels);
     }
 
     private static String cutOffTooManyNestedLevels(String versionLevels) {
