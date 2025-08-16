@@ -309,7 +309,7 @@ A complete copy of this license may be found in src/main/legal/LICENSE.txt of th
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.11.2</version>
+                <version>3.11.3</version>
             </plugin>
         </plugins>
     </reporting>
