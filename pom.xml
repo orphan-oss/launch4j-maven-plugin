@@ -124,7 +124,7 @@ A complete copy of this license may be found in src/main/legal/LICENSE.txt of th
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>3.15.1</version>
+            <version>3.15.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
