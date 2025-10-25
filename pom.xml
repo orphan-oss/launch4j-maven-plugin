@@ -175,7 +175,7 @@ A complete copy of this license may be found in src/main/legal/LICENSE.txt of th
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
-                    <version>3.15.1</version>
+                    <version>3.15.2</version>
                     <configuration>
                         <!-- see https://issues.apache.org/jira/browse/MNG-5346 -->
                         <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
@@ -204,7 +204,7 @@ A complete copy of this license may be found in src/main/legal/LICENSE.txt of th
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.15.1</version>
+                <version>3.15.2</version>
                 <executions>
                     <execution>
                         <id>mojo-descriptor</id>
@@ -304,7 +304,7 @@ A complete copy of this license may be found in src/main/legal/LICENSE.txt of th
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.15.1</version>
+                <version>3.15.2</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
