@@ -118,7 +118,7 @@ A complete copy of this license may be found in src/main/legal/LICENSE.txt of th
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
-            <version>3.9.11</version>
+            <version>3.9.12</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
