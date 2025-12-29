@@ -9,7 +9,7 @@ Windows `.exe` files from Java applications as part of the Maven build process.
 
 **Requirements:**
 
-- Java 8 (specified in with `<maven.compiler.target>` in pom.xml)
+- Java 17 (specified in `<maven.compiler.target>` in pom.xml)
 - Maven 3.6.x or higher
 
 ## Build Commands
