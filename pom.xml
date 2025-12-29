@@ -46,7 +46,7 @@ A complete copy of this license may be found in src/main/legal/LICENSE.txt of th
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
         <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
-        <maven-release-plugin.version>3.2.0</maven-release-plugin.version>
+        <maven-release-plugin.version>3.3.1</maven-release-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
     </properties>
 
