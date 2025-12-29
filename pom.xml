@@ -66,6 +66,21 @@ A complete copy of this license may be found in src/main/legal/LICENSE.txt of th
         <tag>HEAD</tag>
     </scm>
 
+    <issueManagement>
+        <system>Github Issues</system>
+        <url>https://github.com/orphan-oss/launch4j-maven-plugin/issues</url>
+    </issueManagement>
+
+    <developers>
+        <developer>
+            <id>lukaszlenart</id>
+            <email>lukasz.lenart@gmail.com</email>
+            <roles>
+                <role>Lead maintainer</role>
+            </roles>
+        </developer>
+    </developers>
+
     <dependencies>
         <dependency>
             <groupId>net.sf.launch4j</groupId>
