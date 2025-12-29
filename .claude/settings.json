@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "Bash(mvn test:*)",
+      "Bash(javac:*)",
+      "Bash(java:*)",
+      "mcp__jetbrains"
+    ],
+    "deny": []
+  }
+}
