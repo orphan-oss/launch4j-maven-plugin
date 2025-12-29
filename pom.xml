@@ -148,7 +148,7 @@ A complete copy of this license may be found in src/main/legal/LICENSE.txt of th
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>4.11.0</version>
+            <version>5.21.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
