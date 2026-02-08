@@ -171,7 +171,7 @@ A complete copy of this license may be found in src/main/legal/LICENSE.txt of th
         <dependency>
             <groupId>org.apache.maven.plugin-testing</groupId>
             <artifactId>maven-plugin-testing-harness</artifactId>
-            <version>3.5.0</version>
+            <version>3.5.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
