@@ -22,6 +22,7 @@ package com.akathist.maven.plugins.launch4j;
 import com.akathist.maven.plugins.launch4j.tools.ResourceIO;
 import net.sf.launch4j.Builder;
 import net.sf.launch4j.BuilderException;
+import net.sf.launch4j.config.Architecture;
 import net.sf.launch4j.config.Config;
 import net.sf.launch4j.config.ConfigPersister;
 import net.sf.launch4j.config.ConfigPersisterException;
@@ -140,7 +141,7 @@ public class Launch4jMojo extends AbstractMojo {
 
     /**
      * Whether you want a gui or console app.
-     * Valid values are "gui" and "console."
+     * Valid values are "gui", "console", "jniGui", "jniConsole".
      * If you say gui, then launch4j will run your app from javaw instead of java
      * in order to avoid opening a DOS window.
      * Choosing gui also enables other options like taskbar icon and a splash screen.
@@ -161,6 +162,13 @@ public class Launch4jMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project.build.directory}/${project.artifactId}.exe")
     private File outfile;
+
+    /**
+     * The architecture of executable you want launch4j to produce.
+     * Default is WIN32.
+     */
+    @Parameter(defaultValue = "WIN32")
+    private Architecture outfileArch;
 
     /**
      * The jar to bundle inside the executable.
@@ -411,6 +419,10 @@ public class Launch4jMojo extends AbstractMojo {
                         c.setOutfile(outfile);
                     }
 
+                    if (outfileArch != null) {
+                        c.setOutfileArch(outfileArch);
+                    }
+
                     if (icon != null) {
                         c.setIcon(icon);
                     }
@@ -448,6 +460,7 @@ public class Launch4jMojo extends AbstractMojo {
 
             c.setHeaderType(headerType);
             c.setOutfile(outfile);
+            c.setOutfileArch(outfileArch);
             c.setJar(getJar());
             c.setDontWrapJar(dontWrapJar);
             c.setErrTitle(errTitle);
@@ -771,7 +784,11 @@ public class Launch4jMojo extends AbstractMojo {
         // See here for possible values of os.name:
         // http://lopica.sourceforge.net/os.html
         if (os.startsWith("Windows")) {
-            plat = "win32";
+            if ("amd64".equals(arch)) {
+                plat = "win64";
+            } else {
+                plat = "win32";
+            }
         } else if ("Linux".equals(os)) {
             if ("amd64".equals(arch)) {
                 plat = "linux64";
@@ -809,6 +826,7 @@ public class Launch4jMojo extends AbstractMojo {
 
         log.debug("headerType = " + c.getHeaderType());
         log.debug("outfile = " + c.getOutfile());
+        log.debug("outfileArch = " + c.getOutfileArch());
         log.debug("jar = " + c.getJar());
         log.debug("dontWrapJar = " + c.isDontWrapJar());
         log.debug("errTitle = " + c.getErrTitle());
@@ -940,6 +958,7 @@ public class Launch4jMojo extends AbstractMojo {
                 "headerType='" + headerType + '\'' +
                 ", infile=" + infile +
                 ", outfile=" + outfile +
+                ", outfileArch=" + outfileArch +
                 ", jar='" + jar + '\'' +
                 ", dontWrapJar=" + dontWrapJar +
                 ", errTitle='" + errTitle + '\'' +
