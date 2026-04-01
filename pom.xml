@@ -108,7 +108,7 @@ A complete copy of this license may be found in src/main/legal/LICENSE.txt of th
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.10.15</version>
+            <version>1.10.16</version>
         </dependency>
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
