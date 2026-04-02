@@ -38,6 +38,7 @@
                     <headerType>gui</headerType>
                     <jar>${project.build.directory}/${project.artifactId}-${project.version}.jar</jar>
                     <outfile>${project.build.directory}/app.exe</outfile>
+                    <outfileArch>WIN32</outfileArch>
                     <downloadUrl>https://java.com/download</downloadUrl>
                     <classPath>
                         <mainClass>pl.org.lenart.launch4j.App</mainClass>
@@ -45,6 +46,7 @@
                     </classPath>
                     <jre>
                         <path>%JAVA_HOME%;%PATH%</path>
+                        <mode>client</mode>
                         <minVersion>1.8</minVersion>
                         <bundledJreAsFallback>true</bundledJreAsFallback>
                         <jdkPreference>preferJre</jdkPreference>
