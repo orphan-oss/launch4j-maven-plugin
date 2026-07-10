@@ -21,6 +21,7 @@ package com.akathist.maven.plugins.launch4j;
 
 import java.util.List;
 
+import net.sf.launch4j.config.JreMode;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Parameter;
 
@@ -39,6 +40,12 @@ public class Jre {
      */
     @Parameter(required = true)
     String path;
+
+    /**
+     * JRE mode: "server" or "client".
+     */
+    @Parameter(defaultValue = "CLIENT")
+    String mode;
 
     /**
      * Sets jre's bundledJre64Bit flag
@@ -174,6 +181,7 @@ public class Jre {
         net.sf.launch4j.config.Jre ret = new net.sf.launch4j.config.Jre();
 
         ret.setPath(path);
+        ret.setMode(JreMode.valueOf(mode.toUpperCase()));
         ret.setRequires64Bit(requires64Bit);
         ret.setMinVersion(minVersion);
         ret.setMaxVersion(maxVersion);
@@ -191,6 +199,7 @@ public class Jre {
     public String toString() {
         return "Jre{" +
                 "path='" + path + '\'' +
+                ", mode=" + mode +
                 ", requires64Bit=" + requires64Bit +
                 ", minVersion='" + minVersion + '\'' +
                 ", maxVersion='" + maxVersion + '\'' +
