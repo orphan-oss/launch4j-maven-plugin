@@ -34,6 +34,7 @@ public class Launch4jMojoTest extends AbstractMojoTestCase {
                 "headerType='gui', " +
                 "infile=null, " +
                 "outfile=${project.build.directory}" + File.separator + "app.exe, " +
+                "outfileArch=WIN32, " +
                 "jar='${project.build.directory}/${project.artifactId}-${project.version}.jar', " +
                 "dontWrapJar=false, " +
                 "errTitle='null', " +
@@ -51,6 +52,7 @@ public class Launch4jMojoTest extends AbstractMojoTestCase {
                 "vars=null, " +
                 "jre=Jre{" +
                 "path='%JAVA_HOME%;%PATH%', " +
+                "mode=client, " +
                 "requires64Bit=false, " +
                 "minVersion='1.8', " +
                 "maxVersion='null', " +
